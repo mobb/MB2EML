@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eml:eml xmlns:eml="eml://ecoinformatics.org/eml-2.1.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" packageId="knb-lter-dev.1.1" scope="system"
+  system="knb"
+  xsi:schemaLocation="eml://ecoinformatics.org/eml-2.1.1 http://nis.lternet.edu/schemas/EML/eml-2.1.1/eml.xsd">
+    <dataset id="[% id %]">
+        <title>[% dataset.title %]</title>
+        <creators>
+            [%- FOREACH creator = creators %]
+            <creator>
+                [% IF creator.givenname != '' %]
+                <individualName>
+                    <givenName>[% creator.givenname %]</givenName>
+                    <surName>[% creator.surname %]</surName>
+                </individualName>
+                [% END %]
+                <organizationName>[% creator.organization %]</organizationName>
+                <address>
+                    <deliveryPoint>[% creator.address1 %]</deliveryPoint>
+                    <deliveryPoint>[% creator.address2 %]</deliveryPoint>
+                    [% IF creator.address3 != '' %]
+                    <deliveryPoint>[% creator.address3 %]</deliveryPoint>
+                    [% END %]
+                    <city>[% creator.city %]</city>
+                    <administrativeArea>[% creator.state %]</administrativeArea>
+                    <postalCode>[% creator.zip %]</postalCode>
+                    <country>[% creator.country %]</country>
+                </address>
+                <electronicMailAddress>[% creator.email %]</electronicMailAddress>
+                <onlineUrl></onlineUrl>
+                <userId directory=""></userId>
+            </creator>
+            [%- END %]
+        </creators>
+        <keywordSet>
+        [% FOREACH keyword = keywords %]
+            <keyword keywordType="[% keyword.keywordtype %]">
+                [% keyword.keyword %]
+            </keyword>
+        [% END %]
+        </keywordSet>
+    </dataset>
+</eml>
