@@ -1,5 +1,7 @@
 #!/usr/bin/env perl
 
+# Perl module that assembles and serializes EML information to XML
+
 package EML;
 use Moose;
 
@@ -16,17 +18,30 @@ has 'databaseName' => ( is => 'rw', required => 1 );
 sub BUILD {
     my $self = shift;
 
-    #print "eml: dbname: " . $self->databaseName . "\n";
     $self->mb(Metabase->new({ databaseName => $self->databaseName}));
+}
+
+sub getAbstract {
+    my $self = shift;
+    my $datasetId = shift;
+
+    my $abstract = $self->mb->getAbstract($datasetId);
+
+    return $abstract;
+}
+
+sub getAttributeList {
+    my $self = shift;
+    my $datasetId = shift;
+
+    return $self->mb->getAttributeList($datasetId);
 }
 
 sub getCreators{
     my $self = shift;
     my $datasetId = shift;
 
-    #my @creators = $self->mb->getCreatorRows($datasetId);
-
-    return $self->mb->getCreatorRows($datasetId);
+    return $self->mb->getCreators($datasetId);
 }
 
 sub getDatasetTitle{
@@ -38,6 +53,13 @@ sub getDatasetTitle{
     return $datasetTitle;
 }
 
+sub getEntities{
+    my $self = shift;
+    my $datasetId = shift;
+
+    return $self->mb->getEntities($datasetId);
+}
+
 sub getKeywords{
     my $self = shift;
     my $datasetId = shift;
@@ -45,7 +67,7 @@ sub getKeywords{
     return $self->mb->getKeywords($datasetId);
 }
 
-sub createXML {
+sub writeXML {
 
     use Template;
     my $self = shift;
@@ -54,21 +76,34 @@ sub createXML {
     my $templateName;
     my %templateVars = ();
 
+    #my $tt = Template->new({
+    #    CONSTANTS => {
+    #        emlVersion => "2.1.1",
+    #    } 
+    #});
     my $tt = Template->new;
 
-    if ($EMLmodule eq "eml-dataset") {
-        $templateName = 'eml-dataset.tt';
+    if ($EMLmodule eq "eml") {
+        $templateName = 'eml.tt';
         # Retrieve needed data items from the EML object
+        my $abstract = $self->getAbstract($datasetId);
+        my @attributeList = $self->getAttributeList($datasetId);
         my @creators = $self->getCreators($datasetId);
         my $datasetTitle = $self->getDatasetTitle($datasetId);
         my @keywords = $self->getKeywords($datasetId);
+        my @entities = $self->getEntities($datasetId);
         my $k;
 
         # Load data items into Template Toolkit arguments
+        $templateVars{ 'abstract' } = $abstract;
+        $templateVars{ 'attributeList' } = \@attributeList;
         $templateVars{ 'creators' } = \@creators;
         $templateVars{ 'dataset' } = $datasetTitle;
         $templateVars{ 'keywords' } = \@keywords;
-        $templateVars{ 'id' } = $datasetId;
+        $templateVars{ 'datasetid' } = $datasetId;
+        $templateVars{ 'entities' } = \@entities;
+
+        #$str =~ s/\r//g
 
         #foreach $k (@keywords) {
         #    print "kw: " . $k->keyword . "\n";
