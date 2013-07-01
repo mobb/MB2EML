@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eml:eml xmlns:eml="eml://ecoinformatics.org/eml-2.1.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" packageId="knb-lter-dev.1.1" scope="system"
+  system="knb"
+  xsi:schemaLocation="eml://ecoinformatics.org/eml-2.1.1 http://nis.lternet.edu/schemas/EML/eml-2.1.1/eml.xsd">
+  [%- IF datasetid %]
+  [%- INCLUDE 'eml-dataset.tt' %]
+  [%- END %]
+</eml>
