@@ -34,6 +34,15 @@ sub BUILD {
     }
 }
 
+sub DEMOLISH {
+    my $self = shift;
+
+    # Close any open database connection
+    # Note: DEMOLISH is called automatically when this Moose object goes out of scope, which 
+    # is the case at the end of the program
+    $self->schema->storage->disconnect();
+}
+
 sub getAbstract {
     my $self = shift;
     my $datasetId = shift;
@@ -42,13 +51,59 @@ sub getAbstract {
     return $self->schema->resultset('VwEmlAbstract')->find({ dataSetId => $datasetId});
 }
 
+sub getAccess {
+    my $self = shift;
+    my $datasetId = shift;
+    my $entityId = shift;
+    my @accesses = ();
+
+    # resultset returns an interator
+    return $self->schema->resultset('VwEmlAccess')->find({ dataSetId => $datasetId, entity_sort_order => $entityId });
+    #my $rs = $self->schema->resultset('VwEmlAccess')->find({ dataSetId => $datasetId, entity_sort_order => $entityId });
+    
+    # Repackage the resultset as an array of rows, which is a more standard representaion,
+    # i.e. the user doesn't have to know how to use a DBIx resultset
+    # Each row is a hash that used the column names as the keys.
+    #while (my $access = $rs->next) {
+    #    push(@accesses, $access);
+    #    print "access: " . $access->access . "\n";
+    #}
+
+    # Put QC checking here
+    # i.e. nulls for specific fields - Gastil want's a one liner
+    #return @accesses;
+}
+
+sub getAssociatedParties {
+    my $self = shift;
+    my $datasetId = shift;
+    my @associatedParties = ();
+
+    # resultset returns an interator
+    my $rs = $self->schema->resultset('VwEmlAssociatedparty')->search({ dataSetId => $datasetId });
+    
+    # Repackage the resultset as an array of rows, which is a more standard representaion,
+    # i.e. the user doesn't have to know how to use a DBIx resultset
+    # Each row is a hash that used the column names as the keys.
+    while (my $associatedParty = $rs->next) {
+        push(@associatedParties, $associatedParty);
+    }
+
+    # Put QC checking here
+    # i.e. nulls for specific fields - Gastil want's a one liner
+ 
+    return @associatedParties;
+}
+
 sub getAttributeList {
     my $self = shift;
     my $datasetId = shift;
+    my $entityId = shift;
     my @attributeList = ();
 
     # resultset returns an interator
-    my $rs = $self->schema->resultset('VwEmlAttributelist')->search({ dataSetId => $datasetId });
+    # Retrieve attributes for a particular dataset and entity, ordered by entity sort order
+    my $rs = $self->schema->resultset('VwEmlAttributelist')->search({ dataSetId => $datasetId, entity_sort_order => $entityId }, { order_by => { -asc => 'column_sort_order' }});
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
     # i.e. the user doesn't have to know how to use a DBIx resultset
@@ -62,13 +117,32 @@ sub getAttributeList {
  
     return @attributeList;
 }
+
+sub getContacts {
+    my $self = shift;
+    my $datasetId = shift;
+    my @contacts = ();
+
+    # resultset returns an interator
+    my $rs = $self->schema->resultset('VwEmlContact')->search({ dataSetId => $datasetId });
+    
+    # Repackage the resultset as an array of rows, which is a more standard representaion,
+    # i.e. the user doesn't have to know how to use a DBIx resultset
+    # Each row is a hash that used the column names as the keys.
+    while (my $contact = $rs->next) {
+        push(@contacts, $contact);
+    }
+
+    return @contacts;
+}
+
 sub getCreators {
     my $self = shift;
     my $datasetId = shift;
     my @creators = ();
 
     # resultset returns an interator
-    my $rs = $self->schema->resultset('VwEmlCreator')->search({ dataSetId => $datasetId });
+    my $rs = $self->schema->resultset('VwEmlCreator')->search({ dataSetId => $datasetId }, { order_by => { -asc => 'authorshiporder' }});
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
     # i.e. the user doesn't have to know how to use a DBIx resultset
@@ -83,13 +157,12 @@ sub getCreators {
     return @creators;
 }
 
-sub getDatasetTitle{
+sub getDistribution {
     my $self = shift;
     my $datasetId = shift;
 
     # Return a single row, which is a hash
-    return $self->schema->resultset('VwEmlTitle')->find({ dataSetId => $datasetId});
-    
+    return $self->schema->resultset('VwEmlDistribution')->find({ dataSetId => $datasetId});
 }
 
 sub getEntities{
@@ -114,12 +187,20 @@ sub getEntities{
     
 }
 
+sub getIntellectualRights {
+    my $self = shift;
+    my $datasetId = shift;
+
+    # Return a single row, which is a hash
+    return $self->schema->resultset('VwEmlIntellectualrights')->find({ dataSetId => $datasetId});
+}
+
 sub getKeywords {
     my $self = shift;
     my $datasetId = shift;
     my @keywords = ();
 
-    my $rs = $self->schema->resultset('VwEmlKeyword')->search({ dataSetId => $datasetId });
+    my $rs = $self->schema->resultset('VwEmlKeyword')->search({ dataSetId => $datasetId }, { order_by => { -asc => 'keywordthesaurus'}} );
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
     # i.e. the user doesn't have to know how to use a DBIx resultset
@@ -128,6 +209,69 @@ sub getKeywords {
     }
 
     return @keywords;
+}
+
+sub getLanguage {
+    my $self = shift;
+    my $datasetId = shift;
+
+    # Return a single row, which is a hash
+    return $self->schema->resultset('VwEmlLanguage')->find({ dataSetId => $datasetId});
+}
+
+sub getPhysical {
+    my $self = shift;
+    my $datasetId = shift;
+    my $entityId = shift;
+
+    # resultset returns resultSet object
+    # Retrieve physical format description for a particular dataset and entity
+    my $rs = $self->schema->resultset('VwEmlPhysical')->find({ dataSetId => $datasetId, sort_order => $entityId });
+    
+    return $rs;
+}
+
+sub getProject {
+    my $self = shift;
+    my $datasetId = shift;
+
+    # Retrieve project description for a particular dataset and entity
+    my $rs = $self->schema->resultset('VwEmlProject')->find({ dataSetId => $datasetId });
+    
+    return $rs;
+}
+
+sub getPublisher {
+    my $self = shift;
+    my $datasetId = shift;
+
+    my $rs = $self->schema->resultset('VwEmlPublisher')->find({ dataSetId => $datasetId });
+    
+    return $rs;
+}
+
+sub getTitle{
+    my $self = shift;
+    my $datasetId = shift;
+
+    # Return a single row, which is a hash
+    return $self->schema->resultset('VwEmlTitle')->find({ dataSetId => $datasetId});
+}
+
+sub getUnitList {
+    my $self = shift;
+    my $datasetId = shift;
+    my @unitList = ();
+
+    my $rs = $self->schema->resultset('VwStmmlUnitlist')->search({ dataSetId => $datasetId }, { order_by => { -asc => 'unit'}} );
+    
+    # Repackage the resultset as an array of rows, which is a more standard representaion,
+    # i.e. the user doesn't have to know how to use a DBIx resultset
+    while (my $unit = $rs->next) {
+        push(@unitList, $unit);
+    }
+
+    return @unitList;
 }
 
 # Make this Moose class immutable

@@ -4,6 +4,8 @@ use lib '/Users/peter/Projects/MSI/LTER/MB2EML';
 use EML;
 
 $dataSetId = 99013;
+#$dataSetId = 99021;
+#$dataSetId = 99024;
 #$databaseName = "mcr_metabase";
 $databaseName = "sbc_metabase";
 

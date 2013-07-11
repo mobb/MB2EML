@@ -1,0 +1,33 @@
+            <entityName>[% entity.entityname %]</entityName>
+            <entityDescription>[% entity.entitydescription %]</entityDescription> 
+            <physical scope="document">
+                <objectName>[% entity.physical.objectname %]</objectName>
+                <size unit="[% entity.physical.unit %]">[% entity.physical.size %]</size>
+                <characterEncoding>[% entity.physical.characterencoding %]</characterEncoding>
+                <dataFormat>
+                    <textFormat>
+                        <numHeaderLines>[% entity.physical.numheaderlines %]</numHeaderLines>
+                        <numFooterLines>[% entity.physical.numfooterlines %]</numFooterLines>
+                        <recordDelimiter>[% entity.physical.recorddelimiter %]</recordDelimiter>
+                        <attributeOrientation>[% entity.physical.attributeorientation %]</attributeOrientation>
+                        <simpleDelimited>
+                            <fieldDelimiter>[% entity.physical.fielddelimiter %]</fieldDelimiter>
+                            [% IF entity.physical.collapsedelimiter != "" %]
+                            <collapseDelimiters>[% entity.physical.collapsedelimiter %]</collapseDelimiters>
+                            [% END %]
+                            <quoteCharacter>[% entity.physical.quotecharacter %]</quoteCharacter>
+                        </simpleDelimited>
+                    </textFormat>
+                </dataFormat>
+                <distribution>
+                    <online>
+                        <url function="download">[% entity.physical.url %]</url>
+                    </online>
+                    <access authSystem="knb" order="allowFirst" scope="document">
+                        [% entity.access.access %]
+                    </access>
+                </distribution>
+            </physical>
+            <coverage>***** TBD *****</coverage>
+            <methods>***** TBD *****</methods>
+            <additionalInfo>***** TBD *****</additionalInfo>

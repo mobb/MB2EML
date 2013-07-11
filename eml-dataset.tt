@@ -1,30 +1,87 @@
-    <dataset id="[% datasetid %]">
+    <dataset id="[% dataset.id %]">
         <title>[% dataset.title %]</title>
         [%- FOREACH creator = creators %]
         <creator>
-            [%- IF creator.givenname != '' %]
             <individualName>
+                [%- IF creator.givenname != "" %]
                 <givenName>[% creator.givenname %]</givenName>
+                [%- END %]
                 <surName>[% creator.surname %]</surName>
             </individualName>
-            [%- END %]
+ 
+            [%- IF creator.organization != "" %]
             <organizationName>[% creator.organization %]</organizationName>
+            [%- END %]
+            [%- IF creator.address1 != "" or 
+                   creator.address2 != "" or
+                   creator.address3 != "" or
+                   creator.city     != "" or
+                   creator.state    != "" or
+                   creator.zip      != "" or
+                   creator.country  != "" %]
             <address>
+                [%- IF creator.address1 != "" %]
                 <deliveryPoint>[% creator.address1 %]</deliveryPoint>
+                [%- END %]
+                [%- IF creator.address2 != "" %]
                 <deliveryPoint>[% creator.address2 %]</deliveryPoint>
+                [%- END %]
                 [%- IF creator.address3 != '' %]
                 <deliveryPoint>[% creator.address3 %]</deliveryPoint>
                 [%- END %]
+                [%- IF creator.city != "" %]
                 <city>[% creator.city %]</city>
+                [%- END %]
+                [%- IF creator.state != "" %]
                 <administrativeArea>[% creator.state %]</administrativeArea>
+                [%- END %]
+                [%- IF creator.zip != "" %]
                 <postalCode>[% creator.zip %]</postalCode>
+                [%- END %]
+                [%- IF creator.country != "" %]
                 <country>[% creator.country %]</country>
+                [%- END %]
             </address>
+            [%- END %] [%# end IF creator.address1 ... #%]
+            [%- IF creator.email != "" %]
             <electronicMailAddress>[% creator.email %]</electronicMailAddress>
-            <onlineUrl></onlineUrl>
+            [%- END %]
+            [% IF creator.userId != "" %]
             <userId directory=""></userId>
+            [%- END %]
         </creator>
         [%- END %] [%# end FOREACH creator #%]
+        [%- FOREACH associatedParty = associatedParties %]
+        <associatedParty id="[% associatedParty.nameid %]" scope="document">
+            <individualName>
+                <givenName>[% associatedParty.givenname %]</givenName>
+                <surName>[% associatedParty.surname %]</surName>
+            </individualName>
+            [%- IF associatedParty.organization != "" %]
+            <organizationName>[% associatedParty.organization %]</organizationName>
+            [%- END %]
+            <address scope="document">
+                <deliveryPoint>[% associatedParty.address1 %]</deliveryPoint>
+                <deliveryPoint>[% associatedParty.address2 %]</deliveryPoint>
+                [%- IF associatedParty.address3 != "" %]
+                <deliveryPoint>[% associatedParty.address3 %]</deliveryPoint>
+                [%- END %]
+                <city>[% associatedParty.city %]</city>
+                <postalCode>[% associatedParty.zipcode %]</postalCode>
+                <country>[% associatedParty.country %]</country>
+            </address>
+            <phone phonetype="voice">[% associatedParty.phone1 %]</phone>
+            [%- IF associatedParty.phone2 != "" %]
+            <phone phonetype="fax">[% associatedParty.phone2 %]</phone>
+            [%- END %]
+            [%- IF associatedParty.fax != "" %]
+            <phone phonetype="fax">[% associatedParty.fax %]</phone>
+            [%- END %]
+            <electronicMailAddress>[% associatedParty.email %]</electronicMailAddress>
+            <role>[% associatedParty.role %]</role>
+        </associatedParty>
+        [%- END %] [%# end FOREACH associatedParty #%]
+        <language>[% language.language %]</language>
         <abstract>
             [% abstract.abstract %]
         </abstract>
@@ -32,106 +89,43 @@
         [%- FOREACH keyword = keywords %]
             [%- IF loop.first %]
         <keywordSet>
-            [%- END %]
-            <keyword keywordType="[% keyword.keywordtype %]">[% keyword.keyword %]</keyword>
-            [%- IF thesaurus != keyword.keywordthesaurus %]
                 [%- thesaurus = keyword.keywordthesaurus %]
-            <keywordThesaurus>[% keyword.keywordthesaurus %]</keywordThesaurus>
+            [%- END %]
+            [%- IF thesaurus != keyword.keywordthesaurus %]
+            <keywordThesaurus>[% thesaurus %]</keywordThesaurus>
+                [%- thesaurus = keyword.keywordthesaurus %]
         </keywordSet>
+                [%- IF NOT loop.last %]
+        <keywordSet>
+                [%- END %]
+            [%- END %]
+            [%- IF keyword.keywordType == "" %]
+            <keyword>[% keyword.keyword %]</keyword>
+                [%- ELSE %]
+            <keyword keywordType="[% keyword.keywordtype %]">[% keyword.keyword %]</keyword>
             [%- END %]
             [%- IF loop.last %]
-            <keywordThesaurus>[% thesaurus %]</keywordThesaurus>
+                [%- IF keyword.thesaurus != "" %]
+            <keywordThesaurus>[% keyword.thesaurus %]</keywordThesaurus>
+                [%- END %]
         </keywordSet>
-            [%- END %]
-        [%- END %]
+            [% END %]
+        [%- END %] [%# end FOREACH keyword #%]
+        <intellectualRights>
+            [% intellectualRights.intellectualrights %]
+        </intellectualRights>
+        <distribution>
+            [% distribution.distribution %]
+        </distribution>
+        [%- FOREACH contact = contacts %]
+        <contact scope="document">
+            [% contact.contact %] 
+        </contact>
+        [%- END %] [%# end FOREACH contact #%]
+        <publisher>[% publisher.publisher %]</publisher>
+        <project>[% project.project %]</project>
         [%- FOREACH entity = entities %]
-        <[% entity.entitytype %]>
-            <entityName>[% entity.entityname %]</entityName>
-            <entityDescription>[% entity.entitydescription %]</entityDescription> 
-            <physical>
-                <objectName>[% entity.physical.objectname %]</objectName>
-            </physical>
-            <attributeList>
-            [%- FOREACH attribute = attributeList %]
-                [%- IF entity.sortorder == attribute.entity_sort_order %]            
-                <attribute>
-                    <attributeName>[% attribute.attribute_id %]</attributeName>
-                    <attributeLabel>[% attribute.attributelabel %]</attributeLabel>
-                    <attributeDefinition>[% attribute.attributedefinition %]</attributeDefinition>
-                    <storageType>[% attribute.storagetype %]</storageType>
-                    <measurementScale>
-                    [%- SWITCH attribute.measurementscale %]
-                    [%- CASE 'dateTime' %]
-                        <datetime>
-                            <formatString>[% attribute.formatstring %]</formatString>
-                        [%- IF attribute.bounds_xml != "" %]
-                            <dateTimeDomain>[%- attribute.bounds_xml %]</dateTimeDomain>
-                        [%- END %]
-                        [%- IF attribute.missingvaluecode_xml != "" %]
-                        [%# [% attribute.missingvaluecode_xml FILTER replace('\x0D', '\x0A') %] %#]
-                        [% attribute.missingvaluecode_xml %]
-                        [%- END %]
-                        </datetime>
-                    [%- CASE 'interval' %]
-                        <interval>
-                            <precision>[% attribute.precision %]</precision>
-                            <numericDomain>
-                                <numberType>[% attribute.numbertype %]</numberType>
-                            </numericDomain>
-                        [%- IF attribute.missingvaluecode_xml != "" %]
-                        [% attribute.missingvaluecode_xml %]
-                        [%- END %]
-                        </interval>
-                    [%- CASE 'nominal' %]
-                        <nominal>
-                            <nonNumericDomain>
-                        [%- SWITCH attribute.nonnumericdomain %]
-                        [%- CASE 'textDomain' %]
-                                <textDomain>[%- attribute.definition_text_pattern %]</textDomain>
-                        [%- CASE 'enumeratedDomain' %]
-                                [%- attribute.enumeration_xml %]
-                        [%- END %]
-                            </nonNumericDomain>
-                        [%- IF attribute.missingvaluecode_xml != "" %]
-                        [% attribute.missingvaluecode_xml %]
-                        [%- END %]
-                        </nominal>
-                    [%- CASE 'ordinal' %]
-                        <ordinal>
-                            <nonNumericDomain>
-                        [%- SWITCH attribute.nonnumericdomain %]
-                        [%- CASE 'textDomain' %]
-                                <textDomain>[%- attribute.definition_text_pattern%]</textDomain>
-                        [%- CASE 'enumeratedDomain' %]
-                                [%- attribute.enumeration_xml %]
-                        [%- END %]
-                            </nonNumericDomain>
-                        [%- IF attribute.missingvaluecode_xml != "" %]
-                        [% attribute.missingvaluecode_xml %]
-                        [%- END %]
-                        </nominal>
-                        </ordinal>
-                    [%- CASE 'ratio' %]
-                        <ratio>
-                            <unit>
-                                <standardUnit>[% attribute.unit %]</standardUnit>
-                            </unit>
-                            <precision>[% attribute.precision %]</precision>
-                            <numericDomain>
-                                <numberType>[% attribute.numbertype %]</numberType>
-                            </numericDomain>
-                        [%- IF attribute.missingvaluecode_xml != "" %]
-                        [% attribute.missingvaluecode_xml %]
-                        [%- END %]
-                        </ratio>
-                    [%- CASE DEFAULT %] 
-                    Error in template processing - [% attribute.measurementscale %] not recognized
-                    [%- END %]
-                    </measurementScale>
-                </attribute>
-            [%- END %]
-            </attributeList>
-        [%- END %]
-        </[% entity.entitytype %]>
-        [%- END %]
+            [%- SET templateName = 'eml-' _ entity.entitytype _ '.tt' %]
+            [%- INCLUDE "$templateName" %]
+        [%- END %] [%# end FOREACH entity #%]
     </dataset>

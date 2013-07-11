@@ -1,0 +1,69 @@
+                <attribute id="***** TODO *****">
+                    <attributeName>[% attribute.attribute_id %]</attributeName>
+                    <attributeLabel>[% attribute.attributelabel %]</attributeLabel>
+                    <attributeDefinition>[% attribute.attributedefinition %]</attributeDefinition>
+                    <storageType>[% attribute.storagetype %]</storageType>
+                    <measurementScale>
+                    [%- SWITCH attribute.measurementscale %]
+                    [%- CASE 'dateTime' %]
+                        <dateTime>
+                            <formatString>[% attribute.formatstring %]</formatString>
+                        [%- IF attribute.bounds_xml != "" %]
+                            <dateTimeDomain>[%- attribute.bounds_xml %]</dateTimeDomain>
+                        [%- END %]
+                        </dateTime>
+                    [%- CASE 'interval' %]
+                        <interval>
+                            [% IF attribute.precision != "" %]
+                            <precision>[% attribute.precision %]</precision>
+                            [% END %]
+                            <numericDomain>
+                                <numberType>[% attribute.numbertype %]</numberType>
+                            </numericDomain>
+                        </interval>
+                    [%- CASE 'nominal' %]
+                        <nominal>
+                            <nonNumericDomain>
+                        [%- SWITCH attribute.nonnumericdomain %]
+                        [%- CASE 'textDomain' %]
+                                <textDomain>
+                                    <definition>[%- attribute.definition_text_pattern %]</definition>
+                                </textDomain>
+                        [%- CASE 'enumeratedDomain' %]
+                                [%- attribute.enumeration_xml %]
+                        [%- END %]
+                            </nonNumericDomain>
+                        </nominal>
+                    [%- CASE 'ordinal' %]
+                        <ordinal>
+                            <nonNumericDomain>
+                        [%- SWITCH attribute.nonnumericdomain %]
+                        [%- CASE 'textDomain' %]
+                                <textDomain>
+                                    <definition>[%- attribute.definition_text_pattern%]</definition>
+                                </textDomain>
+                        [%- CASE 'enumeratedDomain' %]
+                                [%- attribute.enumeration_xml %]
+                        [%- END %]
+                            </nonNumericDomain>
+                        </ordinal>
+                    [%- CASE 'ratio' %]
+                        <ratio>
+                            <unit>
+                                <customUnit>[% attribute.unit %]</customUnit>
+                            </unit>
+                            [% IF attribute.precision != "" %]
+                            <precision>[% attribute.precision %]</precision>
+                            [% END %]
+                            <numericDomain>
+                                <numberType>[% attribute.numbertype %]</numberType>
+                            </numericDomain>
+                        </ratio>
+                    [%- CASE DEFAULT %] 
+                    Error in template processing - [% attribute.measurementscale %] not recognized
+                    [%- END %]
+                    </measurementScale>
+                    [%- IF attribute.missingvaluecode_xml != "" %]
+                        [% attribute.missingvaluecode_xml %]
+                    [%- END %]
+                </attribute>

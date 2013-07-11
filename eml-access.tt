@@ -1,0 +1,5 @@
+    [%- IF access.access != "" %]
+    <access authSystem="knb" order="allowFirst" scope="document">
+        [% access.access %]
+    </access>
+    [%- END %]
