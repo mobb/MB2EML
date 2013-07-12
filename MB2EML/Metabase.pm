@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-package Metabase;
+package MB2EML::Metabase;
 use Moose;
 use Config::Simple;
 

@@ -2,13 +2,13 @@
 
 # Perl module that assembles and serializes EML information to XML
 
-package EML;
+package MB2EML::EML;
 use Moose;
 
 use lib '/Users/peter/Projects/MSI/LTER/MB2EML';
 use lib '/Users/peter/Projects/MSI/LTER/MB2EML/lib';
 
-use Metabase;
+use MB2EML::Metabase;
 
 has 'mb' => ( is => 'rw');
 has 'databaseName' => ( is => 'rw', required => 1 );
@@ -18,7 +18,7 @@ has 'databaseName' => ( is => 'rw', required => 1 );
 sub BUILD {
     my $self = shift;
 
-    $self->mb(Metabase->new({ databaseName => $self->databaseName}));
+    $self->mb(MB2EML::Metabase->new({ databaseName => $self->databaseName}));
 }
 
 sub DEMOLISH {
@@ -162,6 +162,7 @@ sub writeXML {
     my $self = shift;
     my $datasetId = shift;
     my $EMLmodule = shift;
+    my $output = '';;
     my $templateName;
     my %templateVars = ();
     my @entities;
@@ -216,9 +217,13 @@ sub writeXML {
 
     $templateVars{ 'entities' } = \@entities;
 
-    # Fill in the template
-    $tt->process($templateName, \%templateVars )
+    # Fill in the template, sending template output to a text string
+    $tt->process($templateName, \%templateVars, \$output )
         || die $tt->error;
+
+    return $output;
+
+
 }
 
 # Make this Moose class immutable
