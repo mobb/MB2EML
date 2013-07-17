@@ -126,6 +126,6 @@
         <project>[% project.project %]</project>
         [%- FOREACH entity = entities %]
             [%- SET templateName = 'eml-' _ entity.entitytype _ '.tt' %]
-            [%- INCLUDE "$templateName" %]
+            [%- INCLUDE "./templates/$templateName" %]
         [%- END %] [%# end FOREACH entity #%]
     </dataset>

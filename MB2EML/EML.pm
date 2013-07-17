@@ -161,21 +161,23 @@ sub writeXML {
     use Template;
     my $self = shift;
     my $datasetId = shift;
-    my $EMLmodule = shift;
+
     my $output = '';;
     my $templateName;
     my %templateVars = ();
     my @entities;
     my $entity;
-    my $packageId = "knb-lter-" . substr($self->databaseName, 0, index($self->databaseName, '_')) . $datasetId . "0";
+    # Replace this with packageId from view once Gastil gets around to it.
+    my $packageId = "knb-lter-" . substr($self->databaseName, 0, index($self->databaseName, '_')) . "." . $datasetId . "." . "0";
 
-    my $tt = Template->new;
+    my $tt = Template->new({ RELATIVE => 1 });
     my @attributeList;
 
-    $templateName = 'eml.tt';
+    $templateName = './templates/eml.tt';
     # Retrieve needed data items from the EML object
     my $abstract           = $self->getAbstract($datasetId);
-    my $access             = $self->getAccess($datasetId, 0);
+    my $entitySortOrder;
+    my $access             = $self->getAccess($datasetId, $entitySortOrder=0);
     my @associatedParties  = $self->getAssociatedParties($datasetId);
     my @contacts           = $self->getContacts($datasetId);
     my @creators           = $self->getCreators($datasetId);

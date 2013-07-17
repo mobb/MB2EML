@@ -4,7 +4,7 @@ use DBIx::Class::Schema::Loader qw/ make_schema_at /;
 use Config::Simple;
 
 # Load config file
-my $cfg = new Config::Simple('mb2eml.ini');
+my $cfg = new Config::Simple('config/mb2eml.ini');
 
 # get PostgreSQL account and pass
 my $account = $cfg->param('account');

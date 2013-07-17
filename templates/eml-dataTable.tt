@@ -1,8 +1,8 @@
         <dataTable>
-            [%- INCLUDE 'eml-entityGroup.tt' %]
+            [%- INCLUDE './templates/eml-entityGroup.tt' %]
             <attributeList>
             [%- FOREACH attribute = entity.attributeList %]
-                [%- INCLUDE 'eml-attribute.tt' %]
+                [%- INCLUDE './templates/eml-attribute.tt' %]
             [%- END %] [%# end FOREACH attribute ... #%]
             </attributeList>
         </dataTable>

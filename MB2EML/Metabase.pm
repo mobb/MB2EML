@@ -16,7 +16,7 @@ sub BUILD {
     my $self = shift;
 
     # Load config file
-    my $cfg = new Config::Simple('mb2eml.ini');
+    my $cfg = new Config::Simple('config/mb2eml.ini');
     # get PostgreSQL account and pass
     my $account = $cfg->param('account');
     my $pass = $cfg->param('pass');

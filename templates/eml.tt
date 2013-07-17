@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <eml:eml packageId="[% packageId %]" scope="system" system="knb"
-  xmlns:eml="eml://ecoinformatics.org/eml-2.1.0"
+  xmlns:eml="eml://ecoinformatics.org/eml-2.1.1"
   xmlns:stmml="http://www.xml-cml.org/schema/stmml"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="eml://ecoinformatics.org/eml-2.1.0 http://sbc.lternet.edu/external/InformationManagement/EML_210schema/eml.xsd">
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
     [%- IF dataset.id %]
-    [%- INCLUDE 'eml-access.tt' %]
-    [%- INCLUDE 'eml-dataset.tt' %]
-    [%- INCLUDE 'eml-additionalMetadata.tt' %]
+    [%- INCLUDE './templates/eml-access.tt' %]
+    [%- INCLUDE './templates/eml-dataset.tt' %]
+    [%- INCLUDE './templates/eml-additionalMetadata.tt' %]
     [%- END %]
 </eml:eml>
