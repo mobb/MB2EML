@@ -24,8 +24,9 @@ my $doc = XML::LibXML->load_xml(string => $output, { no_blanks => 1 });
 
 print $doc->toString(1);
 
-# also allow http://nis.lternet.edu/schemas/EML/eml-2.1.1/eml.xsd"
-$xmlschema = XML::LibXML::Schema->new( location => 'eml-2.1.1/eml.xsd');
-#$xmlschema = XML::LibXML::Schema->new( string => "http://sbc.lternet.edu/external/InformationManagement/EML_210schema/eml.xsd" );
+# Validate the XML using a local file
+#$xmlschema = XML::LibXML::Schema->new( location => 'eml-2.1.1/eml.xsd');
 
-#$valid = $xmlschema->validate( $doc );
+# Validate the XML using a URL
+$xmlschema = XML::LibXML::Schema->new( string => "http://sbc.lternet.edu/external/InformationManagement/EML_210schema/eml.xsd" );
+$valid = $xmlschema->validate( $doc );
