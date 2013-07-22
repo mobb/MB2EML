@@ -53,4 +53,7 @@ The flow of information from Metabase to the final EML document is:
      database -> Metabase.pm -> EML.pm -> client program
 
 
+Installing MB2EML
+----------------
 
+git clone https://github.com/sbpcs/MB2EML.git MB2EML
