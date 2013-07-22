@@ -48,7 +48,9 @@ sub getAbstract {
     my $datasetId = shift;
 
     # Return a single row, which is a hash
-    return $self->schema->resultset('VwEmlAbstract')->find({ dataSetId => $datasetId});
+    return $self->schema->resultset('VwEmlAbstract')->find({ datasetid => $datasetId});
+
+    print "datasetId: " . $datasetId
 }
 
 sub getAccess {
@@ -58,8 +60,8 @@ sub getAccess {
     my @accesses = ();
 
     # resultset returns an interator
-    return $self->schema->resultset('VwEmlAccess')->find({ dataSetId => $datasetId, entity_sort_order => $entityId });
-    #my $rs = $self->schema->resultset('VwEmlAccess')->find({ dataSetId => $datasetId, entity_sort_order => $entityId });
+    return $self->schema->resultset('VwEmlAccess')->find({ datasetid => $datasetId, entity_sort_order => $entityId });
+    #my $rs = $self->schema->resultset('VwEmlAccess')->find({ datasetid => $datasetId, entity_sort_order => $entityId });
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
     # i.e. the user doesn't have to know how to use a DBIx resultset
@@ -80,7 +82,7 @@ sub getAssociatedParties {
     my @associatedParties = ();
 
     # resultset returns an interator
-    my $rs = $self->schema->resultset('VwEmlAssociatedparty')->search({ dataSetId => $datasetId });
+    my $rs = $self->schema->resultset('VwEmlAssociatedparty')->search({ datasetid => $datasetId });
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
     # i.e. the user doesn't have to know how to use a DBIx resultset
@@ -103,7 +105,7 @@ sub getAttributeList {
 
     # resultset returns an interator
     # Retrieve attributes for a particular dataset and entity, ordered by entity sort order
-    my $rs = $self->schema->resultset('VwEmlAttributelist')->search({ dataSetId => $datasetId, entity_sort_order => $entityId }, { order_by => { -asc => 'column_sort_order' }});
+    my $rs = $self->schema->resultset('VwEmlAttributelist')->search({ datasetid => $datasetId, entity_sort_order => $entityId }, { order_by => { -asc => 'column_sort_order' }});
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
     # i.e. the user doesn't have to know how to use a DBIx resultset
@@ -124,7 +126,7 @@ sub getContacts {
     my @contacts = ();
 
     # resultset returns an interator
-    my $rs = $self->schema->resultset('VwEmlContact')->search({ dataSetId => $datasetId });
+    my $rs = $self->schema->resultset('VwEmlContact')->search({ datasetid => $datasetId });
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
     # i.e. the user doesn't have to know how to use a DBIx resultset
@@ -142,7 +144,7 @@ sub getCreators {
     my @creators = ();
 
     # resultset returns an interator
-    my $rs = $self->schema->resultset('VwEmlCreator')->search({ dataSetId => $datasetId }, { order_by => { -asc => 'authorshiporder' }});
+    my $rs = $self->schema->resultset('VwEmlCreator')->search({ datasetid => $datasetId }, { order_by => { -asc => 'authorshiporder' }});
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
     # i.e. the user doesn't have to know how to use a DBIx resultset
@@ -162,7 +164,7 @@ sub getDistribution {
     my $datasetId = shift;
 
     # Return a single row, which is a hash
-    return $self->schema->resultset('VwEmlDistribution')->find({ dataSetId => $datasetId});
+    return $self->schema->resultset('VwEmlDistribution')->find({ datasetid => $datasetId});
 }
 
 sub getEntities{
@@ -170,8 +172,10 @@ sub getEntities{
     my $datasetId = shift;
     my @entities = ();
 
+    print "datasetId: " . $datasetId;
+
     # resultset returns an interator
-    my $rs = $self->schema->resultset('VwEmlEntity')->search({ dataSetId => $datasetId });
+    my $rs = $self->schema->resultset('VwEmlEntity')->search({ datasetid => $datasetId });
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
     # i.e. the user doesn't have to know how to use a DBIx resultset
@@ -192,7 +196,7 @@ sub getIntellectualRights {
     my $datasetId = shift;
 
     # Return a single row, which is a hash
-    return $self->schema->resultset('VwEmlIntellectualrights')->find({ dataSetId => $datasetId});
+    return $self->schema->resultset('VwEmlIntellectualrights')->find({ datasetid => $datasetId});
 }
 
 sub getKeywords {
@@ -200,7 +204,7 @@ sub getKeywords {
     my $datasetId = shift;
     my @keywords = ();
 
-    my $rs = $self->schema->resultset('VwEmlKeyword')->search({ dataSetId => $datasetId }, { order_by => { -asc => 'keywordthesaurus'}} );
+    my $rs = $self->schema->resultset('VwEmlKeyword')->search({ datasetid => $datasetId }, { order_by => { -asc => 'keywordthesaurus'}} );
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
     # i.e. the user doesn't have to know how to use a DBIx resultset
@@ -216,7 +220,7 @@ sub getLanguage {
     my $datasetId = shift;
 
     # Return a single row, which is a hash
-    return $self->schema->resultset('VwEmlLanguage')->find({ dataSetId => $datasetId});
+    return $self->schema->resultset('VwEmlLanguage')->find({ datasetid => $datasetId});
 }
 
 sub getPhysical {
@@ -226,7 +230,7 @@ sub getPhysical {
 
     # resultset returns resultSet object
     # Retrieve physical format description for a particular dataset and entity
-    my $rs = $self->schema->resultset('VwEmlPhysical')->find({ dataSetId => $datasetId, sort_order => $entityId });
+    my $rs = $self->schema->resultset('VwEmlPhysical')->find({ datasetid => $datasetId, sort_order => $entityId });
     
     return $rs;
 }
@@ -236,7 +240,7 @@ sub getProject {
     my $datasetId = shift;
 
     # Retrieve project description for a particular dataset and entity
-    my $rs = $self->schema->resultset('VwEmlProject')->find({ dataSetId => $datasetId });
+    my $rs = $self->schema->resultset('VwEmlProject')->find({ datasetid => $datasetId });
     
     return $rs;
 }
@@ -245,7 +249,7 @@ sub getPublisher {
     my $self = shift;
     my $datasetId = shift;
 
-    my $rs = $self->schema->resultset('VwEmlPublisher')->find({ dataSetId => $datasetId });
+    my $rs = $self->schema->resultset('VwEmlPublisher')->find({ datasetid => $datasetId });
     
     return $rs;
 }
@@ -255,7 +259,7 @@ sub getTitle{
     my $datasetId = shift;
 
     # Return a single row, which is a hash
-    return $self->schema->resultset('VwEmlTitle')->find({ dataSetId => $datasetId});
+    return $self->schema->resultset('VwEmlTitle')->find({ datasetid => $datasetId});
 }
 
 sub getUnitList {
@@ -263,7 +267,7 @@ sub getUnitList {
     my $datasetId = shift;
     my @unitList = ();
 
-    my $rs = $self->schema->resultset('VwStmmlUnitlist')->search({ dataSetId => $datasetId }, { order_by => { -asc => 'unit'}} );
+    my $rs = $self->schema->resultset('VwStmmlUnitlist')->search({ datasetid => $datasetId }, { order_by => { -asc => 'unit'}} );
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
     # i.e. the user doesn't have to know how to use a DBIx resultset
