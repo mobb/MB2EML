@@ -28,5 +28,9 @@ print $doc->toString(1);
 #$xmlschema = XML::LibXML::Schema->new( location => 'eml-2.1.1/eml.xsd');
 
 # Validate the XML using a URL
-$xmlschema = XML::LibXML::Schema->new( string => "http://sbc.lternet.edu/external/InformationManagement/EML_210schema/eml.xsd" );
-$valid = $xmlschema->validate( $doc );
+# The following URLs are 
+#$xmlschema = XML::LibXML::Schema->new( location => 'https://nis.lternet.edu/nis/schemas/eml/eml-2.1.1/eml.xsd' );
+#$xmlschema = XML::LibXML::Schema->new( location => 'https://code.ecoinformatics.org/code/eml/tags/RELEASE_EML_2_1_1/eml.xsd' );
+#$xmlschema = XML::LibXML::Schema->new( location => 'eml.xsd' );
+#$xmlschema = XML::LibXML::Schema->new( location => 'eml-2.1.1/eml.xsd' );
+#$valid = $xmlschema->validate( $doc );

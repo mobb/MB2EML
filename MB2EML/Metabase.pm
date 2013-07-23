@@ -1,4 +1,3 @@
-#!/usr/bin/env perl
 
 package MB2EML::Metabase;
 use Moose;
@@ -50,7 +49,6 @@ sub getAbstract {
     # Return a single row, which is a hash
     return $self->schema->resultset('VwEmlAbstract')->find({ datasetid => $datasetId});
 
-    print "datasetId: " . $datasetId
 }
 
 sub getAccess {
@@ -61,16 +59,7 @@ sub getAccess {
 
     # resultset returns an interator
     return $self->schema->resultset('VwEmlAccess')->find({ datasetid => $datasetId, entity_sort_order => $entityId });
-    #my $rs = $self->schema->resultset('VwEmlAccess')->find({ datasetid => $datasetId, entity_sort_order => $entityId });
     
-    # Repackage the resultset as an array of rows, which is a more standard representaion,
-    # i.e. the user doesn't have to know how to use a DBIx resultset
-    # Each row is a hash that used the column names as the keys.
-    #while (my $access = $rs->next) {
-    #    push(@accesses, $access);
-    #    print "access: " . $access->access . "\n";
-    #}
-
     # Put QC checking here
     # i.e. nulls for specific fields - Gastil want's a one liner
     #return @accesses;
@@ -171,8 +160,6 @@ sub getEntities{
     my $self = shift;
     my $datasetId = shift;
     my @entities = ();
-
-    print "datasetId: " . $datasetId;
 
     # resultset returns an interator
     my $rs = $self->schema->resultset('VwEmlEntity')->search({ datasetid => $datasetId });
