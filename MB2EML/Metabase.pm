@@ -159,7 +159,7 @@ sub getDistribution {
 sub getEntities{
     my $self = shift;
     my $datasetId = shift;
-    my @entities = ();
+    my @entities;
 
     # resultset returns an interator
     my $rs = $self->schema->resultset('VwEmlEntity')->search({ datasetid => $datasetId });
@@ -239,6 +239,46 @@ sub getPublisher {
     my $rs = $self->schema->resultset('VwEmlPublisher')->find({ datasetid => $datasetId });
     
     return $rs;
+}
+
+sub getTemporalCoverage {
+    my $self = shift;
+    my $datasetId = shift;
+    my $entityId = shift;
+    my @temporalCoverage = ();
+
+    #print "$entityId , $datasetId \n";
+    my $rs = $self->schema->resultset('VwEmlTemporalcoverage')->search({ datasetid => $datasetId, entity_sort_order => $entityId }, { order_by => { -asc => 'column_sort_order' }});
+    
+    # Repackage the resultset as an array of rows, which is a more standard representaion,
+    # i.e. the user doesn't have to know how to use a DBIx resultset
+    # Each row is a hash that used the column names as the keys.
+    while (my $coverage = $rs->next) {
+        #print "coverage: " . $coverage->begindate . "\n";
+        push(@temporalCoverage, $coverage);
+    }
+
+    return @temporalCoverage;
+}
+
+sub getTaxonomicCoverage {
+    my $self = shift;
+    my $datasetId = shift;
+    my $entityId = shift;
+    my @taxonomicCoverage = ();
+
+    #print "$entityId , $datasetId \n";
+    my $rs = $self->schema->resultset('VwEmlTaxonomiccoverage')->search({ datasetid => $datasetId, entity_sort_order => $entityId }, { order_by => { -asc => 'column_sort_order' }});
+    
+    # Repackage the resultset as an array of rows, which is a more standard representaion,
+    # i.e. the user doesn't have to know how to use a DBIx resultset
+    # Each row is a hash that used the column names as the keys.
+    while (my $coverage = $rs->next) {
+        #print "coverage: " . $coverage->begindate . "\n";
+        push(@taxonomicCoverage, $coverage);
+    }
+
+    return @taxonomicCoverage;
 }
 
 sub getTitle{

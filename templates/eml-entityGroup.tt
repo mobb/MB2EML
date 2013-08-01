@@ -28,6 +28,5 @@
                     </access>
                 </distribution>
             </physical>
-            <coverage>***** TBD *****</coverage>
-            <methods>***** TBD *****</methods>
+            <methods><methodStep><description>***** TBD *****</description></methodStep></methods>
             <additionalInfo>***** TBD *****</additionalInfo>

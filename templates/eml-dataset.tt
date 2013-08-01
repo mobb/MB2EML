@@ -117,6 +117,7 @@
         <distribution>
             [% distribution.distribution %]
         </distribution>
+        [%- INCLUDE './templates/eml-coverage.tt' coverage = dataset.coverage %]
         [%- FOREACH contact = contacts %]
         <contact scope="document">
             [% contact.contact %] 

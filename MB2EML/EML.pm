@@ -28,47 +28,80 @@ has 'project'            => ( is => 'rw' );
 has 'publisher'          => ( is => 'rw' );
 has 'title'              => ( is => 'rw' );
 has 'unitList'           => ( is => 'rw' );
+has 'taxonomicCoverage'           => ( is => 'rw' );
+has 'temporalCoverage'           => ( is => 'rw' );
 
 # Initialize a EML object that is used to access Metabase.
 # Note: Can't override new() with Moose, so use 'BUILD' which is like a new() postprocessing 
 sub BUILD {
     my $self = shift;
+    my @associatedParties;
+    my @attributeList;
+    my @contacts;
+    my @taxonomicCoverage;
+    my @temporalCoverage;
+    my @creators;
     my @entities;
     my $entity;
+    my $entityId;
     my $entitySortOrder;
-    my @attributeList;
+    my @keywords;
+    my @unitList; 
 
     $self->mb(MB2EML::Metabase->new({ databaseName => $self->databaseName}));
 
     # Retrieve needed data items from the EML object
     $self->abstract($self->getAbstract());
-    $self->access($self->getAccess($entitySortOrder=0));
-    my @associatedParties  = $self->getAssociatedParties();
+    $self->access($self->getAccess($entityId=0));
+
+    @associatedParties  = $self->getAssociatedParties();
     $self->associatedParties(\@associatedParties);
-    my @contacts           = $self->getContacts();
+
+    @contacts           = $self->getContacts();
     $self->contacts(\@contacts);
-    my @creators           = $self->getCreators();
+
+    @creators           = $self->getCreators();
     $self->creators(\@creators);
     $self->distribution($self->getDistribution());
     $self->intellectualRights($self->getIntellectualRights());
-    my @keywords           = $self->getKeywords();
+
+    @keywords           = $self->getKeywords();
     $self->keywords(\@keywords);
     $self->language($self->getLanguage());
     $self->project($self->getProject());
     $self->publisher($self->getPublisher());
+    # Get temporal coverage at the dataset level, if it exists
+    @taxonomicCoverage = $self->getTaxonomicCoverage($entityId=0);
+    $self->taxonomicCoverage(@taxonomicCoverage);
+
+    # Get taxonomic coverage at the dataset level, if it exists
+    @temporalCoverage = $self->getTemporalCoverage($entityId=0);
+    $self->temporalCoverage(@temporalCoverage);
+
     $self->title($self->getTitle());
-    my @unitList           = $self->getUnitList();
+
+    @unitList           = $self->getUnitList();
     $self->unitList(\@unitList);
 
     $self->packageId("knb-lter-" . substr($self->databaseName, 0, index($self->databaseName, '_')) . "." . $self->datasetId . "." . "0");
 
-    # Fetch the entities, which includes top level items common to all entities.
+    # Fetch the entities. Initially the @entity array contains just the info from the vw_eml_entity view as returned from
+    # the getEntity method. Here we loop through this array and for each entity append other elements 
+    # ('access', 'attributeList') so that they are easily accessable by the templates.
     @entities = $self->getEntities();
     for $entity (@entities) {
-        $entity->{'access'} = $self->getAccess($entity->{'sort_order'});
-        @attributeList = $self->getAttributeList($entity->{'sort_order'});
+        $entity->{'access'} = $self->getAccess($entity->sort_order);
+        @attributeList = $self->getAttributeList($entity->sort_order);
         $entity->{'attributeList'} =  \@attributeList;
-        $entity->{'physical'} =  $self->getPhysical($entity->{'sort_order'});
+
+        # CUrrently (2013 07 23) the vw_eml_temporalcoverage view only supports one date range per entity
+        @temporalCoverage = $self->getTemporalCoverage($entity->sort_order);
+        $entity->{'coverage'}->{'temporalcoverage'} = \@temporalCoverage;
+
+        @taxonomicCoverage = $self->getTaxonomicCoverage($entity->sort_order);
+        $entity->{'coverage'}->{'taxonomiccoverage'} = \@taxonomicCoverage;
+
+        $entity->{'physical'} =  $self->getPhysical($entity->sort_order);
     }
 
     $self->entities(\@entities);
@@ -116,6 +149,21 @@ sub getCreators{
     my $self = shift;
 
     return $self->mb->getCreators($self->datasetId);
+}
+
+
+sub getTaxonomicCoverage{
+    my $self = shift;
+    my $entityId = shift;
+
+    return $self->mb->getTaxonomicCoverage($self->datasetId, $entityId);
+}
+
+sub getTemporalCoverage{
+    my $self = shift;
+    my $entityId = shift;
+
+    return $self->mb->getTemporalCoverage($self->datasetId, $entityId);
 }
 
 sub getTitle{
@@ -199,7 +247,7 @@ sub writeXML {
     my $self = shift;
     my $output = '';;
     my $templateName;
-    my %templateVars = ();
+    my %templateVars;
 
     my $tt = Template->new({ RELATIVE => 1 });
 
@@ -210,8 +258,17 @@ sub writeXML {
     $templateVars{'access'} = $self->access;
     $templateVars{'associatedParties'} = $self->associatedParties;
     $templateVars{'contacts'} = $self->contacts;
+
+    #my $tc;
+    #foreach $tc ($self->temporalCoverage) {
+    #    print $tc;
+    #}
+
     $templateVars{'creators'} = $self->creators;
-    $templateVars{'dataset'} = { 'title' => $self->title->title, 'id' => $self->datasetId} ;
+    $templateVars{'dataset'} = { 'title' => $self->title->title, 
+                                 'id' => $self->datasetId, 
+                                 'coverage' => {'taxonomiccoverage' => $self->taxonomicCoverage, 
+                                                'temporalcoverage' => $self->temporalCoverage }};
     $templateVars{'distribution'} = $self->distribution;
     $templateVars{'intellectualRights'} = $self->intellectualRights;
     $templateVars{'keywords'} = $self->keywords;
