@@ -1,0 +1,22 @@
+                [% IF coverage.temporalcoverage.size > 0 ||
+                      coverage.taxonomiccoverage.size > 0 %]
+                <coverage scope="document">
+                    [% FOREACH tc IN coverage.temporalcoverage %]
+                    <temporalCoverage scope="document">
+                        <rangeOfDates>
+                            <beginDate>
+                                <calendarDate>[% tc.begindate %]</calendarDate>
+                            </beginDate>
+                            <endDate>
+                                <calendarDate>[% tc.enddate %]</calendarDate>
+                            </endDate>
+                        </rangeOfDates>
+                    </temporalCoverage>
+                    [% END %] [%# END FOREACH tc coverage.temporalcoverage ... #%]
+                    [% FOREACH tc IN coverage.taxonomiccoverage %]
+                    <taxonomicCoverage scope="document">
+                        [% tc.taxonomiccoverage_xml %]
+                    </taxonomicCoverage>
+                    [% END %] [%# FOREACH tc in coverage.taxonomiccoverage ... #%]
+                </coverage>
+                [% END %]
