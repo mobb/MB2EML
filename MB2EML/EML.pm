@@ -263,7 +263,7 @@ sub writeXML {
     my $validate = shift;
 
     my $doc;
-    my $output = '';;
+    my $output = '';
     my $templateName;
     my %templateVars;
     my $xmlschema;
@@ -278,12 +278,6 @@ sub writeXML {
     $templateVars{'access'} = $self->access;
     $templateVars{'associatedParties'} = $self->associatedParties;
     $templateVars{'contacts'} = $self->contacts;
-
-    #my $tc;
-    #foreach $tc ($self->temporalCoverage) {
-    #    print $tc;
-    #}
-
     $templateVars{'creators'} = $self->creators;
     $templateVars{'dataset'} = { 'title' => $self->title->title, 
                                  'id' => $self->datasetId, 
@@ -307,7 +301,7 @@ sub writeXML {
     # call will check for well-formedness.
     eval {
         $doc = XML::LibXML->load_xml(string => $output, { no_blanks => 1 });
-    }
+    };
 
     if ($@) {
         warn ("Error creating XML document: $@\n");
@@ -317,7 +311,7 @@ sub writeXML {
         eval {
             $xmlschema = XML::LibXML::Schema->new( location => 'eml-2.1.1/eml.xsd');
             $valid = $xmlschema->validate( $doc );
-        }
+        };
     }
 
     if ($@) {
