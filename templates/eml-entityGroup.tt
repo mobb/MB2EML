@@ -29,4 +29,5 @@
                 </distribution>
             </physical>
             <methods><methodStep><description>***** TBD *****</description></methodStep></methods>
+            [%- INCLUDE './templates/eml-coverage.tt' coverage = entity.coverage %]
             <additionalInfo>***** TBD *****</additionalInfo>

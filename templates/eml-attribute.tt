@@ -14,11 +14,17 @@
                         </dateTime>
                     [%- CASE 'interval' %]
                         <interval>
-                            [% IF attribute.precision != "" %]
-                            <precision>[% attribute.precision %]</precision>
-                            [% END %]
+                            <unit>
+                                <standardUnit>[% attribute.unit %]</standardUnit>
+                            </unit>
+                            [%- IF attribute.precision_numeric != "" %]
+                            <precision>[% attribute.precision_numeric %]</precision>
+                            [%- END %]
                             <numericDomain>
                                 <numberType>[% attribute.numbertype %]</numberType>
+                                [%- IF attritube.bounds_XML != "" %]
+                                    [% attribute.bounds_xml %]
+                                [%- END %]
                             </numericDomain>
                         </interval>
                     [%- CASE 'nominal' %]
@@ -40,7 +46,7 @@
                         [%- SWITCH attribute.nonnumericdomain %]
                         [%- CASE 'textDomain' %]
                                 <textDomain>
-                                    <definition>[%- attribute.definition_text_pattern%]</definition>
+                                    <definition>[%- attribute.definition_text_pattern %]</definition>
                                 </textDomain>
                         [%- CASE 'enumeratedDomain' %]
                                 [%- attribute.enumeration_xml %]
@@ -50,13 +56,16 @@
                     [%- CASE 'ratio' %]
                         <ratio>
                             <unit>
-                                <customUnit>[% attribute.unit %]</customUnit>
+                                <standardUnit>[% attribute.unit %]</standardUnit>
                             </unit>
-                            [% IF attribute.precision != "" %]
-                            <precision>[% attribute.precision %]</precision>
+                            [% IF attribute.precision_numeric != "" %]
+                            <precision>[% attribute.precision_numeric %]</precision>
                             [% END %]
                             <numericDomain>
                                 <numberType>[% attribute.numbertype %]</numberType>
+                                [%- IF attritube.bounds_XML != "" %]
+                                    [% attribute.bounds_xml %]
+                                [%- END %]
                             </numericDomain>
                         </ratio>
                     [%- CASE DEFAULT %] 

@@ -1,35 +1,34 @@
-#!/usr/bin/env perl
-
 # Perl module that assembles and serializes EML information to XML
 
 package MB2EML::EML;
 use Moose;
+use Carp;
 
 use lib '/Users/peter/Projects/MSI/LTER/MB2EML';
 use lib '/Users/peter/Projects/MSI/LTER/MB2EML/lib';
 
 use MB2EML::Metabase;
 
-has 'abstract'           => ( is => 'rw' );
-has 'access'             => ( is => 'rw' );
-has 'associatedParties'  => ( is => 'rw' );
-has 'contacts'           => ( is => 'rw' );
-has 'creators'           => ( is => 'rw' );
+has 'abstract'           => ( is => 'rw', isa => 'Object' );
+has 'access'             => ( is => 'rw', isa => 'Object' );
+has 'associatedParties'  => ( is => 'rw', isa => 'ArrayRef');
+has 'contacts'           => ( is => 'rw', isa => 'ArrayRef');
+has 'creators'           => ( is => 'rw', isa => 'ArrayRef' );
 has 'databaseName'       => ( is => 'rw', isa => 'Str', required => 1 );
 has 'datasetId'          => ( is => 'rw', isa => 'Num' , required => 1);
-has 'entities'             => ( is => 'rw');
-has 'distribution'       => ( is => 'rw' );
-has 'intellectualRights' => ( is => 'rw' );
-has 'keywords'           => ( is => 'rw' );
-has 'language'           => ( is => 'rw' );
-has 'mb'                 => ( is => 'rw');
-has 'packageId'          => ( is => 'rw' );
-has 'project'            => ( is => 'rw' );
-has 'publisher'          => ( is => 'rw' );
-has 'title'              => ( is => 'rw' );
-has 'unitList'           => ( is => 'rw' );
-has 'taxonomicCoverage'           => ( is => 'rw' );
-has 'temporalCoverage'           => ( is => 'rw' );
+has 'entities'           => ( is => 'rw', isa => 'ArrayRef');
+has 'distribution'       => ( is => 'rw', isa => 'Object' );
+has 'intellectualRights' => ( is => 'rw', isa => 'Object' );
+has 'keywords'           => ( is => 'rw', isa => 'ArrayRef' );
+has 'language'           => ( is => 'rw', isa => 'Object');
+has 'mb'                 => ( is => 'rw', isa => 'Object');
+has 'packageId'          => ( is => 'rw', isa => 'Str');
+has 'project'            => ( is => 'rw', isa => 'Object');
+has 'publisher'          => ( is => 'rw', isa => 'Object');
+has 'title'              => ( is => 'rw', isa => 'Object');
+has 'unitList'           => ( is => 'rw', isa => 'ArrayRef' );
+has 'taxonomicCoverage'  => ( is => 'rw', isa => 'ArrayRef' );
+has 'temporalCoverage'   => ( is => 'rw', isa => 'ArrayRef' );
 
 # Initialize a EML object that is used to access Metabase.
 # Note: Can't override new() with Moose, so use 'BUILD' which is like a new() postprocessing 
@@ -54,7 +53,7 @@ sub BUILD {
     $self->abstract($self->getAbstract());
     $self->access($self->getAccess($entityId=0));
 
-    @associatedParties  = $self->getAssociatedParties();
+    @associatedParties = $self->getAssociatedParties();
     $self->associatedParties(\@associatedParties);
 
     @contacts           = $self->getContacts();
@@ -72,17 +71,19 @@ sub BUILD {
     $self->publisher($self->getPublisher());
     # Get temporal coverage at the dataset level, if it exists
     @taxonomicCoverage = $self->getTaxonomicCoverage($entityId=0);
-    $self->taxonomicCoverage(@taxonomicCoverage);
+    $self->taxonomicCoverage(\@taxonomicCoverage);
 
     # Get taxonomic coverage at the dataset level, if it exists
     @temporalCoverage = $self->getTemporalCoverage($entityId=0);
-    $self->temporalCoverage(@temporalCoverage);
+    $self->temporalCoverage(\@temporalCoverage);
 
     $self->title($self->getTitle());
 
     @unitList           = $self->getUnitList();
     $self->unitList(\@unitList);
 
+    # Currently (2013 08) we are manually constructing the packageId from the database name and datasetId. In the future,
+    # this value will be obtained from Metabase.
     $self->packageId("knb-lter-" . substr($self->databaseName, 0, index($self->databaseName, '_')) . "." . $self->datasetId . "." . "0");
 
     # Fetch the entities. Initially the @entity array contains just the info from the vw_eml_entity view as returned from
@@ -129,6 +130,20 @@ sub getAccess{
 sub getAttributeList {
     my $self = shift;
     my $entityId = shift;
+    my $attribute;
+    my @attributeList;
+
+    @attributeList = $self->mb->getAttributeList($self->datasetId, $entityId);
+
+    # Check each numeric type attribute and ensure that a unit value was specified,
+    # e.g. a 'Temperature' attribute may have a numbertype 'real' with unit type 'celsius'.
+    foreach $attribute (@attributeList) {
+        if ($attribute->numbertype) {
+            if (not $attribute->unit) {
+                warn ("No unit value specified for attribute: " . $attribute->attributeid . ", number type: " . $attribute->numberType . "\n");
+            }
+        }
+    }
 
     return $self->mb->getAttributeList($self->datasetId, $entityId);
 }
@@ -245,9 +260,14 @@ sub writeXML {
 
     use Template;
     my $self = shift;
+    my $validate = shift;
+
+    my $doc;
     my $output = '';;
     my $templateName;
     my %templateVars;
+    my $xmlschema;
+    my $valid;
 
     my $tt = Template->new({ RELATIVE => 1 });
 
@@ -283,7 +303,28 @@ sub writeXML {
     $tt->process($templateName, \%templateVars, \$output )
         || die $tt->error;
 
-    return $output;
+    # Create an XML object from the string returned from the template engine. This
+    # call will check for well-formedness.
+    eval {
+        $doc = XML::LibXML->load_xml(string => $output, { no_blanks => 1 });
+    }
+
+    if ($@) {
+        warn ("Error creating XML document: $@\n");
+    } 
+
+    if ($validate) {
+        eval {
+            $xmlschema = XML::LibXML::Schema->new( location => 'eml-2.1.1/eml.xsd');
+            $valid = $xmlschema->validate( $doc );
+        }
+    }
+
+    if ($@) {
+        warn ("Error validating XML document: $@\n");
+    } 
+
+    return $doc->toString(1);
 }
 
 # Make this Moose class immutable

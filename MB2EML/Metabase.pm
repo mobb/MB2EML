@@ -21,7 +21,7 @@ sub BUILD {
     my $pass = $cfg->param('pass');
     my $host = $cfg->param('host');
 
-    if ($self->databaseName eq "mcr_metabase") {
+   if ($self->databaseName eq "mcr_metabase") {
         use mcr_metabase::Schema;
         $self->schema(mcr_metabase::Schema->connect('dbi:Pg:dbname="mcr_metabase";host=' . $host, $account, $pass, 
           { on_connect_do => ['SET search_path TO mb2eml, public']}));
@@ -57,7 +57,7 @@ sub getAccess {
     my $entityId = shift;
     my @accesses = ();
 
-    # resultset returns an interator
+    # resultset returns an iterator
     return $self->schema->resultset('VwEmlAccess')->find({ datasetid => $datasetId, entity_sort_order => $entityId });
     
     # Put QC checking here
@@ -70,7 +70,7 @@ sub getAssociatedParties {
     my $datasetId = shift;
     my @associatedParties = ();
 
-    # resultset returns an interator
+    # resultset returns an iterator
     my $rs = $self->schema->resultset('VwEmlAssociatedparty')->search({ datasetid => $datasetId });
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
@@ -91,8 +91,9 @@ sub getAttributeList {
     my $datasetId = shift;
     my $entityId = shift;
     my @attributeList = ();
+    my $dataType;
 
-    # resultset returns an interator
+    # resultset returns an iterator
     # Retrieve attributes for a particular dataset and entity, ordered by entity sort order
     my $rs = $self->schema->resultset('VwEmlAttributelist')->search({ datasetid => $datasetId, entity_sort_order => $entityId }, { order_by => { -asc => 'column_sort_order' }});
     
@@ -114,7 +115,7 @@ sub getContacts {
     my $datasetId = shift;
     my @contacts = ();
 
-    # resultset returns an interator
+    # resultset returns an iterator
     my $rs = $self->schema->resultset('VwEmlContact')->search({ datasetid => $datasetId });
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
@@ -132,7 +133,7 @@ sub getCreators {
     my $datasetId = shift;
     my @creators = ();
 
-    # resultset returns an interator
+    # resultset returns an iterator
     my $rs = $self->schema->resultset('VwEmlCreator')->search({ datasetid => $datasetId }, { order_by => { -asc => 'authorshiporder' }});
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
@@ -161,7 +162,7 @@ sub getEntities{
     my $datasetId = shift;
     my @entities;
 
-    # resultset returns an interator
+    # resultset returns an iterator
     my $rs = $self->schema->resultset('VwEmlEntity')->search({ datasetid => $datasetId });
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
