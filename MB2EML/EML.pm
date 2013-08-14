@@ -15,9 +15,11 @@ has 'associatedParties'  => ( is => 'rw', isa => 'ArrayRef');
 has 'contacts'           => ( is => 'rw', isa => 'ArrayRef');
 has 'creators'           => ( is => 'rw', isa => 'ArrayRef' );
 has 'databaseName'       => ( is => 'rw', isa => 'Str', required => 1 );
+has 'dataset'            => ( is => 'rw', isa => 'HashRef');
 has 'datasetId'          => ( is => 'rw', isa => 'Num' , required => 1);
 has 'entities'           => ( is => 'rw', isa => 'ArrayRef');
 has 'distribution'       => ( is => 'rw', isa => 'Object' );
+has 'geographicCoverage' => ( is => 'rw', isa => 'ArrayRef' );
 has 'intellectualRights' => ( is => 'rw', isa => 'Object' );
 has 'keywords'           => ( is => 'rw', isa => 'ArrayRef' );
 has 'language'           => ( is => 'rw', isa => 'Object');
@@ -37,14 +39,16 @@ sub BUILD {
     my @associatedParties;
     my @attributeList;
     my @contacts;
-    my @taxonomicCoverage;
-    my @temporalCoverage;
+    my $dataset;
+    my @geographicCoverage;
     my @creators;
     my @entities;
     my $entity;
     my $entityId;
     my $entitySortOrder;
     my @keywords;
+    my @taxonomicCoverage;
+    my @temporalCoverage;
     my @unitList; 
 
     $self->mb(MB2EML::Metabase->new({ databaseName => $self->databaseName}));
@@ -62,6 +66,10 @@ sub BUILD {
     @creators           = $self->getCreators();
     $self->creators(\@creators);
     $self->distribution($self->getDistribution());
+    # Get geographic coverage at the dataset level, if it exists
+    @geographicCoverage = $self->getGeographicCoverage($entityId=0);
+    $self->geographicCoverage(\@geographicCoverage);
+
     $self->intellectualRights($self->getIntellectualRights());
 
     @keywords           = $self->getKeywords();
@@ -79,7 +87,22 @@ sub BUILD {
 
     $self->title($self->getTitle());
 
-    @unitList           = $self->getUnitList();
+    # Create a hashref for dataset items for which the same name might be used at
+    # another EML level, for example, we need to store dataset level coverage in the
+    # the hash member 'dataset.coverage' ($dataset{'coveage'}) so that it won't be confused 
+    # with 'entity.coveage'. 
+    # Name qualification only as specific as required to avaid name collisions, i.e. we
+    # can say 'entity.attributeList' and not 'dataset.entity.attributeList' because the
+    # former one is unique.
+   
+    $dataset = { 'title' => $self->title->title, 
+                 'id' => $self->datasetId, 
+                 'coverage' => {'geographiccoverage' => $self->geographicCoverage, 
+                                'taxonomiccoverage' => $self->taxonomicCoverage, 
+                                'temporalcoverage' => $self->temporalCoverage }};
+    $self->dataset($dataset);
+
+    @unitList = $self->getUnitList();
     $self->unitList(\@unitList);
 
     # Currently (2013 08) we are manually constructing the packageId from the database name and datasetId. In the future,
@@ -94,6 +117,9 @@ sub BUILD {
         $entity->{'access'} = $self->getAccess($entity->sort_order);
         @attributeList = $self->getAttributeList($entity->sort_order);
         $entity->{'attributeList'} =  \@attributeList;
+
+        @geographicCoverage = $self->getgeographicCoverage($entity->sort_order);
+        $entity->{'coverage'}->{'geographiccoverage'} = \@geographicCoverage;
 
         # CUrrently (2013 07 23) the vw_eml_temporalcoverage view only supports one date range per entity
         @temporalCoverage = $self->getTemporalCoverage($entity->sort_order);
@@ -167,26 +193,11 @@ sub getCreators{
 }
 
 
-sub getTaxonomicCoverage{
+sub getGeographicCoverage{
     my $self = shift;
     my $entityId = shift;
 
-    return $self->mb->getTaxonomicCoverage($self->datasetId, $entityId);
-}
-
-sub getTemporalCoverage{
-    my $self = shift;
-    my $entityId = shift;
-
-    return $self->mb->getTemporalCoverage($self->datasetId, $entityId);
-}
-
-sub getTitle{
-    my $self = shift;
-
-    my $title = $self->mb->getTitle($self->datasetId);
-
-    return $title;
+    return $self->mb->getGeographicCoverage($self->datasetId, $entityId);
 }
 
 sub getDistribution {
@@ -250,6 +261,28 @@ sub getPublisher {
     return $publisher;
 }
 
+sub getTaxonomicCoverage{
+    my $self = shift;
+    my $entityId = shift;
+
+    return $self->mb->getTaxonomicCoverage($self->datasetId, $entityId);
+}
+
+sub getTemporalCoverage{
+    my $self = shift;
+    my $entityId = shift;
+
+    return $self->mb->getTemporalCoverage($self->datasetId, $entityId);
+}
+
+sub getTitle{
+    my $self = shift;
+
+    my $title = $self->mb->getTitle($self->datasetId);
+
+    return $title;
+}
+
 sub getUnitList {
     my $self = shift;
 
@@ -279,10 +312,7 @@ sub writeXML {
     $templateVars{'associatedParties'} = $self->associatedParties;
     $templateVars{'contacts'} = $self->contacts;
     $templateVars{'creators'} = $self->creators;
-    $templateVars{'dataset'} = { 'title' => $self->title->title, 
-                                 'id' => $self->datasetId, 
-                                 'coverage' => {'taxonomiccoverage' => $self->taxonomicCoverage, 
-                                                'temporalcoverage' => $self->temporalCoverage }};
+    $templateVars{'dataset'} = $self->dataset;
     $templateVars{'distribution'} = $self->distribution;
     $templateVars{'intellectualRights'} = $self->intellectualRights;
     $templateVars{'keywords'} = $self->keywords;
@@ -309,7 +339,8 @@ sub writeXML {
 
     if ($validate) {
         eval {
-            $xmlschema = XML::LibXML::Schema->new( location => 'eml-2.1.1/eml.xsd');
+            #$xmlschema = XML::LibXML::Schema->new( location => 'eml-2.1.1/eml.xsd');
+            $xmlschema = XML::LibXML::Schema->new( location => 'http://nis.lternet.edu/schemas/EML/eml-2.1.0/eml.xsd');
             $valid = $xmlschema->validate( $doc );
         };
     }

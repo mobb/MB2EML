@@ -179,6 +179,25 @@ sub getEntities{
     
 }
 
+sub getGeographicCoverage {
+    my $self = shift;
+    my $datasetId = shift;
+    my $entityId = shift;
+    my @geographicCoverage = ();
+
+    my $rs = $self->schema->resultset('VwEmlGeographiccoverage')->search({ datasetid => $datasetId, entity_sort_order => $entityId }, { order_by => { -asc => 'column_sort_order' }});
+    
+    # Repackage the resultset as an array of rows, which is a more standard representaion,
+    # i.e. the user doesn't have to know how to use a DBIx resultset
+    # Each row is a hash that used the column names as the keys.
+    while (my $coverage = $rs->next) {
+        #print "coverage: " . $coverage->begindate . "\n";
+        push(@geographicCoverage, $coverage);
+    }
+
+    return @geographicCoverage;
+}
+
 sub getIntellectualRights {
     my $self = shift;
     my $datasetId = shift;

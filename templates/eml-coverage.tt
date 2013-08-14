@@ -1,6 +1,18 @@
                 [% IF coverage.temporalcoverage.size > 0 ||
                       coverage.taxonomiccoverage.size > 0 %]
                 <coverage scope="document">
+                    [% FOREACH gc IN coverage.geographiccoverage %]
+                    <geographicCoverage>
+                        <geographicDescription>[% gc.geographicdescription %]</geographicDescription>
+                        <boundingCoordinates>
+                            <westBoundingCoordinate>[% gc.westboundingcoordinate %]</westBoundingCoordinate> 
+                            <eastBoundingCoordinate>[% gc.eastboundingcoordinate %]</eastBoundingCoordinate>
+                            <northBoundingCoordinate>[% gc.northboundingcoordinate %]</northBoundingCoordinate> 
+                            <southBoundingCoordinate>[% gc.southboundingcoordinate %]</southBoundingCoordinate>
+                         </boundingCoordinates> 
+                    </geographicCoverage>
+                    [% END %] [%# END FOREACH gc coverage.geographiccoverage ... #%]
+
                     [% FOREACH tc IN coverage.temporalcoverage %]
                     <temporalCoverage scope="document">
                         <rangeOfDates>
