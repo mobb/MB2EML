@@ -11,7 +11,7 @@ my $validate;
 #$databaseName = "mcr_metabase";
 
 # SBC LTER dataset ids: 99013 99021 99024
-$datasetId = 99013;
+$datasetId = 99021;
 $databaseName = "sbc_metabase";
 
 # Create a new EML object that will be used to assemble the Metabase data into EML

@@ -83,7 +83,7 @@ sub getAssociatedParties {
     # Put QC checking here
     # i.e. nulls for specific fields - Gastil want's a one liner
  
-    return @associatedParties;
+    return \@associatedParties;
 }
 
 sub getAttributeList {
@@ -107,7 +107,7 @@ sub getAttributeList {
     # Put QC checking here
     # i.e. nulls for specific fields - Gastil want's a one liner
  
-    return @attributeList;
+    return \@attributeList;
 }
 
 sub getContacts {
@@ -125,7 +125,7 @@ sub getContacts {
         push(@contacts, $contact);
     }
 
-    return @contacts;
+    return \@contacts;
 }
 
 sub getCreators {
@@ -146,7 +146,7 @@ sub getCreators {
     # Put QC checking here
     # i.e. nulls for specific fields - Gastil want's a one liner
  
-    return @creators;
+    return \@creators;
 }
 
 sub getDistribution {
@@ -179,6 +179,25 @@ sub getEntities{
     
 }
 
+sub getGeographicCoverage {
+    my $self = shift;
+    my $datasetId = shift;
+    my $entityId = shift;
+    my @geographicCoverage = ();
+
+    my $rs = $self->schema->resultset('VwEmlGeographiccoverage')->search({ datasetid => $datasetId, entity_sort_order => $entityId }, { order_by => { -asc => 'column_sort_order' }});
+    
+    # Repackage the resultset as an array of rows, which is a more standard representaion,
+    # i.e. the user doesn't have to know how to use a DBIx resultset
+    # Each row is a hash that used the column names as the keys.
+    while (my $coverage = $rs->next) {
+        #print "coverage: " . $coverage->begindate . "\n";
+        push(@geographicCoverage, $coverage);
+    }
+
+    return \@geographicCoverage;
+}
+
 sub getIntellectualRights {
     my $self = shift;
     my $datasetId = shift;
@@ -200,7 +219,7 @@ sub getKeywords {
         push(@keywords, $keyword);
     }
 
-    return @keywords;
+    return \@keywords;
 }
 
 sub getLanguage {
@@ -211,6 +230,27 @@ sub getLanguage {
     return $self->schema->resultset('VwEmlLanguage')->find({ datasetid => $datasetId});
 }
 
+sub getMethods {
+    my $self = shift;
+    my $datasetId = shift;
+    my $entityId = shift;
+    my @methods;
+
+    #print "$entityId , $datasetId \n";
+    #my $rs = $self->schema->resultset('VwEmlMethods')->search({ datasetid => $datasetId, entity_sort_order => $entityId }, { order_by => { -asc => 'column_sort_order' , -asc=>'methodstep_sort_order'}});
+    my $rs = $self->schema->resultset('VwEmlMethods')->search({ datasetid => $datasetId, entity_sort_order => $entityId }, { order_by => { -asc => 'column_sort_order' }});
+    
+    # Repackage the resultset as an array of rows, which is a more standard representaion,
+    # i.e. the user doesn't have to know how to use a DBIx resultset
+    # Each row is a hash that used the column names as the keys.
+    while (my $method = $rs->next) {
+        #print "metabase methodstep: " . $method->methodstep. "\n";
+        push(@methods, $method);
+    }
+
+    return \@methods;
+}
+
 sub getPhysical {
     my $self = shift;
     my $datasetId = shift;
@@ -218,9 +258,7 @@ sub getPhysical {
 
     # resultset returns resultSet object
     # Retrieve physical format description for a particular dataset and entity
-    my $rs = $self->schema->resultset('VwEmlPhysical')->find({ datasetid => $datasetId, sort_order => $entityId });
-    
-    return $rs;
+    return $self->schema->resultset('VwEmlPhysical')->find({ datasetid => $datasetId, sort_order => $entityId });
 }
 
 sub getProject {
@@ -228,18 +266,14 @@ sub getProject {
     my $datasetId = shift;
 
     # Retrieve project description for a particular dataset and entity
-    my $rs = $self->schema->resultset('VwEmlProject')->find({ datasetid => $datasetId });
-    
-    return $rs;
+    return $self->schema->resultset('VwEmlProject')->find({ datasetid => $datasetId });
 }
 
 sub getPublisher {
     my $self = shift;
     my $datasetId = shift;
 
-    my $rs = $self->schema->resultset('VwEmlPublisher')->find({ datasetid => $datasetId });
-    
-    return $rs;
+    return $self->schema->resultset('VwEmlPublisher')->find({ datasetid => $datasetId });
 }
 
 sub getTemporalCoverage {
@@ -259,7 +293,7 @@ sub getTemporalCoverage {
         push(@temporalCoverage, $coverage);
     }
 
-    return @temporalCoverage;
+    return \@temporalCoverage;
 }
 
 sub getTaxonomicCoverage {
@@ -279,7 +313,7 @@ sub getTaxonomicCoverage {
         push(@taxonomicCoverage, $coverage);
     }
 
-    return @taxonomicCoverage;
+    return \@taxonomicCoverage;
 }
 
 sub getTitle{
@@ -303,7 +337,7 @@ sub getUnitList {
         push(@unitList, $unit);
     }
 
-    return @unitList;
+    return \@unitList;
 }
 
 # Make this Moose class immutable

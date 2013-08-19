@@ -2,7 +2,6 @@
 
 package MB2EML::EML;
 use Moose;
-use Carp;
 
 use lib '/Users/peter/Projects/MSI/LTER/MB2EML';
 use lib '/Users/peter/Projects/MSI/LTER/MB2EML/lib';
@@ -15,76 +14,42 @@ has 'associatedParties'  => ( is => 'rw', isa => 'ArrayRef');
 has 'contacts'           => ( is => 'rw', isa => 'ArrayRef');
 has 'creators'           => ( is => 'rw', isa => 'ArrayRef' );
 has 'databaseName'       => ( is => 'rw', isa => 'Str', required => 1 );
+has 'dataset'            => ( is => 'rw', isa => 'HashRef');
 has 'datasetId'          => ( is => 'rw', isa => 'Num' , required => 1);
 has 'entities'           => ( is => 'rw', isa => 'ArrayRef');
 has 'distribution'       => ( is => 'rw', isa => 'Object' );
+has 'geographicCoverage' => ( is => 'rw', isa => 'ArrayRef' );
 has 'intellectualRights' => ( is => 'rw', isa => 'Object' );
 has 'keywords'           => ( is => 'rw', isa => 'ArrayRef' );
 has 'language'           => ( is => 'rw', isa => 'Object');
 has 'mb'                 => ( is => 'rw', isa => 'Object');
+has 'methods'            => ( is => 'rw', isa => 'ArrayRef');
 has 'packageId'          => ( is => 'rw', isa => 'Str');
 has 'project'            => ( is => 'rw', isa => 'Object');
 has 'publisher'          => ( is => 'rw', isa => 'Object');
 has 'title'              => ( is => 'rw', isa => 'Object');
 has 'unitList'           => ( is => 'rw', isa => 'ArrayRef' );
-has 'taxonomicCoverage'  => ( is => 'rw', isa => 'ArrayRef' );
-has 'temporalCoverage'   => ( is => 'rw', isa => 'ArrayRef' );
+has 'taxonomicCoverage'  => ( is => 'rw', isa => 'ArrayRef');
+has 'temporalCoverage'   => ( is => 'rw', isa => 'ArrayRef');
 
 # Initialize a EML object that is used to access Metabase.
 # Note: Can't override new() with Moose, so use 'BUILD' which is like a new() postprocessing 
 sub BUILD {
     my $self = shift;
-    my @associatedParties;
-    my @attributeList;
-    my @contacts;
-    my @taxonomicCoverage;
-    my @temporalCoverage;
-    my @creators;
+    my $datasetRef;
     my @entities;
     my $entity;
     my $entityId;
     my $entitySortOrder;
-    my @keywords;
-    my @unitList; 
 
     $self->mb(MB2EML::Metabase->new({ databaseName => $self->databaseName}));
 
-    # Retrieve needed data items from the EML object
+    # Initialize attributes, in case they will be used by the methods.
     $self->abstract($self->getAbstract());
     $self->access($self->getAccess($entityId=0));
-
-    @associatedParties = $self->getAssociatedParties();
-    $self->associatedParties(\@associatedParties);
-
-    @contacts           = $self->getContacts();
-    $self->contacts(\@contacts);
-
-    @creators           = $self->getCreators();
-    $self->creators(\@creators);
-    $self->distribution($self->getDistribution());
-    $self->intellectualRights($self->getIntellectualRights());
-
-    @keywords           = $self->getKeywords();
-    $self->keywords(\@keywords);
-    $self->language($self->getLanguage());
-    $self->project($self->getProject());
-    $self->publisher($self->getPublisher());
-    # Get temporal coverage at the dataset level, if it exists
-    @taxonomicCoverage = $self->getTaxonomicCoverage($entityId=0);
-    $self->taxonomicCoverage(\@taxonomicCoverage);
-
-    # Get taxonomic coverage at the dataset level, if it exists
-    @temporalCoverage = $self->getTemporalCoverage($entityId=0);
-    $self->temporalCoverage(\@temporalCoverage);
-
-    $self->title($self->getTitle());
-
-    @unitList           = $self->getUnitList();
-    $self->unitList(\@unitList);
-
-    # Currently (2013 08) we are manually constructing the packageId from the database name and datasetId. In the future,
-    # this value will be obtained from Metabase.
-    $self->packageId("knb-lter-" . substr($self->databaseName, 0, index($self->databaseName, '_')) . "." . $self->datasetId . "." . "0");
+    $self->associatedParties($self->getAssociatedParties());
+    $self->contacts($self->getContacts());
+    $self->creators($self->getCreators());
 
     # Fetch the entities. Initially the @entity array contains just the info from the vw_eml_entity view as returned from
     # the getEntity method. Here we loop through this array and for each entity append other elements 
@@ -92,20 +57,57 @@ sub BUILD {
     @entities = $self->getEntities();
     for $entity (@entities) {
         $entity->{'access'} = $self->getAccess($entity->sort_order);
-        @attributeList = $self->getAttributeList($entity->sort_order);
-        $entity->{'attributeList'} =  \@attributeList;
-
+        $entity->{'attributeList'} = $self->getAttributeList($entity->sort_order);
+        $entity->{'coverage'}->{'geographiccoverage'} = $self->getGeographicCoverage($entity->sort_order);
+        $entity->{'methods'} = $self->getMethods($entity->sort_order);
         # CUrrently (2013 07 23) the vw_eml_temporalcoverage view only supports one date range per entity
-        @temporalCoverage = $self->getTemporalCoverage($entity->sort_order);
-        $entity->{'coverage'}->{'temporalcoverage'} = \@temporalCoverage;
-
-        @taxonomicCoverage = $self->getTaxonomicCoverage($entity->sort_order);
-        $entity->{'coverage'}->{'taxonomiccoverage'} = \@taxonomicCoverage;
-
+        $entity->{'coverage'}->{'temporalcoverage'} = $self->getTemporalCoverage($entity->sort_order);
+        $entity->{'coverage'}->{'taxonomiccoverage'} = $self->getTaxonomicCoverage($entity->sort_order);
         $entity->{'physical'} =  $self->getPhysical($entity->sort_order);
     }
 
     $self->entities(\@entities);
+    $self->distribution($self->getDistribution());
+    $self->geographicCoverage($self->getGeographicCoverage($entityId=0));
+    $self->intellectualRights($self->getIntellectualRights());
+    $self->keywords($self->getKeywords());
+    $self->language($self->getLanguage());
+    $self->methods($self->getMethods($entityId=0));
+    # Currently (2013 08) we are manually constructing the packageId from the database name and datasetId. In the future,
+    # this value will be obtained from Metabase.
+    $self->packageId("knb-lter-" . substr($self->databaseName, 0, index($self->databaseName, '_')) . "." . $self->datasetId . "." . "0");
+    $self->project($self->getProject());
+    $self->publisher($self->getPublisher());
+    $self->taxonomicCoverage($self->getTaxonomicCoverage($entityId=0));
+    $self->temporalCoverage($self->getTemporalCoverage($entityId=0));
+    $self->title($self->getTitle());
+    $self->unitList($self->getUnitList());
+
+    # Construct a 'dataset' hash that contains all info we are using in eml-dataset. This
+    # is done for ease of use so that methods such as 'writeXML' don't have to know
+    # the structure of the eml-dataset module (as all the structure is built here).
+    my %dataset = ();
+    $dataset{'abstract'} = $self->abstract;
+    $dataset{'access'} = $self->access;
+    $dataset{'associatedParties'} = $self->associatedParties;
+    $dataset{'contacts'} = $self->contacts;
+    $dataset{'coverage'} = ( { 'geographiccoverage'  => $self->geographicCoverage,
+                               'taxonomiccoverage' => $self->taxonomicCoverage,
+                               'temporalcoverage' => $self->temporalCoverage });
+    $dataset{'creators'} = $self->creators;
+    $dataset{'distribution'} = $self->distribution;
+    $dataset{'entities'} = $self->entities;
+    $dataset{'id'} = $self->datasetId;
+    $dataset{'intellectualRights'} = $self->intellectualRights;
+    $dataset{'keywords'} = $self->keywords;
+    $dataset{'language'} = $self->language;
+    $dataset{'methods'} = $self->methods;
+    $dataset{'packageId'} = $self->packageId;
+    $dataset{'project'} = $self->project;
+    $dataset{'publisher'} = $self->publisher;
+    $dataset{'title'} = $self->title->title;
+    $self->dataset(\%dataset);
+
 }
 
 sub DEMOLISH {
@@ -131,13 +133,13 @@ sub getAttributeList {
     my $self = shift;
     my $entityId = shift;
     my $attribute;
-    my @attributeList;
+    my $attributeListRef;
 
-    @attributeList = $self->mb->getAttributeList($self->datasetId, $entityId);
+    $attributeListRef = $self->mb->getAttributeList($self->datasetId, $entityId);
 
     # Check each numeric type attribute and ensure that a unit value was specified,
     # e.g. a 'Temperature' attribute may have a numbertype 'real' with unit type 'celsius'.
-    foreach $attribute (@attributeList) {
+    foreach $attribute (@$attributeListRef) {
         if ($attribute->numbertype) {
             if (not $attribute->unit) {
                 warn ("No unit value specified for attribute: " . $attribute->attributeid . ", number type: " . $attribute->numberType . "\n");
@@ -167,26 +169,11 @@ sub getCreators{
 }
 
 
-sub getTaxonomicCoverage{
+sub getGeographicCoverage{
     my $self = shift;
     my $entityId = shift;
 
-    return $self->mb->getTaxonomicCoverage($self->datasetId, $entityId);
-}
-
-sub getTemporalCoverage{
-    my $self = shift;
-    my $entityId = shift;
-
-    return $self->mb->getTemporalCoverage($self->datasetId, $entityId);
-}
-
-sub getTitle{
-    my $self = shift;
-
-    my $title = $self->mb->getTitle($self->datasetId);
-
-    return $title;
+    return $self->mb->getGeographicCoverage($self->datasetId, $entityId);
 }
 
 sub getDistribution {
@@ -225,6 +212,22 @@ sub getLanguage{
     return $language;
 }
 
+sub getMethods {
+    my $self = shift;
+    my $entityId = shift;
+
+    #my $method;
+    #my @methods;
+
+    #@methods = $self->mb->getMethods($self->datasetId, $entityId);
+
+    #for $method (@methods) {
+    #    print "getMethods method: " . $method->methodstep . "\n";
+    #}
+
+    return $self->mb->getMethods($self->datasetId, $entityId);
+}
+
 sub getPhysical{
     my $self = shift;
     my $entityId = shift;
@@ -248,6 +251,28 @@ sub getPublisher {
     my $publisher = $self->mb->getPublisher($self->datasetId);
 
     return $publisher;
+}
+
+sub getTaxonomicCoverage{
+    my $self = shift;
+    my $entityId = shift;
+
+    return $self->mb->getTaxonomicCoverage($self->datasetId, $entityId);
+}
+
+sub getTemporalCoverage{
+    my $self = shift;
+    my $entityId = shift;
+
+    return $self->mb->getTemporalCoverage($self->datasetId, $entityId);
+}
+
+sub getTitle{
+    my $self = shift;
+
+    my $title = $self->mb->getTitle($self->datasetId);
+
+    return $title;
 }
 
 sub getUnitList {
@@ -292,6 +317,8 @@ sub writeXML {
     $templateVars{'publisher'} = $self->publisher;
     $templateVars{'unitList'} = $self->unitList;
     $templateVars{'entities'} = $self->entities;
+    $templateVars{'dataset'} = $self->dataset;
+    $templateVars{'additionalMetadata'}{'unitList'} = $self->unitList;
 
     # Fill in the template, sending template output to a text string
     $tt->process($templateName, \%templateVars, \$output )
@@ -309,7 +336,8 @@ sub writeXML {
 
     if ($validate) {
         eval {
-            $xmlschema = XML::LibXML::Schema->new( location => 'eml-2.1.1/eml.xsd');
+            #$xmlschema = XML::LibXML::Schema->new( location => 'eml-2.1.1/eml.xsd');
+            $xmlschema = XML::LibXML::Schema->new( location => 'http://nis.lternet.edu/schemas/EML/eml-2.1.0/eml.xsd');
             $valid = $xmlschema->validate( $doc );
         };
     }

@@ -1,6 +1,7 @@
     <dataset id="[% dataset.id %]">
         <title>[% dataset.title %]</title>
-        [%- FOREACH creator = creators %]
+
+        [%- FOREACH creator = dataset.creators %]
         <creator>
             <individualName>
                 [%- IF creator.givenname != "" %]
@@ -51,7 +52,7 @@
             [%- END %]
         </creator>
         [%- END %] [%# end FOREACH creator #%]
-        [%- FOREACH associatedParty = associatedParties %]
+        [%- FOREACH associatedParty = dataset.associatedParties %]
         <associatedParty id="[% associatedParty.nameid %]" scope="document">
             <individualName>
                 <givenName>[% associatedParty.givenname %]</givenName>
@@ -81,12 +82,12 @@
             <role>[% associatedParty.role %]</role>
         </associatedParty>
         [%- END %] [%# end FOREACH associatedParty #%]
-        <language>[% language.language %]</language>
+        <language>[% dataset.language.language %]</language>
         <abstract>
-            [% abstract.abstract %]
+            [% dataset.abstract.abstract %]
         </abstract>
         [%- thesaurus = "" %]
-        [%- FOREACH keyword = keywords %]
+        [%- FOREACH keyword = dataset.keywords %]
             [%- IF loop.first %]
         <keywordSet>
                 [%- thesaurus = keyword.keywordthesaurus %]
@@ -112,20 +113,21 @@
             [% END %]
         [%- END %] [%# end FOREACH keyword #%]
         <intellectualRights>
-            [% intellectualRights.intellectualrights %]
+            [% dataset.intellectualRights.intellectualrights %]
         </intellectualRights>
         <distribution>
-            [% distribution.distribution %]
+            [% dataset.distribution.distribution %]
         </distribution>
         [%- INCLUDE './templates/eml-coverage.tt' coverage = dataset.coverage %]
-        [%- FOREACH contact = contacts %]
+        [%- INCLUDE './templates/eml-methods.tt' methods = dataset.methods %]
+        [%- FOREACH contact = dataset.contacts %]
         <contact scope="document">
             [% contact.contact %] 
         </contact>
         [%- END %] [%# end FOREACH contact #%]
-        <publisher>[% publisher.publisher %]</publisher>
-        <project>[% project.project %]</project>
-        [%- FOREACH entity = entities %]
+        <publisher>[% dataset.publisher.publisher %]</publisher>
+        <project>[% dataset.project.project %]</project>
+        [%- FOREACH entity = dataset.entities %]
             [%- SET templateName = 'eml-' _ entity.entitytype _ '.tt' %]
             [%- INCLUDE "./templates/$templateName" %]
         [%- END %] [%# end FOREACH entity #%]

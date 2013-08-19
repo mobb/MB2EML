@@ -1,5 +1,5 @@
-    [%- IF access.access != "" %]
+    [%- IF dataset.access.access != "" %]
     <access authSystem="knb" order="allowFirst" scope="document">
-        [% access.access %]
+        [% dataset.access.access %]
     </access>
     [%- END %]
