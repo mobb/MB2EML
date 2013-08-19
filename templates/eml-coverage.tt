@@ -1,4 +1,5 @@
-                [% IF coverage.temporalcoverage.size > 0 ||
+                [% IF coverage.geographiccoverage.size > 0 ||
+                      coverage.temporalcoverage.size > 0 ||
                       coverage.taxonomiccoverage.size > 0 %]
                 <coverage scope="document">
                     [% FOREACH gc IN coverage.geographiccoverage %]

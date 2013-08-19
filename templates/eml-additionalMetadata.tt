@@ -1,7 +1,7 @@
     <additionalMetadata>
         <metadata>
             <stmml:unitList>
-            [%- FOREACH unit = unitList %]
+            [%- FOREACH unit = additionalMetadata.unitList %]
                 <stmml:unit id="[% unit.unit %]" name="[% unit.unit %]" abbreviation="[% unit.abbreviation %]" [% IF unit.type != "" %] unitType="[% unit.type %]"[% END %] [% IF unit.parentsi != "" %] parentSI="[% unit.parentsi %]" [% END %] multiplierToSI="[% unit.multipliertosi %]" [% IF unit.constanttosi != "" %] constantToSI="[% unit.constanttosi %]" [% END %]>
                     <stmml:description>[% unit.description %]</stmml:description>
                 </stmml:unit>
