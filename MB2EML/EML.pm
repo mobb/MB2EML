@@ -299,24 +299,6 @@ sub writeXML {
     $templateName = './templates/eml.tt';
 
     # Load data items into Template Toolkit arguments
-    $templateVars{'abstract'} = $self->abstract;
-    $templateVars{'access'} = $self->access;
-    $templateVars{'associatedParties'} = $self->associatedParties;
-    $templateVars{'contacts'} = $self->contacts;
-    $templateVars{'creators'} = $self->creators;
-    $templateVars{'dataset'} = { 'title' => $self->title->title, 
-                                 'id' => $self->datasetId, 
-                                 'coverage' => {'taxonomiccoverage' => $self->taxonomicCoverage, 
-                                                'temporalcoverage' => $self->temporalCoverage }};
-    $templateVars{'distribution'} = $self->distribution;
-    $templateVars{'intellectualRights'} = $self->intellectualRights;
-    $templateVars{'keywords'} = $self->keywords;
-    $templateVars{'language'} = $self->language;
-    $templateVars{'packageId'} = $self->packageId;
-    $templateVars{'project'} = $self->project;
-    $templateVars{'publisher'} = $self->publisher;
-    $templateVars{'unitList'} = $self->unitList;
-    $templateVars{'entities'} = $self->entities;
     $templateVars{'dataset'} = $self->dataset;
     $templateVars{'additionalMetadata'}{'unitList'} = $self->unitList;
 
