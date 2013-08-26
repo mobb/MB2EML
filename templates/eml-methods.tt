@@ -1,0 +1,5 @@
+            <methods>
+            [%- FOREACH method = methods %]
+                [% method.methodstep %]
+            [%- END %] [%# FOREACH method ... #%]
+            </methods>

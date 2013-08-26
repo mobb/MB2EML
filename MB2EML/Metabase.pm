@@ -1,9 +1,11 @@
 
 package MB2EML::Metabase;
 use Moose;
+use strict;
 use Config::Simple;
 
-use lib '/Users/peter/Projects/MSI/LTER/MB2EML/lib';
+#use lib '/Users/peter/Projects/MSI/LTER/MB2EML/lib';
+use lib './lib';
 #use namespace::autoclean;
 
 has 'schema' => ( is => 'rw' );

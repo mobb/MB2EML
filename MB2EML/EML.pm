@@ -2,10 +2,8 @@
 
 package MB2EML::EML;
 use Moose;
-
-use lib '/Users/peter/Projects/MSI/LTER/MB2EML';
-use lib '/Users/peter/Projects/MSI/LTER/MB2EML/lib';
-
+use strict;
+use File::Temp ();
 use MB2EML::Metabase;
 
 has 'abstract'           => ( is => 'rw', isa => 'Object' );
@@ -286,6 +284,7 @@ sub writeXML {
     use Template;
     my $self = shift;
     my $validate = shift;
+    my $runParser = shift;
 
     my $doc;
     my $output = '';
@@ -299,6 +298,7 @@ sub writeXML {
     $templateName = './templates/eml.tt';
 
     # Load data items into Template Toolkit arguments
+    $templateVars{'packageId'} = $self->packageId;
     $templateVars{'dataset'} = $self->dataset;
     $templateVars{'additionalMetadata'}{'unitList'} = $self->unitList;
 
@@ -318,8 +318,8 @@ sub writeXML {
 
     if ($validate) {
         eval {
-            #$xmlschema = XML::LibXML::Schema->new( location => 'eml-2.1.1/eml.xsd');
-            $xmlschema = XML::LibXML::Schema->new( location => 'http://nis.lternet.edu/schemas/EML/eml-2.1.0/eml.xsd');
+            $xmlschema = XML::LibXML::Schema->new( location => 'eml-2.1.1/eml.xsd');
+            #$xmlschema = XML::LibXML::Schema->new( location => 'http://nis.lternet.edu/schemas/EML/eml-2.1.0/eml.xsd');
             $valid = $xmlschema->validate( $doc );
         };
     }
@@ -327,6 +327,22 @@ sub writeXML {
     if ($@) {
         warn ("Error validating XML document: $@\n");
     } 
+
+    if ($runParser) {
+        my $tmp = File::Temp->new();
+        my $filename = $tmp->filename;
+
+        open my $out, '>', $filename;
+        #print {$out} $doc->toString();
+        my $cmd = "java -cp ./eml-2.1.1/lib/*:./eml-2.1.1/lib/apache/* org.ecoinformatics.eml.EMLParser -q ./eml-2.1.1/lib/config.xml $filename 2>&1";
+        my $result = `$cmd`;
+
+        if ($?) {
+            print STDERR "result: $result \n";
+        }
+
+        print STDERR "result: $? \n";
+    }
 
     return $doc->toString(1);
 }
