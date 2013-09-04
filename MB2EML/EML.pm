@@ -313,35 +313,42 @@ sub writeXML {
     };
 
     if ($@) {
-        warn ("Error creating XML document: $@\n");
+        print STDERR $self->datasetId . " : Error creating XML document: $@\n";
+        die $self->datasetId . ": Processing halted because XML document is not valid.\n";
     } 
 
     if ($validate) {
         eval {
-            $xmlschema = XML::LibXML::Schema->new( location => 'eml-2.1.1/eml.xsd');
+            #$xmlschema = XML::LibXML::Schema->new( location => 'eml-2.1.1/eml.xsd');
+            my $eml211SchemaURL = 'http://sbc.lternet.edu/external/InformationManagement/EML_211_schema/eml.xsd';
             #$xmlschema = XML::LibXML::Schema->new( location => 'http://nis.lternet.edu/schemas/EML/eml-2.1.0/eml.xsd');
+            $xmlschema = XML::LibXML::Schema->new( location => $eml211SchemaURL );
             $valid = $xmlschema->validate( $doc );
         };
     }
 
     if ($@) {
-        warn ("Error validating XML document: $@\n");
+        print STDERR $self->datasetId . ": Error validating XML document: $@\n";
     } 
 
+    # Run the EMLParser against the newly created document to check that all references are correct.
     if ($runParser) {
         my $tmp = File::Temp->new();
         my $filename = $tmp->filename;
 
         open my $out, '>', $filename;
-        #print {$out} $doc->toString();
-        my $cmd = "java -cp ./eml-2.1.1/lib/*:./eml-2.1.1/lib/apache/* org.ecoinformatics.eml.EMLParser -q ./eml-2.1.1/lib/config.xml $filename 2>&1";
-        my $result = `$cmd`;
+        print {$out} $doc->toString();
+        close $out;
+        my $cmd = "java -cp ./eml-2.1.1/lib/*:./eml-2.1.1/lib/apache/* org.ecoinformatics.eml.EMLParser -q ./eml-2.1.1/lib/config.xml $filename";
+        my $result = `$cmd 2>&1`;
 
-        if ($?) {
-            print STDERR "result: $result \n";
+        # The return value is set in $?; this value is the exit status of the command as returned by the 'wait' call; 
+        # to get the real exit status of the command you have to shift right by 8 the value of $? ($? >> 8). 
+        if (($? >> 8)) {
+            print STDERR $self->datasetId . ": $result\n";
+        } else {
+            print $?;
         }
-
-        print STDERR "result: $? \n";
     }
 
     return $doc->toString(1);

@@ -23,15 +23,21 @@ sub BUILD {
     my $pass = $cfg->param('pass');
     my $host = $cfg->param('host');
 
-   if ($self->databaseName eq "mcr_metabase") {
+    # Open a conection to the mcr_metabase database. The 'quote_names' option causes table
+    # names and columns to be quoted in any SQL that DBIC creates. This is necessary if the
+    # Postgresql table names or field names are mixed case, because if Postgresql is sent a
+    # query with mixed case names, it will 'case_fold' them to lower case, so the names in the
+    # SQL won't match the Postgresql names and the query will fail.
+    # Note: export DBIC_TRACE=1 to have DBIC print out the SQL that it generates
+    if ($self->databaseName eq "mcr_metabase") {
         use mcr_metabase::Schema;
-        $self->schema(mcr_metabase::Schema->connect('dbi:Pg:dbname="mcr_metabase";host=' . $host, $account, $pass, 
-          { on_connect_do => ['SET search_path TO mb2eml, public']}));
+        $self->schema(mcr_metabase::Schema->connect('dbi:Pg:dbname="mcr_metabase";host=' . $host, $account, $pass,
+           { on_connect_do => ['SET search_path TO mb2eml, public']}), { quote_names => 1 });
     }
     else {
         use sbc_metabase::Schema;
-        $self->schema(sbc_metabase::Schema->connect('dbi:Pg:dbname="sbc_metabase";host='. $host, $account, $pass, 
-          { on_connect_do => ['SET search_path TO mb2eml, public']}));
+        $self->schema(sbc_metabase::Schema->connect('dbi:Pg:dbname="sbc_metabase";host='. $host, $account, $pass,
+          { on_connect_do => ['SET search_path TO mb2eml, public']}, { quote_names => 1 }));
     }
 }
 
