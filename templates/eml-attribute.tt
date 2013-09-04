@@ -1,4 +1,4 @@
-                <attribute id="***** TODO *****">
+                <attribute>
                     <attributeName>[% attribute.attribute_id %]</attributeName>
                     <attributeLabel>[% attribute.attributelabel %]</attributeLabel>
                     <attributeDefinition>[% attribute.attributedefinition %]</attributeDefinition>
@@ -15,7 +15,7 @@
                     [%- CASE 'interval' %]
                         <interval>
                             <unit>
-                                <standardUnit>[% attribute.unit %]</standardUnit>
+                                <customUnit>[% attribute.unit %]</customUnit>
                             </unit>
                             [%- IF attribute.precision_numeric != "" %]
                             <precision>[% attribute.precision_numeric %]</precision>
@@ -36,7 +36,9 @@
                                     <definition>[%- attribute.definition_text_pattern %]</definition>
                                 </textDomain>
                         [%- CASE 'enumeratedDomain' %]
+                                <enumeratedDomain enforced="yes">
                                 [%- attribute.enumeration_xml %]
+                                </enumeratedDomain>
                         [%- END %]
                             </nonNumericDomain>
                         </nominal>
@@ -56,7 +58,7 @@
                     [%- CASE 'ratio' %]
                         <ratio>
                             <unit>
-                                <standardUnit>[% attribute.unit %]</standardUnit>
+                                <customUnit>[% attribute.unit %]</customUnit>
                             </unit>
                             [% IF attribute.precision_numeric != "" %]
                             <precision>[% attribute.precision_numeric %]</precision>
