@@ -1,5 +1,5 @@
-                <attribute>
-                    <attributeName>[% attribute.attribute_id %]</attributeName>
+                <attribute id="[% attribute.attribute_id %]">
+                    <attributeName>[% attribute.attributename %]</attributeName>
                     <attributeLabel>[% attribute.attributelabel %]</attributeLabel>
                     <attributeDefinition>[% attribute.attributedefinition %]</attributeDefinition>
                     <storageType>[% attribute.storagetype %]</storageType>
@@ -51,7 +51,9 @@
                                     <definition>[%- attribute.definition_text_pattern %]</definition>
                                 </textDomain>
                         [%- CASE 'enumeratedDomain' %]
+                                <enumeratedDomain enforced="yes">
                                 [%- attribute.enumeration_xml %]
+                                </enumeratedDomain>
                         [%- END %]
                             </nonNumericDomain>
                         </ordinal>
@@ -77,4 +79,5 @@
                     [%- IF attribute.missingvaluecode_xml != "" %]
                         [% attribute.missingvaluecode_xml %]
                     [%- END %]
+                    [%- INCLUDE './templates/eml-coverage.tt' coverage = attribute.coverage %]
                 </attribute>

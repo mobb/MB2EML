@@ -1,4 +1,3 @@
-
 package MB2EML::Metabase;
 use Moose;
 use strict;
@@ -288,10 +287,11 @@ sub getTemporalCoverage {
     my $self = shift;
     my $datasetId = shift;
     my $entityId = shift;
+    my $columnId = shift;
     my @temporalCoverage = ();
 
     #print "$entityId , $datasetId \n";
-    my $rs = $self->schema->resultset('VwEmlTemporalcoverage')->search({ datasetid => $datasetId, entity_sort_order => $entityId }, { order_by => { -asc => 'column_sort_order' }});
+    my $rs = $self->schema->resultset('VwEmlTemporalcoverage')->search({ datasetid => $datasetId, entity_sort_order => $entityId, column_sort_order => $columnId }, { order_by => { -asc => 'column_sort_order' }});
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
     # i.e. the user doesn't have to know how to use a DBIx resultset
@@ -308,10 +308,11 @@ sub getTaxonomicCoverage {
     my $self = shift;
     my $datasetId = shift;
     my $entityId = shift;
+    my $columnId = shift;
     my @taxonomicCoverage = ();
 
     #print "$entityId , $datasetId \n";
-    my $rs = $self->schema->resultset('VwEmlTaxonomiccoverage')->search({ datasetid => $datasetId, entity_sort_order => $entityId }, { order_by => { -asc => 'column_sort_order' }});
+    my $rs = $self->schema->resultset('VwEmlTaxonomiccoverage')->search({ datasetid => $datasetId, entity_sort_order => $entityId, column_sort_order => $columnId }, { order_by => { -asc => 'column_sort_order' }});
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
     # i.e. the user doesn't have to know how to use a DBIx resultset

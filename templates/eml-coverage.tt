@@ -3,7 +3,7 @@
                       coverage.taxonomiccoverage.size > 0 %]
                 <coverage scope="document">
                     [% FOREACH gc IN coverage.geographiccoverage %]
-                    <geographicCoverage>
+                    <geographicCoverage id="[% gc.id %]">
                         <geographicDescription>[% gc.geographicdescription %]</geographicDescription>
                         <boundingCoordinates>
                             <westBoundingCoordinate>[% gc.westboundingcoordinate %]</westBoundingCoordinate> 
