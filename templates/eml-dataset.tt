@@ -1,4 +1,7 @@
     <dataset id="[% dataset.id %]">
+        [% IF dataset.alternateIdentifier != "" %]
+        <alternateidentifier>[% dataset.alternateIdentifier %]</alternateidentifier>
+        [% END %]
         <title>[% dataset.title %]</title>
 
         [%- FOREACH creator = dataset.creators %]

@@ -3,13 +3,16 @@
 package MB2EML::EML;
 use Moose;
 use strict;
+use warnings;
 use Config::Simple;
 use File::Temp ();
+use XML::LibXML;
 #use LWP::Simple;
 use MB2EML::Metabase;
 
 has 'abstract'           => ( is => 'rw', isa => 'Object' );
 has 'access'             => ( is => 'rw', isa => 'Object' );
+has 'alternateIdentifier' => ( is => 'rw', isa => 'Object' );
 has 'associatedParties'  => ( is => 'rw', isa => 'ArrayRef');
 has 'contacts'           => ( is => 'rw', isa => 'ArrayRef');
 has 'creators'           => ( is => 'rw', isa => 'ArrayRef' );
@@ -36,8 +39,9 @@ has 'temporalCoverage'   => ( is => 'rw', isa => 'ArrayRef');
 # Note: Can't override new() with Moose, so use 'BUILD' which is like a new() postprocessing 
 sub BUILD {
     my $self = shift;
+    my $columnId;
     my $datasetRef;
-    my @entities;
+    my $entitiesRef;
     my $entity;
     my $entityId;
     my $entitySortOrder;
@@ -47,6 +51,8 @@ sub BUILD {
     # Initialize attributes, in case they will be used by the methods.
     $self->abstract($self->getAbstract());
     $self->access($self->getAccess($entityId=0));
+    # Uncomment this line when the vw_eml_alternateidentifier view is created
+    #$self->alternateIdentifier($self->getAlternateIdentifier($entity=0));
     $self->associatedParties($self->getAssociatedParties());
     $self->contacts($self->getContacts());
     $self->creators($self->getCreators());
@@ -54,25 +60,27 @@ sub BUILD {
     # Fetch the entities. Initially the @entity array contains just the info from the vw_eml_entity view as returned from
     # the getEntity method. Here we loop through this array and for each entity append other elements 
     # ('access', 'attributeList') so that they are easily accessable by the templates.
-    @entities = $self->getEntities();
-    for $entity (@entities) {
+    $entitiesRef = $self->getEntities();
+    for $entity (@$entitiesRef) {
         $entity->{'access'} = $self->getAccess($entity->sort_order);
+        # Uncomment this line when the vw_eml_alternateidentifier view is created
+        #$entity->{'alternateIdentifier'} = $self->getAlternateIdentifier($entity->sort_order);
         $entity->{'attributeList'} = $self->getAttributeList($entity->sort_order);
         $entity->{'coverage'}->{'geographiccoverage'} = $self->getGeographicCoverage($entity->sort_order);
-        $entity->{'methods'} = $self->getMethods($entity->sort_order);
+        $entity->{'methods'} = $self->getMethods($entity->sort_order, $columnId=0);
         # CUrrently (2013 07 23) the vw_eml_temporalcoverage view only supports one date range per entity
-        $entity->{'coverage'}->{'temporalcoverage'} = $self->getTemporalCoverage($entity->sort_order, 0);
-        $entity->{'coverage'}->{'taxonomiccoverage'} = $self->getTaxonomicCoverage($entity->sort_order, 0);
+        $entity->{'coverage'}->{'temporalcoverage'} = $self->getTemporalCoverage($entity->sort_order, $columnId=0);
+        $entity->{'coverage'}->{'taxonomiccoverage'} = $self->getTaxonomicCoverage($entity->sort_order, $columnId=0);
         $entity->{'physical'} =  $self->getPhysical($entity->sort_order);
     }
 
-    $self->entities(\@entities);
+    $self->entities($entitiesRef);
     $self->distribution($self->getDistribution());
     $self->geographicCoverage($self->getGeographicCoverage($entityId=0));
     $self->intellectualRights($self->getIntellectualRights());
     $self->keywords($self->getKeywords());
     $self->language($self->getLanguage());
-    $self->methods($self->getMethods($entityId=0));
+    $self->methods($self->getMethods($entityId=0, $columnId=0));
     # Currently (2013 08) we are manually constructing the packageId from the database name and datasetId. In the future,
     # this value will be obtained from Metabase.
     $self->packageId("knb-lter-" . substr($self->databaseName, 0, index($self->databaseName, '_')) . "." . $self->datasetId . "." . "0");
@@ -129,6 +137,13 @@ sub getAccess{
     return $self->mb->getAccess($self->datasetId, $entityId);
 }
 
+sub getAlternateIdentifier {
+    my $self = shift;
+    my $entityId = shift;
+
+    return $self->mb->getAlternateIdentifier($self->datasetId, $entityId);
+}
+
 sub getAttributeList {
     my $self = shift;
     my $entityId = shift;
@@ -160,6 +175,8 @@ sub getAttributeList {
         # loop over (even though it's empty)
         $attribute->{'coverage'}->{'geographiccoverage'} = {};
         $attribute->{'coverage'}->{'temporalcoverage'} = {};
+
+        $attribute->{'methods'} = $self->mb->getMethods($self->datasetId, $entityId, $attribute->column_sort_order);
     }
 
     #return $self->mb->getAttributeList($self->datasetId, $entityId);
@@ -231,6 +248,7 @@ sub getLanguage{
 sub getMethods {
     my $self = shift;
     my $entityId = shift;
+    my $columnId = shift;
 
     #my $method;
     #my @methods;
@@ -241,7 +259,7 @@ sub getMethods {
     #    print "getMethods method: " . $method->methodstep . "\n";
     #}
 
-    return $self->mb->getMethods($self->datasetId, $entityId);
+    return $self->mb->getMethods($self->datasetId, $entityId, $columnId);
 }
 
 sub getPhysical{
@@ -302,11 +320,14 @@ sub getUnitList {
 sub writeXML {
 
     use Template;
-    my $self = shift;
-    my $validate = shift;
-    my $runParser = shift;
+
+    my ($self, %args) = @_;
+    my $validate     = $args{validate};
+    my $runEMLParser = $args{runEMLParser};
+    my $verbose      = $args{verbose};
 
     my $EMLlocation;
+    my $EML_XSD;
     my $doc;
     my $output = '';
     my $templateName;
@@ -331,31 +352,44 @@ sub writeXML {
 
     # Create an XML object from the string returned from the template engine. This
     # call will check for well-formedness.
+    print STDERR "Creating EML document.\n", if $verbose;
+
     eval {
         $doc = XML::LibXML->load_xml(string => $output, { no_blanks => 1 });
     };
 
     if ($@) {
         print STDERR $self->datasetId . " : Error creating XML document: $@\n";
-        die $self->datasetId . ": Processing halted because XML document is not valid.\n";
+        die $self->datasetId . ": Processing halted because the generated XML document is not valid.\n";
     } 
 
-    if ($validate || $runParser) {
+    # IF we are going to validate or EMLParse, read in the EML XML Schema.
+    if ($validate || $runEMLParser) {
         # Load config file
         my $cfg = new Config::Simple('config/mb2eml.ini');
         $EMLlocation = $cfg->param('EMLlocation');
+
         if (! defined $EMLlocation) {
             print STDERR "The location of the EML distribution is not defined. Please enter the parameter \"EMLlocation\" into the config/mb2eml.ini file.\n";
         } 
+
+        $EML_XSD = $EMLlocation . "/eml.xsd";
+        eval {
+            $xmlschema = XML::LibXML::Schema->new( location => $EML_XSD);
+        };
+
+        if ($@) {
+            print STDERR $self->datasetId . ": Unable to initialize XML Schema: $@\n";
+        } 
     }
 
+    # Validate the EML document against the EML XML Schema
     if ($validate) {
         if (! defined $EMLlocation) {
             print STDERR "Unable to perform validation with eml.xsd because the location of the EML distribution is unknown.\n";
         } else {
+            print STDERR "Running XML Schema validation.\n", if $verbose;
             eval {
-                #my $EMLlocation  = 'http://sbc.lternet.edu/external/InformationManagement/EML_211_schema/eml.xsd';
-                my $EML_XSD = $EMLlocation . "/eml.xsd";
                 $xmlschema = XML::LibXML::Schema->new( location => $EML_XSD);
                 $valid = $xmlschema->validate( $doc );
             };
@@ -366,23 +400,32 @@ sub writeXML {
     }
 
     # Run the EMLParser against the newly created document to check that all references are correct.
-    if ($runParser) {
-        if (! defined $EMLlocation) {
-            print STDERR "Unable to run EML Parser because the location of the EML distribution is unknown.\n";
+    if ($runEMLParser) {
+        # Check if the EMLlocation parameter is a WEB URL. The EMLParser can't be run with a WEB URL as Java
+        # can't be invoked remotely (unless Java RMI is implemented, which it is not for EMLParser).
+        if ($EMLlocation =~ /^http:/) {
+            warn 'The config parameter "EMLlocation" is a HTTP URL. EMLlocation must be local to run the EMLParser.\n'
         } else {
-            my $tmp = File::Temp->new();
-            my $filename = $tmp->filename;
-    
-            open my $out, '>', $filename;
-            print {$out} $doc->toString();
-            close $out;
-            my $cmd = "java -cp " . $EMLlocation . "/lib/*:" . $EMLlocation . "/lib/apache/* org.ecoinformatics.eml.EMLParser -q " . $EMLlocation . "/lib/config.xml " . $filename;
-            my $result = `$cmd 2>&1`;
-    
-            # The return value is set in $?; this value is the exit status of the command as returned by the 'wait' call; 
-            # to get the real exit status of the command you have to shift right by 8 the value of $? ($? >> 8). 
-            if (($? >> 8)) {
-                print STDERR $self->datasetId . ": $result\n";
+            print STDERR "Running EMLParser.\n", if $verbose;
+            if (! defined $EMLlocation) {
+                print STDERR "Unable to run EML Parser because the location of the EML distribution is unknown.\n";
+            } else {
+                my $tmp = File::Temp->new();
+                my $filename = $tmp->filename;
+        
+                open my $out, '>', $filename;
+                print {$out} $doc->toString();
+                close $out;
+                my $cmd = "java -cp " . $EMLlocation . "/lib/*:" . $EMLlocation . "/lib/apache/* org.ecoinformatics.eml.EMLParser -q " . $EMLlocation . "/lib/config.xml " . $filename;
+                my $result = `$cmd 2>&1`;
+        
+                # The return value is set in $?; this value is the exit status of the command as returned by the 'wait' call; 
+                # to get the real exit status of the command you have to shift right by 8 the value of $? ($? >> 8). 
+                if (($? >> 8)) {
+                    print STDERR $self->datasetId . ": $result\n";
+                } else {
+                    print STDERR "$result\n", if $verbose;
+                }
             }
         }
     }
@@ -394,3 +437,69 @@ sub writeXML {
 __PACKAGE__->meta->make_immutable;
 
 1;
+
+__END__
+
+=head1 NAME
+
+MB2EML - export data from Metabase to the Ecological Metadata Language (EML)
+
+=head1 SYNOPSIS
+
+    my $eml = MB2EML::EML->new( { databaseName => $databaseName, datasetId => $datasetId } );
+    my $output = $eml->writeXML(validate => 1, runEMLParser => 1);
+
+=head1 DESCRIPTION
+
+The MB2EML module provides methods to 
+
+The mb2eml-test.pl script runs regression tests for the MB2EML software package. 
+
+These tests are run to verify that changes to the MB2EML software and templates have
+not introduced errors in the EML documents that MB2EML creates.
+
+=head2 Unit Tests
+
+The first set of tests that are run are unit tests for each function of the 
+MB2EML/Metabase.pm module. Each function is run against a reference dataset.
+
+=head2 System Tests
+
+The second set of tests compare reference EML documents to newly created EML documents.
+The reference documents are created from the reference datasets and are stored as
+test data. When the tests are run, newly created documents are compared to the reference
+ones, and any differences between them are shown.
+
+=head2 Reference datasets
+
+In order to test if chagnes in the software or the database have not caused unintended changes
+to the EML docuemnts created, reference datasets are used. The reference datasets are only used
+for testing purposes and are only changed when testing requirements change. In contrast, production
+datasests can be changed at any time.
+
+Two reference datasets are used: 
+
+=over 4
+
+=item * a dataset with a minimul number of EML elements that
+are used by our LTERs 
+
+=item * a dataset that has the full compliment of EML elements used by our LTERs.
+
+=back
+
+The minimal dataset tests whether mb2eml works properly when certain EML data are not present, and the
+full document tests that mb2eml works properly when all data are present.
+
+=head1 MAINTENANCE
+
+If MB2EML is updated to write out new EML elements to the documents that it
+creates, then the tests should be updated to reflect this. A unit test should
+be added for any new routine added to Metabase.pm. Also, the reference datasets
+and documents should be updated with any new EML elements.
+
+=head1 AUTHOR
+
+Peter Slaughter "<peter@eri.ucsb.edu>"
+
+=cut
