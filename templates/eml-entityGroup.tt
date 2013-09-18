@@ -1,3 +1,6 @@
+            [% IF entity.alternateidentifier != "" %]
+            <alternateidentifier>[% entity.alternateidentifier %]</alternateidentifier>
+            [% END %]
             <entityName>[% entity.entityname %]</entityName>
             <entityDescription>[% entity.entitydescription %]</entityDescription> 
             <physical scope="document">
@@ -29,4 +32,5 @@
                 </distribution>
             </physical>
             [%- INCLUDE './templates/eml-coverage.tt' coverage = entity.coverage %]
+            [%- INCLUDE './templates/eml-methods.tt' methods = entity.methods %]
             <additionalInfo>***** TBD *****</additionalInfo>

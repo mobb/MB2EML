@@ -1,3 +1,7 @@
 account = "your account"
 pass = "your pass"
 host = "your host"
+# A URL that specifies the location of the EML 2.1.1 distribution which contains
+# the EML XSD and the EMLParser program. This URL should be a directory
+# that contains the eml.xsd file.
+EMLlocation = "./eml-2.1.1/"

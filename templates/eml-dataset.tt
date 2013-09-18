@@ -1,8 +1,11 @@
     <dataset id="[% dataset.id %]">
+        [% IF dataset.alternateIdentifier != "" %]
+        <alternateidentifier>[% dataset.alternateIdentifier %]</alternateidentifier>
+        [% END %]
         <title>[% dataset.title %]</title>
 
         [%- FOREACH creator = dataset.creators %]
-        <creator>
+        <creator id="[% creator.nameid %]">
             <individualName>
                 [%- IF creator.givenname != "" %]
                 <givenName>[% creator.givenname %]</givenName>

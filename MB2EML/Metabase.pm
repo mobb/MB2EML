@@ -1,10 +1,9 @@
-
 package MB2EML::Metabase;
 use Moose;
 use strict;
+use warnings;
 use Config::Simple;
 
-#use lib '/Users/peter/Projects/MSI/LTER/MB2EML/lib';
 use lib './lib';
 #use namespace::autoclean;
 
@@ -73,6 +72,16 @@ sub getAccess {
     #return @accesses;
 }
 
+sub getAlternateIdentifier {
+    my $self = shift;
+    my $datasetId = shift;
+    my $entityId = shift;
+
+    # Return a single row, which is a hash of DBIC access methods named for the column that they access 
+    return $self->schema->resultset('VwEmlAlternateidentifier')->find({ datasetid => $datasetId, entity_sort_order => $entityId });
+
+}
+
 sub getAssociatedParties {
     my $self = shift;
     my $datasetId = shift;
@@ -86,6 +95,7 @@ sub getAssociatedParties {
     # Each row is a hash that used the column names as the keys.
     while (my $associatedParty = $rs->next) {
         push(@associatedParties, $associatedParty);
+        #print "party: " . $associatedParty->nameid . "\n";
     }
 
     # Put QC checking here
@@ -183,8 +193,7 @@ sub getEntities{
     # Put QC checking here
     # i.e. nulls for specific fields - Gastil want's a one liner
  
-    return @entities;
-    
+    return \@entities;
 }
 
 sub getGeographicCoverage {
@@ -242,11 +251,10 @@ sub getMethods {
     my $self = shift;
     my $datasetId = shift;
     my $entityId = shift;
+    my $columnId = shift;
     my @methods;
 
-    #print "$entityId , $datasetId \n";
-    #my $rs = $self->schema->resultset('VwEmlMethods')->search({ datasetid => $datasetId, entity_sort_order => $entityId }, { order_by => { -asc => 'column_sort_order' , -asc=>'methodstep_sort_order'}});
-    my $rs = $self->schema->resultset('VwEmlMethods')->search({ datasetid => $datasetId, entity_sort_order => $entityId }, { order_by => { -asc => 'column_sort_order' }});
+    my $rs = $self->schema->resultset('VwEmlMethods')->search({ datasetid => $datasetId, entity_sort_order => $entityId, column_sort_order => $columnId }, { order_by => { -asc => 'column_sort_order' }});
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
     # i.e. the user doesn't have to know how to use a DBIx resultset
@@ -288,10 +296,11 @@ sub getTemporalCoverage {
     my $self = shift;
     my $datasetId = shift;
     my $entityId = shift;
+    my $columnId = shift;
     my @temporalCoverage = ();
 
     #print "$entityId , $datasetId \n";
-    my $rs = $self->schema->resultset('VwEmlTemporalcoverage')->search({ datasetid => $datasetId, entity_sort_order => $entityId }, { order_by => { -asc => 'column_sort_order' }});
+    my $rs = $self->schema->resultset('VwEmlTemporalcoverage')->search({ datasetid => $datasetId, entity_sort_order => $entityId, column_sort_order => $columnId }, { order_by => { -asc => 'column_sort_order' }});
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
     # i.e. the user doesn't have to know how to use a DBIx resultset
@@ -308,10 +317,11 @@ sub getTaxonomicCoverage {
     my $self = shift;
     my $datasetId = shift;
     my $entityId = shift;
+    my $columnId = shift;
     my @taxonomicCoverage = ();
 
     #print "$entityId , $datasetId \n";
-    my $rs = $self->schema->resultset('VwEmlTaxonomiccoverage')->search({ datasetid => $datasetId, entity_sort_order => $entityId }, { order_by => { -asc => 'column_sort_order' }});
+    my $rs = $self->schema->resultset('VwEmlTaxonomiccoverage')->search({ datasetid => $datasetId, entity_sort_order => $entityId, column_sort_order => $columnId }, { order_by => { -asc => 'column_sort_order' }});
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
     # i.e. the user doesn't have to know how to use a DBIx resultset
@@ -352,3 +362,4 @@ sub getUnitList {
 __PACKAGE__->meta->make_immutable;
 
 1;
+

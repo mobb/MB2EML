@@ -1,4 +1,4 @@
-        <dataTable>
+        <dataTable id="[% entity.entity_id %]">
             [%- INCLUDE './templates/eml-entityGroup.tt' %]
             <attributeList>
             [%- FOREACH attribute = entity.attributeList %]
