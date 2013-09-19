@@ -43,9 +43,10 @@ __PACKAGE__->add_columns(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-07-22 14:22:19
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:LlUz3WaH6a7TwVzFvbZFtA
+# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-09-18 15:23:07
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:t0p1aqNU9PKCK9nEzVhDtg
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
+__PACKAGE__->set_primary_key(qw/ datasetid /);
 1;
