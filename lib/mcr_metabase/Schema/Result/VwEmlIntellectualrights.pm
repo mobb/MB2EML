@@ -37,7 +37,7 @@ __PACKAGE__->table("vw_eml_intellectualrights");
 
 __PACKAGE__->add_columns(
   "datasetid",
-  { data_type => "integer", is_nullable => 1 },
+  { data_type => "integer", is_nullable => 0 },
   "intellectualrights",
   { data_type => "xml", is_nullable => 1 },
 );
