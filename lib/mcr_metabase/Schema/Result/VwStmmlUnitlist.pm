@@ -74,9 +74,9 @@ __PACKAGE__->table("vw_stmml_unitlist");
 
 __PACKAGE__->add_columns(
   "datasetid",
-  { data_type => "integer", is_nullable => 0 },
+  { data_type => "integer", is_nullable => 1 },
   "unit",
-  { data_type => "varchar", is_nullable => 0, size => 100 },
+  { data_type => "varchar", is_nullable => 1, size => 100 },
   "unittype",
   { data_type => "varchar", is_nullable => 1, size => 50 },
   "abbreviation",
@@ -92,10 +92,9 @@ __PACKAGE__->add_columns(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-07-22 14:22:22
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:ItSU53jb4eYzqGGUUgqZrA
+# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-09-20 09:24:55
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:rJTkm+bQUtHTmI3cLXwtew
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
-__PACKAGE__->set_primary_key(qw/ datasetid unit /);
 1;

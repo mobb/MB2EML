@@ -52,11 +52,11 @@ __PACKAGE__->table("vw_eml_temporalcoverage");
 
 __PACKAGE__->add_columns(
   "datasetid",
-  { data_type => "integer", is_nullable => 0 },
+  { data_type => "integer", is_nullable => 1 },
   "entity_sort_order",
-  { data_type => "integer", is_nullable => 0 },
+  { data_type => "integer", is_nullable => 1 },
   "column_sort_order",
-  { data_type => "integer", is_nullable => 0 },
+  { data_type => "integer", is_nullable => 1 },
   "begindate",
   { data_type => "date", is_nullable => 1 },
   "enddate",
@@ -64,10 +64,9 @@ __PACKAGE__->add_columns(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-07-22 14:24:11
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:/c0ucVxcNnhslC9s2yCISg
+# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-09-20 09:25:00
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:G7K3JLZRlpG0fbtAL8DZig
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
-__PACKAGE__->set_primary_key(qw/ datasetid entity_sort_order column_sort_order /);
 1;

@@ -110,9 +110,9 @@ __PACKAGE__->table("vw_eml_physical");
 
 __PACKAGE__->add_columns(
   "datasetid",
-  { data_type => "integer", is_nullable => 0 },
+  { data_type => "integer", is_nullable => 1 },
   "sort_order",
-  { data_type => "integer", is_nullable => 0 },
+  { data_type => "integer", is_nullable => 1 },
   "entityname",
   { data_type => "varchar", is_nullable => 1, size => 100 },
   "objectname",
@@ -146,10 +146,9 @@ __PACKAGE__->add_columns(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-07-22 14:24:10
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:5WfYDVRK2VcY1UCMBaIonA
+# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-09-20 09:25:00
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:+lQ4Gw6VFc5VhDphdHy2ag
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
-__PACKAGE__->set_primary_key(qw/ datasetid sort_order /);
 1;

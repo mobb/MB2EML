@@ -37,16 +37,15 @@ __PACKAGE__->table("vw_eml_pubdate");
 
 __PACKAGE__->add_columns(
   "datasetid",
-  { data_type => "integer", is_nullable => 0 },
+  { data_type => "integer", is_nullable => 1 },
   "pubdate",
   { data_type => "date", is_nullable => 1 },
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-08-14 09:57:07
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:kg4+Z12HkR/q3N/5b1nQMg
+# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-09-20 09:24:55
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:bevkYIzjeEGRr1mZgQ7L4g
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
-__PACKAGE__->set_primary_key(qw/ datasetid /);
 1;

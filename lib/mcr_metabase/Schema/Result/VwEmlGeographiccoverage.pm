@@ -51,22 +51,22 @@ __PACKAGE__->table("vw_eml_geographiccoverage");
 
 =head2 northboundingcoordinate
 
-  data_type: 'real'
+  data_type: 'double precision'
   is_nullable: 1
 
 =head2 southboundingcoordinate
 
-  data_type: 'real'
+  data_type: 'double precision'
   is_nullable: 1
 
 =head2 eastboundingcoordinate
 
-  data_type: 'real'
+  data_type: 'double precision'
   is_nullable: 1
 
 =head2 westboundingcoordinate
 
-  data_type: 'real'
+  data_type: 'double precision'
   is_nullable: 1
 
 =cut
@@ -83,18 +83,18 @@ __PACKAGE__->add_columns(
   "geographicdescription",
   { data_type => "text", is_nullable => 1 },
   "northboundingcoordinate",
-  { data_type => "real", is_nullable => 1 },
+  { data_type => "double precision", is_nullable => 1 },
   "southboundingcoordinate",
-  { data_type => "real", is_nullable => 1 },
+  { data_type => "double precision", is_nullable => 1 },
   "eastboundingcoordinate",
-  { data_type => "real", is_nullable => 1 },
+  { data_type => "double precision", is_nullable => 1 },
   "westboundingcoordinate",
-  { data_type => "real", is_nullable => 1 },
+  { data_type => "double precision", is_nullable => 1 },
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-09-04 14:14:40
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:pn3Puv8mYg23ySUZoMsyMA
+# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-09-20 09:24:55
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:GRY7frfIi92l5pS35SGjMw
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
