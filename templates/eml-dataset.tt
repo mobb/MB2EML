@@ -10,6 +10,9 @@
                 [%- IF creator.givenname != "" %]
                 <givenName>[% creator.givenname %]</givenName>
                 [%- END %]
+                [%- IF creator.givenname2 != "" %]
+                <givenName>[% creator.givenname2 %]</givenName>
+                [%- END %]
                 <surName>[% creator.surname %]</surName>
             </individualName>
  
@@ -58,7 +61,12 @@
         [%- FOREACH associatedParty = dataset.associatedParties %]
         <associatedParty id="[% associatedParty.nameid %]" scope="document">
             <individualName>
+                [%- IF associatedParty.givenname != "" %]
                 <givenName>[% associatedParty.givenname %]</givenName>
+                [%- END %]
+                [%- IF associatedParty.givenname2 != "" %]
+                <givenName>[% associatedParty.givenname2 %]</givenName>
+                [%- END %]
                 <surName>[% associatedParty.surname %]</surName>
             </individualName>
             [%- IF associatedParty.organization != "" %]

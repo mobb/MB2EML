@@ -54,7 +54,7 @@ sub getAbstract {
     my $datasetId = shift;
 
     # Return a single row, which is a hash
-    return $self->schema->resultset('VwEmlAbstract')->find({ datasetid => $datasetId});
+    return $self->schema->resultset('VwEmlAbstract')->search({ datasetid => $datasetId})->single;
 
 }
 
@@ -65,7 +65,7 @@ sub getAccess {
     my @accesses = ();
 
     # resultset returns an iterator
-    return $self->schema->resultset('VwEmlAccess')->find({ datasetid => $datasetId, entity_sort_order => $entityId });
+    return $self->schema->resultset('VwEmlAccess')->search({ datasetid => $datasetId, entity_sort_order => $entityId })->single;
     
     # Put QC checking here
     # i.e. nulls for specific fields - Gastil want's a one liner
@@ -78,7 +78,7 @@ sub getAlternateIdentifier {
     my $entityId = shift;
 
     # Return a single row, which is a hash of DBIC access methods named for the column that they access 
-    return $self->schema->resultset('VwEmlAlternateidentifier')->find({ datasetid => $datasetId, entity_sort_order => $entityId });
+    return $self->schema->resultset('VwEmlAlternateidentifier')->search({ datasetid => $datasetId, entity_sort_order => $entityId })->single;
 
 }
 
@@ -172,7 +172,7 @@ sub getDistribution {
     my $datasetId = shift;
 
     # Return a single row, which is a hash
-    return $self->schema->resultset('VwEmlDistribution')->find({ datasetid => $datasetId});
+    return $self->schema->resultset('VwEmlDistribution')->search({ datasetid => $datasetId})->single;
 }
 
 sub getEntities{
@@ -220,7 +220,7 @@ sub getIntellectualRights {
     my $datasetId = shift;
 
     # Return a single row, which is a hash
-    return $self->schema->resultset('VwEmlIntellectualrights')->find({ datasetid => $datasetId});
+    return $self->schema->resultset('VwEmlIntellectualrights')->search({ datasetid => $datasetId})->single;
 }
 
 sub getKeywords {
@@ -244,7 +244,7 @@ sub getLanguage {
     my $datasetId = shift;
 
     # Return a single row, which is a hash
-    return $self->schema->resultset('VwEmlLanguage')->find({ datasetid => $datasetId});
+    return $self->schema->resultset('VwEmlLanguage')->search({ datasetid => $datasetId})->single;
 }
 
 sub getMethods {
@@ -274,7 +274,7 @@ sub getPhysical {
 
     # resultset returns resultSet object
     # Retrieve physical format description for a particular dataset and entity
-    return $self->schema->resultset('VwEmlPhysical')->find({ datasetid => $datasetId, sort_order => $entityId });
+    return $self->schema->resultset('VwEmlPhysical')->search({ datasetid => $datasetId, sort_order => $entityId })->single;
 }
 
 sub getProject {
@@ -282,14 +282,14 @@ sub getProject {
     my $datasetId = shift;
 
     # Retrieve project description for a particular dataset and entity
-    return $self->schema->resultset('VwEmlProject')->find({ datasetid => $datasetId });
+    return $self->schema->resultset('VwEmlProject')->search({ datasetid => $datasetId })->single;
 }
 
 sub getPublisher {
     my $self = shift;
     my $datasetId = shift;
 
-    return $self->schema->resultset('VwEmlPublisher')->find({ datasetid => $datasetId });
+    return $self->schema->resultset('VwEmlPublisher')->search({ datasetid => $datasetId })->single;
 }
 
 sub getTemporalCoverage {
@@ -339,7 +339,7 @@ sub getTitle{
     my $datasetId = shift;
 
     # Return a single row, which is a hash
-    return $self->schema->resultset('VwEmlTitle')->find({ datasetid => $datasetId});
+    return $self->schema->resultset('VwEmlTitle')->search({ datasetid => $datasetId})->single;
 }
 
 sub getUnitList {
