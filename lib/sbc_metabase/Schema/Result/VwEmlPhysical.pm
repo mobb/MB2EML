@@ -47,13 +47,14 @@ __PACKAGE__->table("vw_eml_physical");
 
 =head2 size
 
-  data_type: 'text'
+  data_type: 'double precision'
   is_nullable: 1
 
 =head2 unit
 
-  data_type: 'text'
+  data_type: 'varchar'
   is_nullable: 1
+  size: 20
 
 =head2 characterencoding
 
@@ -118,9 +119,9 @@ __PACKAGE__->add_columns(
   "objectname",
   { data_type => "varchar", is_nullable => 1, size => 100 },
   "size",
-  { data_type => "text", is_nullable => 1 },
+  { data_type => "double precision", is_nullable => 1 },
   "unit",
-  { data_type => "text", is_nullable => 1 },
+  { data_type => "varchar", is_nullable => 1, size => 20 },
   "characterencoding",
   { data_type => "varchar", is_nullable => 1, size => 20 },
   "numheaderlines",
@@ -146,8 +147,8 @@ __PACKAGE__->add_columns(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-09-20 09:25:00
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:+lQ4Gw6VFc5VhDphdHy2ag
+# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-09-23 16:12:28
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:owtBR+L8hbk7a4BaegCmMg
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

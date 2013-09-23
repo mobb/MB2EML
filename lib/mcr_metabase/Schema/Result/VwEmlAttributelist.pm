@@ -100,7 +100,7 @@ __PACKAGE__->table("vw_eml_attributelist");
 
   data_type: 'varchar'
   is_nullable: 1
-  size: 100
+  size: 500
 
 =head2 unit
 
@@ -163,7 +163,7 @@ __PACKAGE__->add_columns(
   "enumeration_xml",
   { data_type => "xml", is_nullable => 1 },
   "definition_text_pattern",
-  { data_type => "varchar", is_nullable => 1, size => 100 },
+  { data_type => "varchar", is_nullable => 1, size => 500 },
   "unit",
   { data_type => "varchar", is_nullable => 1, size => 100 },
   "precision_numeric",
@@ -177,8 +177,8 @@ __PACKAGE__->add_columns(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-09-20 09:24:55
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:jW53IPTG9cbkYkC17JeOwg
+# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-09-23 16:12:23
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:TGAAf1PIPWpKwuAuJoQl/A
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
