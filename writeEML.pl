@@ -47,7 +47,7 @@ sub usage {
     print "   \to  a range of integers, i.e. \"10-20\"\n";
     print "   \to  the keyword \"all\", meaning all datasetIds for the specified databaseName.\n\n";
     print "For example, the command:\n\n";
-    print "   \t./writeEML.pl mcr_metabase 10-20 -v\n\n";
+    print "   \t./writeEML.pl -v mcr_metabase 10-20\n\n";
     print "will create EML documents from the \"mcr_metabase\" database schema for all document IDs between 10 and 20, with verbose mode on.\n";
 }
 
@@ -90,64 +90,71 @@ $idsRef = $mb->searchDatasetIds();
 # Free object and db connection.
 undef $mb;
 
-# Was datasetId specified on command line? If not, then use all datasetIds in the database.
+my @ids;
+
+# If $datasetId is specified as a range then use all existing datasets in that range.
 if ($datasetId =~ /(\d+)-(\d+)/) {
     $startId = $1;
     $endId = $2;
+    for my $id (@$idsRef) {
+        if ($id >= $startId && $id <= $endId) {
+            push (@ids, $id);
+        }
+    }
+# If $datasetId is specified as a list, use all ids in the list.
+} elsif ($datasetId =~ /(\d+),(\d+)/) {
+    @ids = split(/,/, $datasetId);
+# If keyword "all" is specified for $aatasetId, use all ids.
 } elsif ($datasetId eq "all") {
-    $startId = @$idsRef[0];
-    $endId = @$idsRef[-1];
+    @ids = @$idsRef;
+# If single $datasetId is used, then use it!
 } elsif ($datasetId =~ /(\d+)/) {
-    $startId = $1;
-    $endId = $1;
+    push (@ids, $datasetId);
 } else {
     warn "Invalid datasetId: $datasetId\n";
     usage();
     exit;
 }
 
-for my $id (@$idsRef) {
-    if ($id >= $startId && $id <= $endId) {
+for my $id (@ids) {
+    if (defined $opt_d) {
+        $errFilename = $opt_d . "/" . $databaseName . "-" . $id . ".err";
+        open STDERR, ">", $errFilename;
+    }
 
-        if (defined $opt_d) {
-            $errFilename = $opt_d . "/" . $databaseName . "-" . $id . ".err";
-            open STDERR, ">", $errFilename;
+    # Create a new EML object that will be used to assemble the Metabase data into EML
+    eval {
+        $eml = MB2EML::EML->new( { databaseName => $databaseName, datasetId => $id} );
+    };
+
+    if ($@) {
+        print STDERR $id . ": Error initializing EML document: $@\n";
+    } 
+
+    # Write out the EML object as XML
+    # $opt_v = 1 causes schema validation against the eml.xsd to be performed
+    # $opt_x = 1 causes the KNB EML parser to be run
+    eval {
+        $emlDoc = $eml->writeXML(validate => $opt_p, runEMLParser => $opt_x, verbose => $opt_v);
+    };
+
+    if ($@) {
+        print STDERR $id . ": Error writing EML document: $@\n";
+    } 
+
+    if (defined $opt_d) {
+        $outFilename = $opt_d . "/" . $databaseName . "-" . $id . ".xml";
+
+        if ($opt_v) {
+            print "Writing document $outFilename...\n";
         }
 
-        # Create a new EML object that will be used to assemble the Metabase data into EML
-        eval {
-            $eml = MB2EML::EML->new( { databaseName => $databaseName, datasetId => $id} );
-        };
-
-        if ($@) {
-            print STDERR $id . ": Error initializing EML document: $@\n";
-        } 
-
-        # Write out the EML object as XML
-        # $opt_v = 1 causes schema validation against the eml.xsd to be performed
-        # $opt_x = 1 causes the KNB EML parser to be run
-        eval {
-            $emlDoc = $eml->writeXML(validate => $opt_p, runEMLParser => $opt_x, verbose => $opt_v);
-        };
-
-        if ($@) {
-            print STDERR $id . ": Error writing EML document: $@\n";
-        } 
-
-        if (defined $opt_d) {
-            $outFilename = $opt_d . "/" . $databaseName . "-" . $id . ".xml";
-
-            if ($opt_v) {
-                print "Writing document $outFilename...\n";
-            }
-
-            open FILE, ">", $outFilename or die $!;
-            print FILE $emlDoc;
-            close FILE;
-            close STDERR;
-        } else {
-            print $emlDoc;
-        }
+        open FILE, ">", $outFilename or die $!;
+        print FILE $emlDoc;
+        close FILE;
+        close STDERR;
+    } else {
+        print $emlDoc;
     }
     undef $eml;
 }

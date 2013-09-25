@@ -17,52 +17,52 @@ ok( defined($mb->schema), 'initialized Metabase object' );
 my $datasetId = '99013';
 my $entityId;
 
-ok ( defined($mb->getAbstract($datasetId, $entityId=1)), 'fetched data for "abstract" for dataset: ' . $datasetId . ', entity: ' . $entityId);
-ok ( defined($mb->getAccess($datasetId, $entityId=1)),   'fetched data for "access" for dataset: ' . $datasetId . ', entity: ' . $entityId);
+ok ( defined($mb->searchAbstract($datasetId, $entityId=1)), 'fetched data for "abstract" for dataset: ' . $datasetId . ', entity: ' . $entityId);
+ok ( defined($mb->searchAccess($datasetId, $entityId=1)),   'fetched data for "access" for dataset: ' . $datasetId . ', entity: ' . $entityId);
 
 # Uncomment this line when the vw_eml_alternateidentifier view is created
-#ok ( defined($mb->getAlternateIdentifier($datasetId, $entityId)), 'fetched data for "alternateidentifier" for dataset: ' . $datasetId);
+#ok ( defined($mb->searchAlternateIdentifier($datasetId, $entityId)), 'fetched data for "alternateidentifier" for dataset: ' . $datasetId);
 
-my $arrRef = $mb->getAssociatedParties($datasetId);
+my $arrRef = $mb->searchAssociatedParties($datasetId);
 ok ( scalar @$arrRef > 0, 'fetched data for "associated parties" for dataset: ' . $datasetId);
 
-$arrRef = $mb->getAttributeList($datasetId, $entityId=1);
+$arrRef = $mb->searchAttributeList($datasetId, $entityId=1);
 ok ( scalar @$arrRef> 0, 'fetched data for "attributeList" for dataset: ' . $datasetId . ', entity: ' . $entityId);
-ok ( defined($mb->getContacts($datasetId)), 'fetched data for "contacts" for dataset: ' . $datasetId);
+ok ( defined($mb->searchContacts($datasetId)), 'fetched data for "contacts" for dataset: ' . $datasetId);
 
-$arrRef = $mb->getCreators($datasetId);
+$arrRef = $mb->searchCreators($datasetId);
 ok ( scalar @$arrRef > 0, 'fetched data for "creators" for dataset: ' . $datasetId);
-ok ( defined($mb->getDistribution($datasetId)), 'fetched data for "distribution" for dataset: ' . $datasetId);
+ok ( defined($mb->searchDistribution($datasetId)), 'fetched data for "distribution" for dataset: ' . $datasetId);
 
-$arrRef = $mb->getEntities($datasetId);
+$arrRef = $mb->searchEntities($datasetId);
 ok ( scalar @$arrRef > 0, 'fetched data for "entities" for dataset: ' . $datasetId);
 
-$arrRef = $mb->getGeographicCoverage($datasetId, $entityId=0);
+$arrRef = $mb->searchGeographicCoverage($datasetId, $entityId=0);
 ok ( scalar @$arrRef > 0, 'fetched data for "geographic coverage" for dataset: ' . $datasetId . ', entityId: ' . $entityId);
 
-ok ( defined($mb->getIntellectualRights($datasetId)), 'fetched data for "intellectual rights" for dataset: ' . $datasetId);
+ok ( defined($mb->searchIntellectualRights($datasetId)), 'fetched data for "intellectual rights" for dataset: ' . $datasetId);
 
-$arrRef = $mb->getKeywords($datasetId, $entityId=1);
+$arrRef = $mb->searchKeywords($datasetId, $entityId=1);
 ok ( scalar @$arrRef > 0, 'fetched data for "keywords" for dataset: ' . $datasetId . ', entityId: ' . $entityId);
 
-ok ( defined($mb->getLanguage($datasetId)), 'fetched data for "language" for dataset: ' . $datasetId);
+ok ( defined($mb->searchLanguage($datasetId)), 'fetched data for "language" for dataset: ' . $datasetId);
 
-$arrRef = $mb->getMethods($datasetId, $entityId=0, $columnId=0);
+$arrRef = $mb->searchMethods($datasetId, $entityId=0, $columnId=0);
 ok ( scalar @$arrRef > 0, 'fetched data for "methods" for dataset: ' . $datasetId . ', entityId: ' . $entityId . ', columnId: ' . $columnId);
 
-ok ( defined($mb->getPhysical($datasetId, $entityId=1)), 'fetched data for "physical" for dataset: ' . $datasetId . ', entityId: ' . $entityId);
-ok ( defined($mb->getProject($datasetId)), 'fetched data for "project" for dataset: ' . $datasetId);
-ok ( defined($mb->getPublisher($datasetId)), 'fetched data for "publisher" for dataset: ' . $datasetId);
+ok ( defined($mb->searchPhysical($datasetId, $entityId=1)), 'fetched data for "physical" for dataset: ' . $datasetId . ', entityId: ' . $entityId);
+ok ( defined($mb->searchProject($datasetId)), 'fetched data for "project" for dataset: ' . $datasetId);
+ok ( defined($mb->searchPublisher($datasetId)), 'fetched data for "publisher" for dataset: ' . $datasetId);
 
-$arrRef = $mb->getTaxonomicCoverage($datasetId, $entityId=1, $columnId=10);
+$arrRef = $mb->searchTaxonomicCoverage($datasetId, $entityId=1, $columnId=10);
 ok ( scalar @$arrRef > 0, 'fetched data for "taxonomic coverage" for dataset: ' . $datasetId . ', entityId: ' . $entityId . ', columnId: ' . $columnId);
 
-$arrRef = $mb->getTemporalCoverage($datasetId, $entityId=0, $columnId=0);
+$arrRef = $mb->searchTemporalCoverage($datasetId, $entityId=0, $columnId=0);
 ok ( scalar @$arrRef > 0, 'fetched data for "temporal coverage" for dataset: ' . $datasetId . ', entityId: ' . $entityId . ', columnId: ' . $columnId);
 
-ok ( defined($mb->getTitle($datasetId)), 'fetched data for "title" for dataset: ' . $datasetId);
+ok ( defined($mb->searchTitle($datasetId)), 'fetched data for "title" for dataset: ' . $datasetId);
 
-$arrRef = $mb->getUnitList($datasetId);
+$arrRef = $mb->searchUnitList($datasetId);
 ok ( scalar @$arrRef > 0, 'fetched data for "unit list" for dataset: ' . $datasetId);
 
 print "Done performing unit tests for mb2eml...\n";
