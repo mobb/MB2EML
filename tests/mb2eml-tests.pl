@@ -4,6 +4,7 @@ use MB2EML::Metabase;  # What you're testing.
 use MB2EML::EML;
 #use Test::Simple tests => 5;
 use Test::More 'no_plan';
+#use Test;
 
 my $databaseName = "sbc_metabase";
 my $element;
@@ -194,7 +195,7 @@ and documents should be updated with any new EML elements.
 
 =head1 AUTHOR
 
-Peter Slaughter "<peter@eri.ucsb.edu>"
+Peter Slaughter "<pslaughter@msi.ucsb.edu>"
 
 =cut
 

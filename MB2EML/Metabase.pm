@@ -9,7 +9,7 @@ use lib './lib';
 
 has 'schema' => ( is => 'rw' );
 has 'databaseName' => ( is => 'ro', isa => 'Str', required => 1);
-has 'datasetid' => ( is => 'ro', isa => 'Num' );
+has 'datasetid' => ( is => 'ro', isa => 'Num');
 
 # Can't override new() with Moose, so use 'BUILD' which is like a new() postprocessing
 sub BUILD {
@@ -21,6 +21,7 @@ sub BUILD {
     my $account = $cfg->param('account');
     my $pass = $cfg->param('pass');
     my $host = $cfg->param('host');
+    my $port = $cfg->param('port');
 
     # Open a conection to the mcr_metabase database. The 'quote_names' option causes table
     # names and columns to be quoted in any SQL that DBIC creates. This is necessary if the
@@ -28,16 +29,16 @@ sub BUILD {
     # query with mixed case names, it will 'case_fold' them to lower case, so the names in the
     # SQL won't match the Postgresql names and the query will fail.
     # Note: export DBIC_TRACE=1 to have DBIC print out the SQL that it generates
-    if ($self->databaseName eq "mcr_metabase") {
-        use mcr_metabase::Schema;
-        $self->schema(mcr_metabase::Schema->connect('dbi:Pg:dbname="mcr_metabase";host=' . $host, $account, $pass,
-           { on_connect_do => ['SET search_path TO mb2eml, public']}), { quote_names => 1 });
-    }
-    else {
-        use sbc_metabase::Schema;
-        $self->schema(sbc_metabase::Schema->connect('dbi:Pg:dbname="sbc_metabase";host='. $host, $account, $pass,
-          { on_connect_do => ['SET search_path TO mb2eml, public']}, { quote_names => 1 }));
-    }
+
+    # The database to use is specified at runtime, but it is necessary to import the Perl module
+    # that contains the on-disk database schema. Because this must be done at runtime, the
+    # 'require' statement is used instead of 'use'.
+    my $schema = $self->databaseName . "::Schema";
+    eval "require $schema";
+    $schema->import();
+    my $dbi = 'dbi:Pg:dbname=' . $self->databaseName . ';host='. $host . ';port=' . $port;
+    $self->schema($schema->connect($dbi, $account, $pass,
+        { on_connect_do => ['SET search_path TO mb2eml, public']}, { quote_names => 1 }));
 }
 
 sub DEMOLISH {
@@ -49,7 +50,7 @@ sub DEMOLISH {
     $self->schema->storage->disconnect();
 }
 
-sub getAbstract {
+sub searchAbstract {
     my $self = shift;
     my $datasetId = shift;
 
@@ -58,7 +59,7 @@ sub getAbstract {
 
 }
 
-sub getAccess {
+sub searchAccess {
     my $self = shift;
     my $datasetId = shift;
     my $entityId = shift;
@@ -72,17 +73,16 @@ sub getAccess {
     #return @accesses;
 }
 
-sub getAlternateIdentifier {
+sub searchAlternateIdentifier {
     my $self = shift;
     my $datasetId = shift;
     my $entityId = shift;
 
     # Return a single row, which is a hash of DBIC access methods named for the column that they access 
     return $self->schema->resultset('VwEmlAlternateidentifier')->search({ datasetid => $datasetId, entity_sort_order => $entityId })->single;
-
 }
 
-sub getAssociatedParties {
+sub searchAssociatedParties {
     my $self = shift;
     my $datasetId = shift;
     my @associatedParties = ();
@@ -104,7 +104,7 @@ sub getAssociatedParties {
     return \@associatedParties;
 }
 
-sub getAttributeList {
+sub searchAttributeList {
     my $self = shift;
     my $datasetId = shift;
     my $entityId = shift;
@@ -128,7 +128,7 @@ sub getAttributeList {
     return \@attributeList;
 }
 
-sub getContacts {
+sub searchContacts {
     my $self = shift;
     my $datasetId = shift;
     my @contacts = ();
@@ -146,7 +146,7 @@ sub getContacts {
     return \@contacts;
 }
 
-sub getCreators {
+sub searchCreators {
     my $self = shift;
     my $datasetId = shift;
     my @creators = ();
@@ -167,7 +167,23 @@ sub getCreators {
     return \@creators;
 }
 
-sub getDistribution {
+sub searchDatasetIds{
+    my $self = shift;
+    my @ids = ();
+
+    # Every dataset must have a title, so retrieve the ids from the title view.
+    my $rs = $self->schema->resultset('VwEmlTitle')->search({}, { order_by => { -asc => 'datasetid'}} );
+    
+    # Repackage the resultset as an array of rows, which is a more standard representaion,
+    # i.e. the user doesn't have to know how to use a DBIx resultset
+    while (my $id = $rs->next) {
+        push(@ids, $id->datasetid);
+    }
+
+    return \@ids;
+}
+
+sub searchDistribution {
     my $self = shift;
     my $datasetId = shift;
 
@@ -175,7 +191,7 @@ sub getDistribution {
     return $self->schema->resultset('VwEmlDistribution')->search({ datasetid => $datasetId})->single;
 }
 
-sub getEntities{
+sub searchEntities{
     my $self = shift;
     my $datasetId = shift;
     my @entities;
@@ -196,7 +212,7 @@ sub getEntities{
     return \@entities;
 }
 
-sub getGeographicCoverage {
+sub searchGeographicCoverage {
     my $self = shift;
     my $datasetId = shift;
     my $entityId = shift;
@@ -215,7 +231,7 @@ sub getGeographicCoverage {
     return \@geographicCoverage;
 }
 
-sub getIntellectualRights {
+sub searchIntellectualRights {
     my $self = shift;
     my $datasetId = shift;
 
@@ -223,7 +239,7 @@ sub getIntellectualRights {
     return $self->schema->resultset('VwEmlIntellectualrights')->search({ datasetid => $datasetId})->single;
 }
 
-sub getKeywords {
+sub searchKeywords {
     my $self = shift;
     my $datasetId = shift;
     my @keywords = ();
@@ -239,7 +255,7 @@ sub getKeywords {
     return \@keywords;
 }
 
-sub getLanguage {
+sub searchLanguage {
     my $self = shift;
     my $datasetId = shift;
 
@@ -247,7 +263,7 @@ sub getLanguage {
     return $self->schema->resultset('VwEmlLanguage')->search({ datasetid => $datasetId})->single;
 }
 
-sub getMethods {
+sub searchMethods {
     my $self = shift;
     my $datasetId = shift;
     my $entityId = shift;
@@ -267,7 +283,7 @@ sub getMethods {
     return \@methods;
 }
 
-sub getPhysical {
+sub searchPhysical {
     my $self = shift;
     my $datasetId = shift;
     my $entityId = shift;
@@ -277,7 +293,7 @@ sub getPhysical {
     return $self->schema->resultset('VwEmlPhysical')->search({ datasetid => $datasetId, sort_order => $entityId })->single;
 }
 
-sub getProject {
+sub searchProject {
     my $self = shift;
     my $datasetId = shift;
 
@@ -285,14 +301,14 @@ sub getProject {
     return $self->schema->resultset('VwEmlProject')->search({ datasetid => $datasetId })->single;
 }
 
-sub getPublisher {
+sub searchPublisher {
     my $self = shift;
     my $datasetId = shift;
 
     return $self->schema->resultset('VwEmlPublisher')->search({ datasetid => $datasetId })->single;
 }
 
-sub getTemporalCoverage {
+sub searchTemporalCoverage {
     my $self = shift;
     my $datasetId = shift;
     my $entityId = shift;
@@ -313,7 +329,7 @@ sub getTemporalCoverage {
     return \@temporalCoverage;
 }
 
-sub getTaxonomicCoverage {
+sub searchTaxonomicCoverage {
     my $self = shift;
     my $datasetId = shift;
     my $entityId = shift;
@@ -334,7 +350,7 @@ sub getTaxonomicCoverage {
     return \@taxonomicCoverage;
 }
 
-sub getTitle{
+sub searchTitle{
     my $self = shift;
     my $datasetId = shift;
 
@@ -342,7 +358,7 @@ sub getTitle{
     return $self->schema->resultset('VwEmlTitle')->search({ datasetid => $datasetId})->single;
 }
 
-sub getUnitList {
+sub searchUnitList {
     my $self = shift;
     my $datasetId = shift;
     my @unitList = ();
@@ -363,3 +379,243 @@ __PACKAGE__->meta->make_immutable;
 
 1;
 
+__END__
+
+=head1 NAME
+
+Metabase.pm - retrieve data from the Metabase database.
+
+=head1 SYNOPSIS
+
+    $metabase = MB2EML::Metabase->new({ databaseName => $self->databaseName});
+
+=head1 DESCRIPTION
+
+B<Metabase.pm> uses the DBIx package to query the Metabase database, providing an abstraction layer to the database
+so that higher level modules (e.g. EML.pm) don't require any details about the database, except for the name of the database
+and datasetId to query.
+
+B<Metabase.pm> is used internally by MB2EML.
+
+=head2 Database schema
+
+Metabase uses a static database schema when querying Metabase. This on-disk representation of the schema is created by the I<saveSchema.pl> script, which uses the 
+DBIx::Class::Schema::Loader module.
+
+=head1 METHODS
+
+=head2 getAbstract 
+
+=over 4
+
+=item Arguments: $datasetId, $entityId
+
+=item Return Value: DBIx::Class::Row
+
+=back
+
+=head2 getAccess 
+
+=over 4
+
+=item Arguments: $datasetId, $entityId
+
+=item Return Value: DBIx::Class::Row
+
+=back
+
+=head2 getAlternateIdentifier 
+
+=over 4
+
+=item Arguments: $datasetId, $entityId
+
+=item Return Value: DBIx::Class::Row
+
+=back
+
+=head2 getAssociatedParties 
+
+=over 4
+
+=item Arguments: $datasetId, $entityId
+
+=item Return Value: array reference to array of DBIx::Class::Row
+
+=back
+
+=head2 getAttributeList 
+
+=over 4
+
+=item Arguments: $datasetId, $entityId
+
+=item Return Value: array reference to array of DBIx::Class::Row
+
+=back
+
+=head2 getContacts 
+
+=over 4
+
+=item Arguments: $datasetId, $entityId
+
+=item Return Value: DBIx::Class::Row
+
+=back
+
+=head2 getCreators 
+
+=over 4
+
+=item Arguments: $datasetId, $entityId
+
+=item Return Value: array reference to array of DBIx::Class::Row
+
+=back
+
+=head2 getDistribution 
+
+=over 4
+
+=item Arguments: $datasetId, $entityId
+
+=item Return Value: DBIx::Class::Row
+
+=back
+
+=head2 getEntities
+
+=over 4
+
+=item Arguments: $datasetId, $entityId
+
+=item Return Value: array reference to array of DBIx::Class::Row
+
+=back
+
+=head2 getGeographicCoverage 
+
+=over 4
+
+=item Arguments: $datasetId, $entityId
+
+=item Return Value: array reference to array of DBIx::Class::Row
+
+=back
+
+=head2 getIntellectualRights 
+
+=over 4
+
+=item Arguments: $datasetId, $entityId
+
+=item Return Value: DBIx::Class::Row
+
+=back
+
+=head2 getKeywords 
+
+=over 4
+
+=item Arguments: $datasetId, $entityId
+
+=item Return Value: array reference to array of DBIx::Class::Row
+
+=back
+
+=head2 getLanguage 
+
+=over 4
+
+=item Arguments: $datasetId, $entityId
+
+=item Return Value: DBIx::Class::Row
+
+=back
+
+=head2 getMethods 
+
+=over 4
+
+=item Arguments: $datasetId, $entityId
+
+=item Return Value: array reference to array of DBIx::Class::Row
+
+=back
+
+=head2 getPhysical 
+
+=over 4
+
+=item Arguments: $datasetId, $entityId
+
+=item Return Value: DBIx::Class::Row
+
+=back
+
+=head2 getProject 
+
+=over 4
+
+=item Arguments: $datasetId, $entityId
+
+=item Return Value: DBIx::Class::Row
+
+=back
+
+=head2 getPublisher 
+
+=over 4
+
+=item Arguments: $datasetId, $entityId
+
+=item Return Value: DBIx::Class::Row
+
+=back
+
+=head2 getTemporalCoverage 
+
+=over 4
+
+=item Arguments: $datasetId, $entityId
+
+=item Return Value: array reference to array of DBIx::Class::Row
+
+=back
+
+=head2 getTaxonomicCoverage 
+
+=over 4
+
+=item Arguments: $datasetId, $entityId
+
+=item Return Value: array reference to array of DBIx::Class::Row
+
+=back
+
+=head2 getTitle
+
+=over 4
+
+=item Arguments: $datasetId, $entityId
+
+=item Return Value: DBIx::Class::Row
+
+=back
+
+=head2 getUnitList 
+
+=over 4
+
+=item Arguments: $datasetId, $entityId
+
+=item Return Value: array reference to array of DBIx::Class::Row
+
+=back
+
+=head1 AUTHOR
+
+Peter Slaughter "<pslaughter@msi.ucsb.edu>"
+
+=cut

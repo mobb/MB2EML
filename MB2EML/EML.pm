@@ -10,6 +10,7 @@ use XML::LibXML;
 #use LWP::Simple;
 use MB2EML::Metabase;
 
+# Attributes of the Metabase object
 has 'abstract'           => ( is => 'rw', isa => 'Object' );
 has 'access'             => ( is => 'rw', isa => 'Object' );
 has 'alternateIdentifier' => ( is => 'rw', isa => 'Object' );
@@ -96,7 +97,7 @@ sub BUILD {
     # the structure of the eml-dataset module (as all the structure is built here).
     my %dataset = ();
     $dataset{'abstract'} = $self->abstract;
-    $dataset{'access'} = $self->access;
+    $dataset{'access'} = $self->access->access;
     $dataset{'associatedParties'} = $self->associatedParties;
     $dataset{'contacts'} = $self->contacts;
     $dataset{'coverage'} = ( { 'geographiccoverage'  => $self->geographicCoverage,
@@ -125,7 +126,7 @@ sub DEMOLISH {
 sub getAbstract {
     my $self = shift;
 
-    my $abstract = $self->mb->getAbstract($self->datasetId);
+    my $abstract = $self->mb->searchAbstract($self->datasetId);
 
     return $abstract;
 }
@@ -134,14 +135,14 @@ sub getAccess{
     my $self = shift;
     my $entityId = shift;
 
-    return $self->mb->getAccess($self->datasetId, $entityId);
+    return $self->mb->searchAccess($self->datasetId, $entityId);
 }
 
 sub getAlternateIdentifier {
     my $self = shift;
     my $entityId = shift;
 
-    return $self->mb->getAlternateIdentifier($self->datasetId, $entityId);
+    return $self->mb->searchAlternateIdentifier($self->datasetId, $entityId);
 }
 
 sub getAttributeList {
@@ -150,7 +151,7 @@ sub getAttributeList {
     my $attribute;
     my $attributeListRef;
 
-    $attributeListRef = $self->mb->getAttributeList($self->datasetId, $entityId);
+    $attributeListRef = $self->mb->searchAttributeList($self->datasetId, $entityId);
 
     # Check each numeric type attribute and ensure that a unit value was specified,
     # e.g. a 'Temperature' attribute may have a numbertype 'real' with unit type 'celsius'.
@@ -162,7 +163,7 @@ sub getAttributeList {
         }
 
         # Check each attribute to see if it has a taxomicCoverage element, and if so, append it to that attribute.
-        my $taxonomicCoverageRef = $self->mb->getTaxonomicCoverage($self->datasetId, $entityId, $attribute->column_sort_order);
+        my $taxonomicCoverageRef = $self->mb->searchTaxonomicCoverage($self->datasetId, $entityId, $attribute->column_sort_order);
         # Check length of the returned list of tax. coverage
         if (scalar @{ $taxonomicCoverageRef } > 0) {
             $attribute->{'coverage'}->{'taxonomiccoverage'} = $taxonomicCoverageRef;
@@ -176,29 +177,29 @@ sub getAttributeList {
         $attribute->{'coverage'}->{'geographiccoverage'} = {};
         $attribute->{'coverage'}->{'temporalcoverage'} = {};
 
-        $attribute->{'methods'} = $self->mb->getMethods($self->datasetId, $entityId, $attribute->column_sort_order);
+        $attribute->{'methods'} = $self->mb->searchMethods($self->datasetId, $entityId, $attribute->column_sort_order);
     }
 
-    #return $self->mb->getAttributeList($self->datasetId, $entityId);
+    #return $self->mb->searchAttributeList($self->datasetId, $entityId);
     return $attributeListRef;
 }
 
 sub getAssociatedParties{
     my $self = shift;
 
-    return $self->mb->getAssociatedParties($self->datasetId);
+    return $self->mb->searchAssociatedParties($self->datasetId);
 }
 
 sub getContacts{
     my $self = shift;
 
-    return $self->mb->getContacts($self->datasetId);
+    return $self->mb->searchContacts($self->datasetId);
 }
 
 sub getCreators{
     my $self = shift;
 
-    return $self->mb->getCreators($self->datasetId);
+    return $self->mb->searchCreators($self->datasetId);
 }
 
 
@@ -206,13 +207,13 @@ sub getGeographicCoverage{
     my $self = shift;
     my $entityId = shift;
 
-    return $self->mb->getGeographicCoverage($self->datasetId, $entityId);
+    return $self->mb->searchGeographicCoverage($self->datasetId, $entityId);
 }
 
 sub getDistribution {
     my $self = shift;
 
-    my $distribution = $self->mb->getDistribution($self->datasetId);
+    my $distribution = $self->mb->searchDistribution($self->datasetId);
 
     return $distribution;
 }
@@ -220,13 +221,13 @@ sub getDistribution {
 sub getEntities{
     my $self = shift;
 
-    return $self->mb->getEntities($self->datasetId);
+    return $self->mb->searchEntities($self->datasetId);
 }
 
 sub getIntellectualRights {
     my $self = shift;
 
-    my $intellectualRights = $self->mb->getIntellectualRights ($self->datasetId);
+    my $intellectualRights = $self->mb->searchIntellectualRights ($self->datasetId);
 
     return $intellectualRights;
 }
@@ -234,13 +235,13 @@ sub getIntellectualRights {
 sub getKeywords{
     my $self = shift;
 
-    return $self->mb->getKeywords($self->datasetId);
+    return $self->mb->searchKeywords($self->datasetId);
 }
 
 sub getLanguage{
     my $self = shift;
 
-    my $language = $self->mb->getLanguage($self->datasetId);
+    my $language = $self->mb->searchLanguage($self->datasetId);
 
     return $language;
 }
@@ -253,20 +254,20 @@ sub getMethods {
     #my $method;
     #my @methods;
 
-    #@methods = $self->mb->getMethods($self->datasetId, $entityId);
+    #@methods = $self->mb->searchMethods($self->datasetId, $entityId);
 
     #for $method (@methods) {
     #    print "getMethods method: " . $method->methodstep . "\n";
     #}
 
-    return $self->mb->getMethods($self->datasetId, $entityId, $columnId);
+    return $self->mb->searchMethods($self->datasetId, $entityId, $columnId);
 }
 
 sub getPhysical{
     my $self = shift;
     my $entityId = shift;
 
-    my $language = $self->mb->getPhysical($self->datasetId, $entityId);
+    my $language = $self->mb->searchPhysical($self->datasetId, $entityId);
 
     return $language;
 }
@@ -274,7 +275,7 @@ sub getPhysical{
 sub getProject {
     my $self = shift;
 
-    my $project = $self->mb->getProject($self->datasetId);
+    my $project = $self->mb->searchProject($self->datasetId);
 
     return $project;
 }
@@ -282,7 +283,7 @@ sub getProject {
 sub getPublisher {
     my $self = shift;
 
-    my $publisher = $self->mb->getPublisher($self->datasetId);
+    my $publisher = $self->mb->searchPublisher($self->datasetId);
 
     return $publisher;
 }
@@ -292,7 +293,7 @@ sub getTaxonomicCoverage{
     my $entityId = shift;
     my $columnId = shift;
 
-    return $self->mb->getTaxonomicCoverage($self->datasetId, $entityId, $columnId);
+    return $self->mb->searchTaxonomicCoverage($self->datasetId, $entityId, $columnId);
 }
 
 sub getTemporalCoverage{
@@ -300,21 +301,19 @@ sub getTemporalCoverage{
     my $entityId = shift;
     my $columnId = shift;
 
-    return $self->mb->getTemporalCoverage($self->datasetId, $entityId, $columnId);
+    return $self->mb->searchTemporalCoverage($self->datasetId, $entityId, $columnId);
 }
 
 sub getTitle{
     my $self = shift;
 
-    my $title = $self->mb->getTitle($self->datasetId);
-
-    return $title;
+    return $self->mb->searchTitle($self->datasetId);
 }
 
 sub getUnitList {
     my $self = shift;
 
-    return $self->mb->getUnitList($self->datasetId);
+    return $self->mb->searchUnitList($self->datasetId);
 }
 
 sub writeXML {
@@ -350,6 +349,10 @@ sub writeXML {
     $tt->process($templateName, \%templateVars, \$output )
         || die $tt->error;
 
+    print STDERR "------------------------------------------------------------------------------------------------------------------------\n";
+    print STDERR "Command line: " . $0 . " " . join(' ', @ARGV) . "\n";
+    print STDERR "Database name: " . $self->databaseName . "\n";
+    print STDERR "Dataset Id: " . $self->datasetId . "\n\n";
     # Create an XML object from the string returned from the template engine. This
     # call will check for well-formedness.
     print STDERR "Creating EML document.\n", if $verbose;
@@ -404,11 +407,11 @@ sub writeXML {
         # Check if the EMLlocation parameter is a WEB URL. The EMLParser can't be run with a WEB URL as Java
         # can't be invoked remotely (unless Java RMI is implemented, which it is not for EMLParser).
         if ($EMLlocation =~ /^http:/) {
-            warn 'The config parameter "EMLlocation" is a HTTP URL. EMLlocation must be local to run the EMLParser.\n'
+            warn 'The config parameter "EMLlocation" is a web URL. EMLlocation must be a local directory to run EMLParser.'
         } else {
             print STDERR "Running EMLParser.\n", if $verbose;
             if (! defined $EMLlocation) {
-                print STDERR "Unable to run EML Parser because the location of the EML distribution is unknown.\n";
+                print STDERR "Unable to run EML Parser because the location of the EML distribution is unknown.";
             } else {
                 my $tmp = File::Temp->new();
                 my $filename = $tmp->filename;
@@ -442,64 +445,62 @@ __END__
 
 =head1 NAME
 
-MB2EML - export data from Metabase to the Ecological Metadata Language (EML)
+EML - construct an EML object and write out an EML document as XML
 
 =head1 SYNOPSIS
 
     my $eml = MB2EML::EML->new( { databaseName => $databaseName, datasetId => $datasetId } );
-    my $output = $eml->writeXML(validate => 1, runEMLParser => 1);
 
 =head1 DESCRIPTION
 
-The MB2EML module provides methods to 
+The MB2EML package reads data from the PostgreSQL Metabase database using B<MB2EML::Metabase> and writes out and Ecological Metadata
+Language documents. 
 
-The mb2eml-test.pl script runs regression tests for the MB2EML software package. 
+The Metabase 
+database schema was developed at the Georgia Costal Ecosystems LTER I<https://gce-lter.marsci.uga.edu/public/app/resources.asp?type=document&category=informatics&theme=Database%20schemas>
 
-These tests are run to verify that changes to the MB2EML software and templates have
-not introduced errors in the EML documents that MB2EML creates.
+=head2 Database schema
 
-=head2 Unit Tests
+MB2EML uses a I<static> database schema when querying Metabase. This on-disk representation of the schema is created by the I<saveSchema.pl> script, which uses the DBIx module.
 
-The first set of tests that are run are unit tests for each function of the 
-MB2EML/Metabase.pm module. Each function is run against a reference dataset.
+=head1 METHODS
 
-=head2 System Tests
-
-The second set of tests compare reference EML documents to newly created EML documents.
-The reference documents are created from the reference datasets and are stored as
-test data. When the tests are run, newly created documents are compared to the reference
-ones, and any differences between them are shown.
-
-=head2 Reference datasets
-
-In order to test if chagnes in the software or the database have not caused unintended changes
-to the EML docuemnts created, reference datasets are used. The reference datasets are only used
-for testing purposes and are only changed when testing requirements change. In contrast, production
-datasests can be changed at any time.
-
-Two reference datasets are used: 
+=head2 new
 
 =over 4
 
-=item * a dataset with a minimul number of EML elements that
-are used by our LTERs 
+=item Arguments: $databaseName, $datasetId
 
-=item * a dataset that has the full compliment of EML elements used by our LTERs.
+=item Return Value: an MB2EML::EML object
 
 =back
 
-The minimal dataset tests whether mb2eml works properly when certain EML data are not present, and the
-full document tests that mb2eml works properly when all data are present.
+$eml = MB2EML::EML->new( { databaseName => $databaseName, datasetId => $datasetId } );
 
-=head1 MAINTENANCE
+This object constructor takes two arguments, I<$databaseName> and I<$datasetId>. The argument I<$databaseName> is the name of the 
+PostgreSQL database containing the Metabase schema, and I<$datasetId> is the dataset identifier number of the dataset to query.
 
-If MB2EML is updated to write out new EML elements to the documents that it
-creates, then the tests should be updated to reflect this. A unit test should
-be added for any new routine added to Metabase.pm. Also, the reference datasets
-and documents should be updated with any new EML elements.
+=head2 writeXML
+
+=over 4
+
+=item Arguments: $validate, $runEMLParser, $verbose
+
+=item Return Value: No return value
+
+=back
+
+$output = $eml->writeXML(validate => $validate, runEMLParser => $runEMLParser, verbose => $verbose);
+
+Once the EML object is created, you can write it out to an XML document that conforms to the EML XML Schema.
+If the argument I<$validate> is true (i.e. '1'), then the EML document is validated using the EML XML Schema
+specified in the ./config/mb2eml.ini file. If I<$runEMLParser> is true, then the KNB I<runEMLParser> program
+will be run to perform further validation checks on the EML document. If I<$verbose> is true, then verbose
+information will be printed to stdout.
 
 =head1 AUTHOR
 
-Peter Slaughter "<peter@eri.ucsb.edu>"
+Peter Slaughter "<pslaughter@msi.ucsb.edu>"
 
 =cut
+
