@@ -28,12 +28,12 @@ __PACKAGE__->table("vw_eml_taxonomiccoverage");
   data_type: 'integer'
   is_nullable: 1
 
-=head2 entity_sort_order
+=head2 entity_position
 
   data_type: 'integer'
   is_nullable: 1
 
-=head2 column_sort_order
+=head2 attribute_position
 
   data_type: 'integer'
   is_nullable: 1
@@ -48,17 +48,17 @@ __PACKAGE__->table("vw_eml_taxonomiccoverage");
 __PACKAGE__->add_columns(
   "datasetid",
   { data_type => "integer", is_nullable => 1 },
-  "entity_sort_order",
+  "entity_position",
   { data_type => "integer", is_nullable => 1 },
-  "column_sort_order",
+  "attribute_position",
   { data_type => "integer", is_nullable => 1 },
   "taxonomiccoverage_xml",
   { data_type => "xml", is_nullable => 1 },
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-09-20 09:25:00
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Fbbyppk2JMIGths6cHhpFw
+# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-09-30 13:23:48
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:W0tBE/ZXrX4Ix/fJdu4Lcw
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

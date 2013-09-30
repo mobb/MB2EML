@@ -28,7 +28,7 @@ __PACKAGE__->table("vw_eml_physical");
   data_type: 'integer'
   is_nullable: 1
 
-=head2 sort_order
+=head2 entity_position
 
   data_type: 'integer'
   is_nullable: 1
@@ -107,12 +107,24 @@ __PACKAGE__->table("vw_eml_physical");
   data_type: 'text'
   is_nullable: 1
 
+=head2 onlinedescription
+
+  data_type: 'varchar'
+  is_nullable: 1
+  size: 500
+
+=head2 mediumname
+
+  data_type: 'varchar'
+  is_nullable: 1
+  size: 500
+
 =cut
 
 __PACKAGE__->add_columns(
   "datasetid",
   { data_type => "integer", is_nullable => 1 },
-  "sort_order",
+  "entity_position",
   { data_type => "integer", is_nullable => 1 },
   "entityname",
   { data_type => "varchar", is_nullable => 1, size => 100 },
@@ -144,11 +156,15 @@ __PACKAGE__->add_columns(
   { data_type => "char", is_nullable => 1, size => 1 },
   "url",
   { data_type => "text", is_nullable => 1 },
+  "onlinedescription",
+  { data_type => "varchar", is_nullable => 1, size => 500 },
+  "mediumname",
+  { data_type => "varchar", is_nullable => 1, size => 500 },
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-09-23 16:12:28
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:owtBR+L8hbk7a4BaegCmMg
+# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-09-30 13:23:47
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:krVC7qT8opsGHBJeuqzXRA
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

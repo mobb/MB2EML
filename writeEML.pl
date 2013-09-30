@@ -7,10 +7,8 @@ use MB2EML::EML;
 use MB2EML::Metabase;
 use XML::LibXML;
 
-# Default values for arguments
-my $databaseName = "sbc_metabase";
-my $datasetId    = '99999';
-
+my $databaseName;
+my $datasetId;
 my $eml;
 my $emlDoc;
 my $endId;

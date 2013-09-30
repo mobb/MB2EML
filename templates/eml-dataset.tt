@@ -59,7 +59,7 @@
         </creator>
         [%- END %] [%# end FOREACH creator #%]
         [%- FOREACH associatedParty = dataset.associatedParties %]
-        <associatedParty id="[% associatedParty.nameid %]" scope="document">
+        <associatedParty id="[% associatedParty.nameid %]">
             <individualName>
                 [%- IF associatedParty.givenname != "" %]
                 <givenName>[% associatedParty.givenname %]</givenName>

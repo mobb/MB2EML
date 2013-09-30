@@ -3,34 +3,40 @@
             [% END %]
             <entityName>[% entity.entityname %]</entityName>
             <entityDescription>[% entity.entitydescription %]</entityDescription> 
-            <physical scope="document">
-                <objectName>[% entity.physical.objectname %]</objectName>
-                <size unit="[% entity.physical.unit %]">[% entity.physical.size %]</size>
-                <characterEncoding>[% entity.physical.characterencoding %]</characterEncoding>
+            [%- FOREACH physical = entity.physical %]
+            <physical>
+                <objectName>[% physical.objectname %]</objectName>
+                <size unit="[% physical.unit %]">[% entity.physical.size %]</size>
+                <characterEncoding>[% physical.characterencoding %]</characterEncoding>
                 <dataFormat>
                     <textFormat>
-                        <numHeaderLines>[% entity.physical.numheaderlines %]</numHeaderLines>
-                        <numFooterLines>[% entity.physical.numfooterlines %]</numFooterLines>
-                        <recordDelimiter>[% entity.physical.recorddelimiter %]</recordDelimiter>
-                        <attributeOrientation>[% entity.physical.attributeorientation %]</attributeOrientation>
+                        <numHeaderLines>[% physical.numheaderlines %]</numHeaderLines>
+                        <numFooterLines>[% physical.numfooterlines %]</numFooterLines>
+                        <recordDelimiter>[% physical.recorddelimiter %]</recordDelimiter>
+                        <attributeOrientation>[% physical.attributeorientation %]</attributeOrientation>
                         <simpleDelimited>
-                            <fieldDelimiter>[% entity.physical.fielddelimiter %]</fieldDelimiter>
-                            [% IF entity.physical.collapsedelimiter != "" %]
-                            <collapseDelimiters>[% entity.physical.collapsedelimiter %]</collapseDelimiters>
+                            <fieldDelimiter>[% physical.fielddelimiter %]</fieldDelimiter>
+                            <collapseDelimiters>[% physical.collapsedelimiter %]</collapseDelimiters>
+                            [% IF physical.quotecharacter != "" %]
+                            <quoteCharacter>[% physical.quotecharacter %]</quoteCharacter>
                             [% END %]
-                            <quoteCharacter>[% entity.physical.quotecharacter %]</quoteCharacter>
                         </simpleDelimited>
                     </textFormat>
                 </dataFormat>
                 <distribution>
+                    [% IF physical.url != "" %]
                     <online>
-                        <url function="download">[% entity.physical.url %]</url>
+                        <url function="download">[% physical.url %]</url>
                     </online>
-                    <access authSystem="knb" order="allowFirst" scope="document">
-                        [% entity.access.access %]
-                    </access>
+                    [% ELSIF physical.mediumname != "" %]
+                    <offline>
+                        <mediumName>[% physical.mediumname %]</mediumName>
+                    </offline>
+                    [%- END %]
+                    [%- INCLUDE './templates/eml-access.tt' access = entity.access %]
                 </distribution>
             </physical>
+            [%- END %]
             [%- INCLUDE './templates/eml-coverage.tt' coverage = entity.coverage %]
             [%- INCLUDE './templates/eml-methods.tt' methods = entity.methods %]
             <additionalInfo>***** TBD *****</additionalInfo>

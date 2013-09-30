@@ -17,7 +17,7 @@ sub BUILD {
 
     # Load config file
     my $cfg = new Config::Simple('config/mb2eml.ini');
-    # get PostgreSQL account and pass
+    # search PostgreSQL account and pass
     my $account = $cfg->param('account');
     my $pass = $cfg->param('pass');
     my $host = $cfg->param('host');
@@ -66,11 +66,7 @@ sub searchAccess {
     my @accesses = ();
 
     # resultset returns an iterator
-    return $self->schema->resultset('VwEmlAccess')->search({ datasetid => $datasetId, entity_sort_order => $entityId })->single;
-    
-    # Put QC checking here
-    # i.e. nulls for specific fields - Gastil want's a one liner
-    #return @accesses;
+    return $self->schema->resultset('VwEmlAccess')->search({ datasetid => $datasetId, entity_position => $entityId })->single;
 }
 
 sub searchAlternateIdentifier {
@@ -79,7 +75,7 @@ sub searchAlternateIdentifier {
     my $entityId = shift;
 
     # Return a single row, which is a hash of DBIC access methods named for the column that they access 
-    return $self->schema->resultset('VwEmlAlternateidentifier')->search({ datasetid => $datasetId, entity_sort_order => $entityId })->single;
+    return $self->schema->resultset('VwEmlAlternateidentifier')->search({ datasetid => $datasetId, entity_position => $entityId })->single;
 }
 
 sub searchAssociatedParties {
@@ -113,11 +109,11 @@ sub searchAttributeList {
 
     # resultset returns an iterator
     # Retrieve attributes for a particular dataset and entity, ordered by entity sort order
-    my $rs = $self->schema->resultset('VwEmlAttributelist')->search({ datasetid => $datasetId, entity_sort_order => $entityId }, { order_by => { -asc => 'column_sort_order' }});
+    my $rs = $self->schema->resultset('VwEmlAttributelist')->search({ datasetid => $datasetId, entity_position => $entityId }, { order_by => { -asc => 'column_position' }});
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
     # i.e. the user doesn't have to know how to use a DBIx resultset
-    # Each row is a hash that used the column names as the keys.
+    # Each row is a DBIx ResultRow object that used the column names as the accesors.
     while (my $attribute = $rs->next) {
         push(@attributeList, $attribute);
     }
@@ -197,7 +193,7 @@ sub searchEntities{
     my @entities;
 
     # resultset returns an iterator
-    my $rs = $self->schema->resultset('VwEmlEntity')->search({ datasetid => $datasetId });
+    my $rs = $self->schema->resultset('VwEmlEntity')->search({ datasetid => $datasetId }, { order_by => { -asc => 'entity_position' }});
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
     # i.e. the user doesn't have to know how to use a DBIx resultset
@@ -216,9 +212,11 @@ sub searchGeographicCoverage {
     my $self = shift;
     my $datasetId = shift;
     my $entityId = shift;
+    my $columnId = shift;
     my @geographicCoverage = ();
 
-    my $rs = $self->schema->resultset('VwEmlGeographiccoverage')->search({ datasetid => $datasetId, entity_sort_order => $entityId }, { order_by => { -asc => 'column_sort_order' }});
+    my $rs = $self->schema->resultset('VwEmlGeographiccoverage')->search({ datasetid => $datasetId, entity_position => $entityId, attribute_position => $columnId }, 
+                                                                         { order_by => { -asc => [qw/entity_position attribute_position geocoverage_sort_order/] }});
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
     # i.e. the user doesn't have to know how to use a DBIx resultset
@@ -270,7 +268,8 @@ sub searchMethods {
     my $columnId = shift;
     my @methods;
 
-    my $rs = $self->schema->resultset('VwEmlMethods')->search({ datasetid => $datasetId, entity_sort_order => $entityId, column_sort_order => $columnId }, { order_by => { -asc => 'column_sort_order' }});
+    my $rs = $self->schema->resultset('VwEmlMethods')->search({ datasetid => $datasetId, entity_position => $entityId, column_position => $columnId }, 
+                                                              { order_by => { -asc => [qw/entity_position column_position methodstep_sort_order/] }});
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
     # i.e. the user doesn't have to know how to use a DBIx resultset
@@ -283,14 +282,29 @@ sub searchMethods {
     return \@methods;
 }
 
+sub searchPackageId {
+    my $self = shift;
+    my $datasetId = shift;
+
+    # Retrieve package identifier for a particular dataset
+    return $self->schema->resultset('VwEmlPackageid')->search({ DataSetID => $datasetId })->single;
+}
+
 sub searchPhysical {
     my $self = shift;
     my $datasetId = shift;
     my $entityId = shift;
+    my @physical = ();
 
     # resultset returns resultSet object
     # Retrieve physical format description for a particular dataset and entity
-    return $self->schema->resultset('VwEmlPhysical')->search({ datasetid => $datasetId, sort_order => $entityId })->single;
+    my $rs = $self->schema->resultset('VwEmlPhysical')->search({ datasetid => $datasetId, entity_position => $entityId });
+
+    while (my $p = $rs->next) {
+        push(@physical, $p);
+    }
+
+    return \@physical;
 }
 
 sub searchProject {
@@ -316,7 +330,8 @@ sub searchTemporalCoverage {
     my @temporalCoverage = ();
 
     #print "$entityId , $datasetId \n";
-    my $rs = $self->schema->resultset('VwEmlTemporalcoverage')->search({ datasetid => $datasetId, entity_sort_order => $entityId, column_sort_order => $columnId }, { order_by => { -asc => 'column_sort_order' }});
+    my $rs = $self->schema->resultset('VwEmlTemporalcoverage')->search({ datasetid => $datasetId, entity_position => $entityId, attribute_position => $columnId }, 
+                                                                       { order_by => { -asc => [qw/entity_position attribute_position temporalcoverage_sort_order/] }});
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
     # i.e. the user doesn't have to know how to use a DBIx resultset
@@ -337,7 +352,8 @@ sub searchTaxonomicCoverage {
     my @taxonomicCoverage = ();
 
     #print "$entityId , $datasetId \n";
-    my $rs = $self->schema->resultset('VwEmlTaxonomiccoverage')->search({ datasetid => $datasetId, entity_sort_order => $entityId, column_sort_order => $columnId }, { order_by => { -asc => 'column_sort_order' }});
+    my $rs = $self->schema->resultset('VwEmlTaxonomiccoverage')->search({ datasetid => $datasetId, entity_position => $entityId, attribute_position => $columnId }, 
+                                                                        { order_by => { -asc => [qw /entity_position attribute_position/] }});
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
     # i.e. the user doesn't have to know how to use a DBIx resultset
@@ -404,7 +420,7 @@ DBIx::Class::Schema::Loader module.
 
 =head1 METHODS
 
-=head2 getAbstract 
+=head2 searchAbstract 
 
 =over 4
 
@@ -414,7 +430,7 @@ DBIx::Class::Schema::Loader module.
 
 =back
 
-=head2 getAccess 
+=head2 searchAccess 
 
 =over 4
 
@@ -424,7 +440,7 @@ DBIx::Class::Schema::Loader module.
 
 =back
 
-=head2 getAlternateIdentifier 
+=head2 searchAlternateIdentifier 
 
 =over 4
 
@@ -434,7 +450,7 @@ DBIx::Class::Schema::Loader module.
 
 =back
 
-=head2 getAssociatedParties 
+=head2 searchAssociatedParties 
 
 =over 4
 
@@ -444,7 +460,7 @@ DBIx::Class::Schema::Loader module.
 
 =back
 
-=head2 getAttributeList 
+=head2 searchAttributeList 
 
 =over 4
 
@@ -454,7 +470,7 @@ DBIx::Class::Schema::Loader module.
 
 =back
 
-=head2 getContacts 
+=head2 searchContacts 
 
 =over 4
 
@@ -464,7 +480,7 @@ DBIx::Class::Schema::Loader module.
 
 =back
 
-=head2 getCreators 
+=head2 searchCreators 
 
 =over 4
 
@@ -474,7 +490,7 @@ DBIx::Class::Schema::Loader module.
 
 =back
 
-=head2 getDistribution 
+=head2 searchDistribution 
 
 =over 4
 
@@ -484,7 +500,7 @@ DBIx::Class::Schema::Loader module.
 
 =back
 
-=head2 getEntities
+=head2 searchEntities
 
 =over 4
 
@@ -494,7 +510,7 @@ DBIx::Class::Schema::Loader module.
 
 =back
 
-=head2 getGeographicCoverage 
+=head2 searchGeographicCoverage 
 
 =over 4
 
@@ -504,7 +520,7 @@ DBIx::Class::Schema::Loader module.
 
 =back
 
-=head2 getIntellectualRights 
+=head2 searchIntellectualRights 
 
 =over 4
 
@@ -514,7 +530,7 @@ DBIx::Class::Schema::Loader module.
 
 =back
 
-=head2 getKeywords 
+=head2 searchKeywords 
 
 =over 4
 
@@ -524,7 +540,7 @@ DBIx::Class::Schema::Loader module.
 
 =back
 
-=head2 getLanguage 
+=head2 searchLanguage 
 
 =over 4
 
@@ -534,7 +550,7 @@ DBIx::Class::Schema::Loader module.
 
 =back
 
-=head2 getMethods 
+=head2 searchMethods 
 
 =over 4
 
@@ -544,7 +560,7 @@ DBIx::Class::Schema::Loader module.
 
 =back
 
-=head2 getPhysical 
+=head2 searchPhysical 
 
 =over 4
 
@@ -554,7 +570,27 @@ DBIx::Class::Schema::Loader module.
 
 =back
 
-=head2 getProject 
+=head2 searchPackageId
+
+=over 4
+
+=item Arguments: $datasetId
+
+=item Return Value: DBIx::Class::Row
+
+=back
+
+=head2 searchProject 
+
+=over 4
+
+=item Arguments: $datasetId
+
+=item Return Value: DBIx::Class::Row
+
+=back
+
+=head2 searchPublisher 
 
 =over 4
 
@@ -564,17 +600,7 @@ DBIx::Class::Schema::Loader module.
 
 =back
 
-=head2 getPublisher 
-
-=over 4
-
-=item Arguments: $datasetId, $entityId
-
-=item Return Value: DBIx::Class::Row
-
-=back
-
-=head2 getTemporalCoverage 
+=head2 searchTemporalCoverage 
 
 =over 4
 
@@ -584,7 +610,7 @@ DBIx::Class::Schema::Loader module.
 
 =back
 
-=head2 getTaxonomicCoverage 
+=head2 searchTaxonomicCoverage 
 
 =over 4
 
@@ -594,7 +620,7 @@ DBIx::Class::Schema::Loader module.
 
 =back
 
-=head2 getTitle
+=head2 searchTitle
 
 =over 4
 
@@ -604,7 +630,7 @@ DBIx::Class::Schema::Loader module.
 
 =back
 
-=head2 getUnitList 
+=head2 searchUnitList 
 
 =over 4
 

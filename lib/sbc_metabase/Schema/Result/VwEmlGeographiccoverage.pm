@@ -28,12 +28,17 @@ __PACKAGE__->table("vw_eml_geographiccoverage");
   data_type: 'integer'
   is_nullable: 1
 
-=head2 entity_sort_order
+=head2 entity_position
 
   data_type: 'integer'
   is_nullable: 1
 
-=head2 column_sort_order
+=head2 attribute_position
+
+  data_type: 'integer'
+  is_nullable: 1
+
+=head2 geocoverage_sort_order
 
   data_type: 'integer'
   is_nullable: 1
@@ -42,7 +47,7 @@ __PACKAGE__->table("vw_eml_geographiccoverage");
 
   data_type: 'varchar'
   is_nullable: 1
-  size: 30
+  size: 50
 
 =head2 geographicdescription
 
@@ -69,17 +74,30 @@ __PACKAGE__->table("vw_eml_geographiccoverage");
   data_type: 'double precision'
   is_nullable: 1
 
+=head2 gring
+
+  data_type: 'text'
+  is_nullable: 1
+  original: {data_type => "varchar"}
+
+=head2 is_ref
+
+  data_type: 'boolean'
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
   "datasetid",
   { data_type => "integer", is_nullable => 1 },
-  "entity_sort_order",
+  "entity_position",
   { data_type => "integer", is_nullable => 1 },
-  "column_sort_order",
+  "attribute_position",
+  { data_type => "integer", is_nullable => 1 },
+  "geocoverage_sort_order",
   { data_type => "integer", is_nullable => 1 },
   "id",
-  { data_type => "varchar", is_nullable => 1, size => 30 },
+  { data_type => "varchar", is_nullable => 1, size => 50 },
   "geographicdescription",
   { data_type => "text", is_nullable => 1 },
   "northboundingcoordinate",
@@ -90,11 +108,19 @@ __PACKAGE__->add_columns(
   { data_type => "double precision", is_nullable => 1 },
   "westboundingcoordinate",
   { data_type => "double precision", is_nullable => 1 },
+  "gring",
+  {
+    data_type   => "text",
+    is_nullable => 1,
+    original    => { data_type => "varchar" },
+  },
+  "is_ref",
+  { data_type => "boolean", is_nullable => 1 },
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-09-20 09:25:00
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:cCxN29LBMh4apzau0xwwaw
+# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-09-30 13:23:45
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:/GgsvyMlsOU1/aXacTBm/w
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

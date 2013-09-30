@@ -28,44 +28,63 @@ __PACKAGE__->table("vw_eml_temporalcoverage");
   data_type: 'integer'
   is_nullable: 1
 
-=head2 entity_sort_order
+=head2 entity_position
 
   data_type: 'integer'
   is_nullable: 1
 
-=head2 column_sort_order
+=head2 attribute_position
+
+  data_type: 'integer'
+  is_nullable: 1
+
+=head2 temporalcoverage_sort_order
 
   data_type: 'integer'
   is_nullable: 1
 
 =head2 begindate
 
-  data_type: 'date'
+  data_type: 'text'
   is_nullable: 1
 
 =head2 enddate
 
-  data_type: 'date'
+  data_type: 'text'
   is_nullable: 1
+
+=head2 singledatetime
+
+  data_type: 'text'
+  is_nullable: 1
+  original: {data_type => "varchar"}
 
 =cut
 
 __PACKAGE__->add_columns(
   "datasetid",
   { data_type => "integer", is_nullable => 1 },
-  "entity_sort_order",
+  "entity_position",
   { data_type => "integer", is_nullable => 1 },
-  "column_sort_order",
+  "attribute_position",
+  { data_type => "integer", is_nullable => 1 },
+  "temporalcoverage_sort_order",
   { data_type => "integer", is_nullable => 1 },
   "begindate",
-  { data_type => "date", is_nullable => 1 },
+  { data_type => "text", is_nullable => 1 },
   "enddate",
-  { data_type => "date", is_nullable => 1 },
+  { data_type => "text", is_nullable => 1 },
+  "singledatetime",
+  {
+    data_type   => "text",
+    is_nullable => 1,
+    original    => { data_type => "varchar" },
+  },
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-09-20 09:24:55
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:OVAIdxFdfXdKBuzD/Y89nQ
+# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-09-30 13:21:30
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:sDvpOvbytGNUmZmHsNUWWQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
