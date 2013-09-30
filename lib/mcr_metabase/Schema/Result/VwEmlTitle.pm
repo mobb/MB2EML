@@ -38,16 +38,15 @@ __PACKAGE__->table("vw_eml_title");
 
 __PACKAGE__->add_columns(
   "datasetid",
-  { data_type => "integer", is_nullable => 0 },
+  { data_type => "integer", is_nullable => 1 },
   "title",
   { data_type => "varchar", is_nullable => 1, size => 300 },
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-07-22 14:22:22
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:TXeN5pXELWDZAvNeA+dTRA
+# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-09-30 13:21:30
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:l+8eTNVeO4qTr0HiBxeE6Q
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
-__PACKAGE__->set_primary_key(qw/ datasetid /);
 1;

@@ -37,16 +37,15 @@ __PACKAGE__->table("vw_eml_publisher");
 
 __PACKAGE__->add_columns(
   "datasetid",
-  { data_type => "integer", is_nullable => 0 },
+  { data_type => "integer", is_nullable => 1 },
   "publisher",
   { data_type => "xml", is_nullable => 1 },
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-07-22 14:24:11
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:vUF53/yk6dinh8Dxb3NA8g
+# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-09-30 13:23:48
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:L7a0+knmUuhJZ/nGV+BTAQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
-__PACKAGE__->set_primary_key(qw/ datasetid /);
 1;

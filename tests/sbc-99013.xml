@@ -1,0 +1,652 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eml:eml xmlns:eml="eml://ecoinformatics.org/eml-2.1.1" xmlns:stmml="http://www.xml-cml.org/schema/stm#ml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" packageId="knb-lter-sbc.99013.0" scope="system" system="knb" xsi:schemaLocation="eml://ecoinformatics.org/eml-2.1.1 http://sbc.lternet.edu/external/InformationManagement//EML_211_schema/eml.xsd">
+  <access authSystem="knb" order="allowFirst" scope="document">
+    <allow>
+      <principal>uid=SBC,o=lter,dc=ecoinformatics,dc=org</principal>
+      <permission>all</permission>
+    </allow>
+    <allow>
+      <principal>public</principal>
+      <permission>read</permission>
+    </allow>
+  </access>
+  <dataset id="99013">
+    <title>SBC LTER: TEST: Water temperature at the bottom</title>
+    <creator id="dreed">
+      <individualName>
+        <givenName>Daniel C</givenName>
+        <surName>Reed</surName>
+      </individualName>
+      <address>
+        <deliveryPoint>Marine Science Institute</deliveryPoint>
+        <deliveryPoint>University of California</deliveryPoint>
+        <city>Santa Barbara</city>
+        <administrativeArea>CA</administrativeArea>
+        <country>US</country>
+      </address>
+      <electronicMailAddress>dan.reed@lifesci.ucsb.edu</electronicMailAddress>
+    </creator>
+    <associatedParty id="sharrer" scope="document">
+      <individualName>
+        <givenName>Shannon</givenName>
+        <surName>Harrer</surName>
+      </individualName>
+      <address scope="document">
+        <deliveryPoint>Marine Science Institute</deliveryPoint>
+        <deliveryPoint>University of California</deliveryPoint>
+        <city>Santa Barbara</city>
+        <postalCode>93106-6150</postalCode>
+        <country>US</country>
+      </address>
+      <phone phonetype="voice">805-893-7295</phone>
+      <electronicMailAddress>harrer@msi.ucsb.edu</electronicMailAddress>
+      <role>data processing</role>
+    </associatedParty>
+    <language>english</language>
+    <abstract>
+      <para>this is a test dataset</para>
+    </abstract>
+    <keywordSet>
+      <keyword>Water Temperature</keyword>
+      <keywordThesaurus>Global Change Master Directory (GCMD) v6.0.0.0.0</keywordThesaurus>
+    </keywordSet>
+    <keywordSet>
+      <keyword>Marine</keyword>
+      <keyword>Temperature</keyword>
+      <keywordThesaurus>Knowledge Network for Biocomplexity</keywordThesaurus>
+    </keywordSet>
+    <keywordSet>
+      <keyword>temperature</keyword>
+      <keywordThesaurus>LTER Controlled Vocabulary v1</keywordThesaurus>
+    </keywordSet>
+    <keywordSet>
+      <keyword>Carpinteria</keyword>
+      <keyword>Goleta Bay</keyword>
+      <keyword>Isla Vista</keyword>
+      <keyword>Mohawk</keyword>
+      <keyword>Naples</keyword>
+      <keyword>Santa Cruz Island, Diablo</keyword>
+      <keyword>Santa Cruz Island, Twin Harbor West</keyword>
+      <keyword>Arroyo Burro</keyword>
+      <keyword>Arroyo Hondo</keyword>
+      <keyword>Arroyo Quemado</keyword>
+      <keyword>Bullito</keyword>
+      <keywordThesaurus>Santa Barbara Coastal LTER Places</keywordThesaurus>
+    </keywordSet>
+    <keywordSet>
+      <keyword>LTER</keyword>
+      <keyword>Santa Barbara Coastal</keyword>
+      <keyword>Ocean_biogeochemistry</keyword>
+    </keywordSet>
+    <intellectualRights>
+      <para>
+        <itemizedlist>
+          <listitem>
+            <para>The user of SBC LTER data agrees to contact the data owner (i.e., the SBC  investigator responsible for data) prior to publishing. Where appropriate, users whose projects are integrally dependent on SBC LTER 
+data are encouraged to consider   collaboration and/or co-authorship with the data owner.</para>
+          </listitem>
+          <listitem>
+            <para>The user agrees to cite SBC LTER in all publications that use SBC LTER data by   including the following statement in the Acknowledgments: "Data were provided by the  Santa Barbara Coastal LTER, funded by the US National Science Foundation (OCE-1232779)".</para>
+          </listitem>
+          <listitem>
+            <para>The user agrees to send the full citation of any publication using SBC LTER data   to sbclter@msi.ucsb.edu</para>
+          </listitem>
+          <listitem>
+            <para>Users are prohibited from selling or redistributing any data provided by SBC  LTER.</para>
+          </listitem>
+          <listitem>
+            <para>Extensive efforts are made to ensure that online data are accurate and up to date,  but SBC LTER will not take responsibility for any errors that may exist.</para>
+          </listitem>
+          <listitem>
+            <para>The user agrees also to adhere to the Data Use Agreement of the Long Term   Ecological Research Network.</para>
+          </listitem>
+          <listitem>
+            <para>Any violation of the terms of this agreement will result in immediate forfeiture   of the data and loss of access privileges to other SBC LTER data sets.</para>
+          </listitem>
+          <listitem>
+            <para>SBC LTER is committed to protecting the privacy and accuracy of your confidential  information. See our Privacy Policy for more information.</para>
+          </listitem>
+        </itemizedlist>
+      </para>
+    </intellectualRights>
+    <distribution>
+      <online>
+        <url function="information">http://sbc.lternet.edu/</url>
+      </online>
+    </distribution>
+    <coverage scope="document">
+      <geographicCoverage id="ABUR">
+        <geographicDescription>Arroyo Burro Reef: Arroyo Burro Reef is located on the Santa Barbara Channel near the mouth of Arroyo Burro Creek and Beach. Depth ranges from 5.4 to 7 meters.</geographicDescription>
+        <boundingCoordinates>
+          <westBoundingCoordinate>-119.744591</westBoundingCoordinate>
+          <eastBoundingCoordinate>-119.744591</eastBoundingCoordinate>
+          <northBoundingCoordinate>34.4002762</northBoundingCoordinate>
+          <southBoundingCoordinate>34.4002762</southBoundingCoordinate>
+        </boundingCoordinates>
+      </geographicCoverage>
+      <geographicCoverage id="AHND">
+        <geographicDescription>Arroyo Hondo Reef: Arroyo Hondo Reef is located on the Santa Barbara Channel near the east end of Gaviota State Park, CA. Depth ranges from -4.3m to -6.6 meters.</geographicDescription>
+        <boundingCoordinates>
+          <westBoundingCoordinate>-120.142616</westBoundingCoordinate>
+          <eastBoundingCoordinate>-120.142616</eastBoundingCoordinate>
+          <northBoundingCoordinate>34.471817</northBoundingCoordinate>
+          <southBoundingCoordinate>34.471817</southBoundingCoordinate>
+        </boundingCoordinates>
+      </geographicCoverage>
+      <geographicCoverage id="AQUE">
+        <geographicDescription>Arroyo Quemado Reef: Arroyo Quemado Reef is located on the Santa Barbara Channel near the mouth of Arroyo Quemada Creek, Santa Barbara County, CA. Depth ranges from -5.4 to -10.7 meters.</geographicDescription>
+        <boundingCoordinates>
+          <westBoundingCoordinate>-120.119049</westBoundingCoordinate>
+          <eastBoundingCoordinate>-120.119049</eastBoundingCoordinate>
+          <northBoundingCoordinate>34.4677505</northBoundingCoordinate>
+          <southBoundingCoordinate>34.4677505</southBoundingCoordinate>
+        </boundingCoordinates>
+      </geographicCoverage>
+      <geographicCoverage id="BULL">
+        <geographicDescription>Bullito Reef: Bullito Reef is located on the Santa Barbara Channel between Gaviota and Pt. Conception, CA. Depth ranges from -5.5 to -7.3 meters.</geographicDescription>
+        <boundingCoordinates>
+          <westBoundingCoordinate>-120.333488</westBoundingCoordinate>
+          <eastBoundingCoordinate>-120.333488</eastBoundingCoordinate>
+          <northBoundingCoordinate>34.4585037</northBoundingCoordinate>
+          <southBoundingCoordinate>34.4585037</southBoundingCoordinate>
+        </boundingCoordinates>
+      </geographicCoverage>
+      <geographicCoverage id="CARP">
+        <geographicDescription>Carpinteria Reef: Carpinteria Reef is located on the Santa Barbara Channel offshore of the Carpinteria Salt Marsh. Depth range is from -2.2 to -8.8 meters.</geographicDescription>
+        <boundingCoordinates>
+          <westBoundingCoordinate>-119.541687</westBoundingCoordinate>
+          <eastBoundingCoordinate>-119.541687</eastBoundingCoordinate>
+          <northBoundingCoordinate>34.3916321</northBoundingCoordinate>
+          <southBoundingCoordinate>34.3916321</southBoundingCoordinate>
+        </boundingCoordinates>
+      </geographicCoverage>
+      <geographicCoverage id="GOLB">
+        <geographicDescription>Goleta Bay: Goleta Bay is located on the Santa Barbara Channel east of Goleta Pier. Depth range is -4.2 to -5 meters. check lat/lon. this was found with abur!</geographicDescription>
+        <boundingCoordinates>
+          <westBoundingCoordinate>-119.822098</westBoundingCoordinate>
+          <eastBoundingCoordinate>-119.822098</eastBoundingCoordinate>
+          <northBoundingCoordinate>34.4137154</northBoundingCoordinate>
+          <southBoundingCoordinate>34.4137154</southBoundingCoordinate>
+        </boundingCoordinates>
+      </geographicCoverage>
+      <geographicCoverage id="IVEE">
+        <geographicDescription>Isla Vista Reef: Isla Vista (IV) Reef is located on the Santa Barbara Channel near the University of California Santa Barbara, CA. Depth range is from -8.2 to -8.8 meters.</geographicDescription>
+        <boundingCoordinates>
+          <westBoundingCoordinate>-119.857552</westBoundingCoordinate>
+          <eastBoundingCoordinate>-119.857552</eastBoundingCoordinate>
+          <northBoundingCoordinate>34.4027824</northBoundingCoordinate>
+          <southBoundingCoordinate>34.4027824</southBoundingCoordinate>
+        </boundingCoordinates>
+      </geographicCoverage>
+      <geographicCoverage id="MOHK">
+        <geographicDescription>Mohawk Reef: Mohawk Reef is located on the Santa Barbara Channel, east of Arroyo Burro Beach, Santa Barbara, CA. Depth range from 4.5m to 6.0 m.</geographicDescription>
+        <boundingCoordinates>
+          <westBoundingCoordinate>-119.729568</westBoundingCoordinate>
+          <eastBoundingCoordinate>-119.729568</eastBoundingCoordinate>
+          <northBoundingCoordinate>34.3940697</northBoundingCoordinate>
+          <southBoundingCoordinate>34.3940697</southBoundingCoordinate>
+        </boundingCoordinates>
+      </geographicCoverage>
+      <geographicCoverage id="NAPL">
+        <geographicDescription>Naples Reef: Naples Reef is located on the Santa Barbara Channel near the community of Naples and Dos Pueblos Canyon, Santa Barbara County, CA. Depth ranges from -5.9 to -13.4 meters.</geographicDescription>
+        <boundingCoordinates>
+          <westBoundingCoordinate>-119.951538</westBoundingCoordinate>
+          <eastBoundingCoordinate>-119.951538</eastBoundingCoordinate>
+          <northBoundingCoordinate>34.422123</northBoundingCoordinate>
+          <southBoundingCoordinate>34.422123</southBoundingCoordinate>
+        </boundingCoordinates>
+      </geographicCoverage>
+      <temporalCoverage scope="document">
+        <rangeOfDates>
+          <beginDate>
+            <calendarDate>2002-03-01</calendarDate>
+          </beginDate>
+          <endDate>
+            <calendarDate>2013-02-11</calendarDate>
+          </endDate>
+        </rangeOfDates>
+      </temporalCoverage>
+    </coverage>
+    <contact scope="document">
+      <positionName>Information Manager, Santa Barbara Coastal LTER</positionName>
+      <address>
+        <deliveryPoint>Marine Science Institute</deliveryPoint>
+        <deliveryPoint>University of California</deliveryPoint>
+        <city>Santa Barbara</city>
+        <administrativeArea>California</administrativeArea>
+        <postalCode>93106-6150</postalCode>
+        <country>United States</country>
+      </address>
+      <phone phonetype="voice">805 893 2071</phone>
+      <electronicMailAddress>sbclter@msi.ucsb.edu</electronicMailAddress>
+      <onlineUrl>http://sbc.lternet.edu</onlineUrl>
+    </contact>
+    <publisher>
+      <organizationName>Santa Barbara Coastal LTER</organizationName>
+    </publisher>
+    <methods>
+      <methodStep>
+        <description>
+          <para>Bottom Temperature Protocol</para>
+        </description>
+        <protocol>
+          <title>Continuous Temperature Protocol</title>
+          <creator>
+            <individualName>
+              <surName>Reed</surName>
+            </individualName>
+          </creator>
+          <distribution>
+            <online>
+              <url function="download">http://sbc.lternet.edu/external/Reef/Protocols/Bottom_Temperature/Continuous_Temperature_Protocol.pdf</url>
+            </online>
+          </distribution>
+        </protocol>
+        <instrumentation>32K StowAway TidbiT with a range of -5 to 37 degrees Celsius, manufactured
+          by Onset Computer Corporation </instrumentation>
+      </methodStep>
+    </methods>
+    <project>
+      <title>Santa Barbara Coastal Long Term Ecological Research Project</title>
+      <personnel>
+        <individualName>
+          <salutation>Dr.</salutation>
+          <givenName>Daniel</givenName>
+          <surName>Reed</surName>
+        </individualName>
+        <address>
+          <deliveryPoint>Marine Science Institute</deliveryPoint>
+          <deliveryPoint>University of California</deliveryPoint>
+          <city>Santa Barbara</city>
+          <administrativeArea>California</administrativeArea>
+          <postalCode>93106-6150</postalCode>
+          <country>United States</country>
+        </address>
+        <phone phonetype="voice">805 893 8363</phone>
+        <electronicMailAddress>reed@lifesci.ucsb.edu</electronicMailAddress>
+        <role>Principal Investigator</role>
+      </personnel>
+      <personnel>
+        <individualName>
+          <salutation>Dr.</salutation>
+          <givenName>John</givenName>
+          <surName>Melack</surName>
+        </individualName>
+        <address>
+          <deliveryPoint>Bren School of Environmental Science and Management</deliveryPoint>
+          <deliveryPoint>University of California</deliveryPoint>
+          <city>Santa Barbara</city>
+          <administrativeArea>California</administrativeArea>
+          <postalCode>93106-5131</postalCode>
+          <country>United States</country>
+        </address>
+        <phone phonetype="voice">805 893 3879</phone>
+        <electronicMailAddress>melack@lifesci.ucsb.edu</electronicMailAddress>
+        <role>Co-principal Investigator</role>
+      </personnel>
+      <personnel>
+        <individualName>
+          <salutation>Dr.</salutation>
+          <givenName>Sally</givenName>
+          <surName>Holbrook</surName>
+        </individualName>
+        <address>
+          <deliveryPoint>Ecology, Evolution and Marine Biology</deliveryPoint>
+          <deliveryPoint>University of California</deliveryPoint>
+          <city>Santa Barbara</city>
+          <administrativeArea>California</administrativeArea>
+          <postalCode>93106-9620</postalCode>
+          <country>United States</country>
+        </address>
+        <phone phonetype="voice">805 893 3777</phone>
+        <electronicMailAddress>holbrook@lifesci.ucsb.edu</electronicMailAddress>
+        <role>Co-principal Investigator</role>
+      </personnel>
+      <personnel>
+        <individualName>
+          <salutation>Dr.</salutation>
+          <givenName>David</givenName>
+          <surName>Siegel</surName>
+        </individualName>
+        <address>
+          <deliveryPoint>Institute for Computational Earth System Science</deliveryPoint>
+          <deliveryPoint>University of California</deliveryPoint>
+          <city>Santa Barbara</city>
+          <administrativeArea>California</administrativeArea>
+          <postalCode>93106-3060</postalCode>
+          <country>United States</country>
+        </address>
+        <phone phonetype="voice">805 893 4547</phone>
+        <electronicMailAddress>davey@icess.ucsb.edu</electronicMailAddress>
+        <role>Co-principal Investigator</role>
+      </personnel>
+      <abstract>
+        <section>
+          <para>The primary research objective of the Santa Barbara Coastal LTER is to investigate
+            the importance of land and ocean processes in structuring giant kelp
+            (<emphasis>Macrocystis pyrifera</emphasis> ) forest ecosystems. As in many temperate
+            regions, the shallow rocky reefs in the Santa Barbara Channel, California, are dominated
+            by giant kelp forests. Because of their close proximity to shore, kelp forests are
+            influenced by physical and biological processes occurring on land as well as in the open
+            ocean. SBC LTER research focuses on measuring and modeling the patterns, transport, and
+            processing of material constituents (e.g., nutrients, carbon, sediment, organisms, and
+            pollutants) from terrestrial watersheds and the coastal ocean to these reefs.
+            Specifically, we are examining the effects of these material inputs on the primary
+            production of kelp, and the population dynamics, community structure, and trophic
+            interactions of kelp forest ecosystems.</para>
+        </section>
+      </abstract>
+      <funding>
+        <section>
+          <para>NSF Awards OCE-9982105, OCE-0620276, OCE-1232779</para>
+        </section>
+      </funding>
+    </project>
+    <dataTable id="">
+      <entityName>bottom_temp_all_years_20120626.csv</entityName>
+      <entityDescription>continuous temperature at permanent reef sites</entityDescription>
+      <physical scope="document">
+        <objectName>bottom_temp_all_years_20120626.csv</objectName>
+        <size unit="bytes">150972050</size>
+        <characterEncoding>utf8</characterEncoding>
+        <dataFormat>
+          <textFormat>
+            <numHeaderLines>1</numHeaderLines>
+            <numFooterLines>0</numFooterLines>
+            <recordDelimiter>\r\n</recordDelimiter>
+            <attributeOrientation>column</attributeOrientation>
+            <simpleDelimited>
+              <fieldDelimiter>,</fieldDelimiter>
+              <quoteCharacter>"</quoteCharacter>
+            </simpleDelimited>
+          </textFormat>
+        </dataFormat>
+        <distribution>
+          <online>
+            <url function="download">http://sbc.lternet.edu/external/Reef/Data/Bottom_Temperature/bottom_temp_all_years_20120626.csv</url>
+          </online>
+          <access authSystem="knb" order="allowFirst" scope="document">
+            <allow>
+              <principal>uid=SBC,o=lter,dc=ecoinformatics,dc=org</principal>
+              <permission>all</permission>
+            </allow>
+            <allow>
+              <principal>public</principal>
+              <permission>read</permission>
+            </allow>
+          </access>
+        </distribution>
+      </physical>
+      <additionalInfo>***** TBD *****</additionalInfo>
+      <attributeList>
+        <attribute id="ent1.att1">
+          <attributeName>date</attributeName>
+          <attributeLabel>Date</attributeLabel>
+          <attributeDefinition>date</attributeDefinition>
+          <storageType>date</storageType>
+          <measurementScale>
+            <dateTime>
+              <formatString>MM/DD/YYYY</formatString>
+              <dateTimeDomain>
+                <bounds>
+                  <minimum exclusive="false">01/01/2000</minimum>
+                  <maximum exclusive="false">01/01/2100</maximum>
+                </bounds>
+              </dateTimeDomain>
+            </dateTime>
+          </measurementScale>
+          <missingValueCode>
+            <code>-99999</code>
+            <codeExplanation>value not recorded or not available</codeExplanation>
+          </missingValueCode>
+        </attribute>
+        <attribute id="ent1.att2">
+          <attributeName>time</attributeName>
+          <attributeLabel>time</attributeLabel>
+          <attributeDefinition>time</attributeDefinition>
+          <storageType>string</storageType>
+          <measurementScale>
+            <dateTime>
+              <formatString>hh:mm:ss</formatString>
+            </dateTime>
+          </measurementScale>
+          <missingValueCode>
+            <code>-99999</code>
+            <codeExplanation>value not recorded or not available</codeExplanation>
+          </missingValueCode>
+        </attribute>
+        <attribute id="ent1.att3">
+          <attributeName>temp_c</attributeName>
+          <attributeLabel>Temperature C</attributeLabel>
+          <attributeDefinition>water temperature</attributeDefinition>
+          <storageType>float</storageType>
+          <measurementScale>
+            <interval>
+              <unit>
+                <customUnit>celsius</customUnit>
+              </unit>
+              <precision>0.01</precision>
+              <numericDomain>
+                <numberType>real</numberType>
+              </numericDomain>
+            </interval>
+          </measurementScale>
+          <missingValueCode>
+            <code>-99999</code>
+            <codeExplanation>value not recorded or not available</codeExplanation>
+          </missingValueCode>
+        </attribute>
+        <attribute id="ent1.att4">
+          <attributeName>serial</attributeName>
+          <attributeLabel>Serial Number</attributeLabel>
+          <attributeDefinition>Serial number of instrument used for observation. Instruments: 32K StowAway TidbiT (-5 deg C to 37 deg C) manufactured by Onset Computer Corporation.</attributeDefinition>
+          <storageType>integer</storageType>
+          <measurementScale>
+            <nominal>
+              <nonNumericDomain>
+                <textDomain>
+                  <definition>integer as text</definition>
+                </textDomain>
+              </nonNumericDomain>
+            </nominal>
+          </measurementScale>
+          <missingValueCode>
+            <code>-99999</code>
+            <codeExplanation>value not recorded or not available</codeExplanation>
+          </missingValueCode>
+        </attribute>
+        <attribute id="ent1.att5">
+          <attributeName>site_code</attributeName>
+          <attributeLabel>Site</attributeLabel>
+          <attributeDefinition>Name of field site. Depth of temperature logger at each site varies from 4.95 to 8.15 meters. See enumerated list for site-specific depths.</attributeDefinition>
+          <storageType>string</storageType>
+          <measurementScale>
+            <nominal>
+              <nonNumericDomain>
+                <enumeratedDomain enforced="yes">
+                  <codeDefinition>
+                    <code>ABUR</code>
+                    <definition>Arroyo Burro</definition>
+                  </codeDefinition>
+                  <codeDefinition>
+                    <code>AHND</code>
+                    <definition>Arroyo Hondo</definition>
+                  </codeDefinition>
+                  <codeDefinition>
+                    <code>AQUE</code>
+                    <definition>Arroyo Quemado</definition>
+                  </codeDefinition>
+                  <codeDefinition>
+                    <code>BULL</code>
+                    <definition>Bulito</definition>
+                  </codeDefinition>
+                  <codeDefinition>
+                    <code>CARP</code>
+                    <definition>Carpinteria</definition>
+                  </codeDefinition>
+                  <codeDefinition>
+                    <code>GOLB</code>
+                    <definition>Goleta Bay</definition>
+                  </codeDefinition>
+                  <codeDefinition>
+                    <code>IVEE</code>
+                    <definition>Isla Vista</definition>
+                  </codeDefinition>
+                  <codeDefinition>
+                    <code>MOHK</code>
+                    <definition>Mohawk</definition>
+                  </codeDefinition>
+                  <codeDefinition>
+                    <code>NAPL</code>
+                    <definition>Naples</definition>
+                  </codeDefinition>
+                  <codeDefinition>
+                    <code>SCDI</code>
+                    <definition>Santa Cruz Island, Diablo </definition>
+                  </codeDefinition>
+                  <codeDefinition>
+                    <code>SCTW</code>
+                    <definition>Santa Cruz Island, Twin Harbor West Reef</definition>
+                  </codeDefinition>
+                </enumeratedDomain>
+              </nonNumericDomain>
+            </nominal>
+          </measurementScale>
+          <missingValueCode>
+            <code>-99999</code>
+            <codeExplanation>value not recorded or not available</codeExplanation>
+          </missingValueCode>
+        </attribute>
+        <attribute id="ent1.att6">
+          <attributeName>fake_xsect_code</attributeName>
+          <attributeLabel>Fake transect code</attributeLabel>
+          <attributeDefinition>this is a fake col to test ordinalenum</attributeDefinition>
+          <storageType>string</storageType>
+          <measurementScale>
+            <ordinal>
+              <nonNumericDomain>
+                <enumeratedDomain enforced="yes"> 
+                                </enumeratedDomain>
+              </nonNumericDomain>
+            </ordinal>
+          </measurementScale>
+          <missingValueCode>
+            <code>-99999</code>
+            <codeExplanation>value not recorded or not available</codeExplanation>
+          </missingValueCode>
+        </attribute>
+        <attribute id="ent1.att7">
+          <attributeName>fake_ord_text</attributeName>
+          <attributeLabel>Fake ordinal text field</attributeLabel>
+          <attributeDefinition>this is a test field</attributeDefinition>
+          <storageType>string</storageType>
+          <measurementScale>
+            <ordinal>
+              <nonNumericDomain>
+                <textDomain>
+                  <definition>any text</definition>
+                </textDomain>
+              </nonNumericDomain>
+            </ordinal>
+          </measurementScale>
+          <missingValueCode>
+            <code>-99999</code>
+            <codeExplanation>value not recorded or not available</codeExplanation>
+          </missingValueCode>
+        </attribute>
+        <attribute id="ent1.attr8">
+          <attributeName>fake-temp</attributeName>
+          <attributeLabel>Temperature fake</attributeLabel>
+          <attributeDefinition>this is fake</attributeDefinition>
+          <storageType>float</storageType>
+          <measurementScale>
+            <ratio>
+              <unit>
+                <customUnit>kelvin</customUnit>
+              </unit>
+              <precision>0.1</precision>
+              <numericDomain>
+                <numberType>real</numberType>
+              </numericDomain>
+            </ratio>
+          </measurementScale>
+          <missingValueCode>
+            <code>-99999</code>
+            <codeExplanation>value not recorded or not available</codeExplanation>
+          </missingValueCode>
+        </attribute>
+        <attribute id="ent1.att9">
+          <attributeName>fake temp</attributeName>
+          <attributeLabel>asdf</attributeLabel>
+          <attributeDefinition>asdf</attributeDefinition>
+          <storageType>float</storageType>
+          <measurementScale>
+            <ratio>
+              <unit>
+                <customUnit>kelvin</customUnit>
+              </unit>
+              <precision>0.1</precision>
+              <numericDomain>
+                <numberType>real</numberType>
+              </numericDomain>
+            </ratio>
+          </measurementScale>
+        </attribute>
+        <attribute id="ent1.att10">
+          <attributeName>fake_col_w_taxonCov</attributeName>
+          <attributeLabel>Fake taxa</attributeLabel>
+          <attributeDefinition>this is a fake col to test this is a fake column. string field</attributeDefinition>
+          <storageType>string</storageType>
+          <measurementScale>
+            <nominal>
+              <nonNumericDomain>
+                <textDomain>
+                  <definition>any text</definition>
+                </textDomain>
+              </nonNumericDomain>
+            </nominal>
+          </measurementScale>
+          <missingValueCode>
+            <code>-99999</code>
+            <codeExplanation>value not recorded or not available</codeExplanation>
+          </missingValueCode>
+          <coverage scope="document">
+            <taxonomicCoverage scope="document">
+              <taxonomicClassification>
+                <taxonRankName>Class</taxonRankName>
+                <taxonRankValue>Bacillariophyceae</taxonRankValue>
+                <commonName>Diatom</commonName>
+              </taxonomicClassification>
+              <taxonomicClassification>
+                <taxonRankName>Phylum</taxonRankName>
+                <taxonRankValue>Dinoflagellata</taxonRankValue>
+                <commonName>Dinoflagellates</commonName>
+              </taxonomicClassification>
+              <taxonomicClassification>
+                <taxonRankName>Class</taxonRankName>
+                <taxonRankValue>Prymnesiophyceae</taxonRankValue>
+              </taxonomicClassification>
+              <taxonomicClassification>
+                <taxonRankName>Order</taxonRankName>
+                <taxonRankValue>Dictyochales</taxonRankValue>
+                <commonName>Silicoflagellates</commonName>
+              </taxonomicClassification>
+            </taxonomicCoverage>
+          </coverage>
+        </attribute>
+      </attributeList>
+    </dataTable>
+  </dataset>
+  <additionalMetadata>
+    <metadata>
+      <stmml:unitList>
+        <stmml:unit id="celsius" name="celsius" abbreviation="C" parentSI="kelvin" multiplierToSI="1" constantToSI="273.18">
+          <stmml:description>SI-derived unit of temperature</stmml:description>
+        </stmml:unit>
+        <stmml:unit id="kelvin" name="kelvin" abbreviation="K" multiplierToSI="1">
+          <stmml:description>SI unit of temperature</stmml:description>
+        </stmml:unit>
+      </stmml:unitList>
+    </metadata>
+  </additionalMetadata>
+</eml:eml>

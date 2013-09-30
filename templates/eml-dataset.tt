@@ -1,11 +1,17 @@
     <dataset id="[% dataset.id %]">
+        [% IF dataset.alternateIdentifier != "" %]
+        <alternateidentifier>[% dataset.alternateIdentifier %]</alternateidentifier>
+        [% END %]
         <title>[% dataset.title %]</title>
 
         [%- FOREACH creator = dataset.creators %]
-        <creator>
+        <creator id="[% creator.nameid %]">
             <individualName>
                 [%- IF creator.givenname != "" %]
                 <givenName>[% creator.givenname %]</givenName>
+                [%- END %]
+                [%- IF creator.givenname2 != "" %]
+                <givenName>[% creator.givenname2 %]</givenName>
                 [%- END %]
                 <surName>[% creator.surname %]</surName>
             </individualName>
@@ -53,9 +59,14 @@
         </creator>
         [%- END %] [%# end FOREACH creator #%]
         [%- FOREACH associatedParty = dataset.associatedParties %]
-        <associatedParty id="[% associatedParty.nameid %]" scope="document">
+        <associatedParty id="[% associatedParty.nameid %]">
             <individualName>
+                [%- IF associatedParty.givenname != "" %]
                 <givenName>[% associatedParty.givenname %]</givenName>
+                [%- END %]
+                [%- IF associatedParty.givenname2 != "" %]
+                <givenName>[% associatedParty.givenname2 %]</givenName>
+                [%- END %]
                 <surName>[% associatedParty.surname %]</surName>
             </individualName>
             [%- IF associatedParty.organization != "" %]
