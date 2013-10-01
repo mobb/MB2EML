@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <eml:eml xmlns:eml="eml://ecoinformatics.org/eml-2.1.1"
-  xmlns:stmml="http://www.xml-cml.org/schema/stm#ml"
+  xmlns:stmml="http://www.xml-cml.org/schema/stmml"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   packageId="[% dataset.packageId %]" scope="system" system="knb"
   xsi:schemaLocation="eml://ecoinformatics.org/eml-2.1.1 http://sbc.lternet.edu/external/InformationManagement//EML_211_schema/eml.xsd">

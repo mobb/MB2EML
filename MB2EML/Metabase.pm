@@ -54,7 +54,7 @@ sub searchAbstract {
     my $self = shift;
     my $datasetId = shift;
 
-    # Return a single row, which is a hash
+    # Return a single DBIx::Class::Row
     return $self->schema->resultset('VwEmlAbstract')->search({ datasetid => $datasetId})->single;
 
 }
@@ -65,7 +65,7 @@ sub searchAccess {
     my $entityId = shift;
     my @accesses = ();
 
-    # resultset returns an iterator
+    # Return a singgle DBIx::Class::Row
     return $self->schema->resultset('VwEmlAccess')->search({ datasetid => $datasetId, entity_position => $entityId })->single;
 }
 
@@ -74,8 +74,8 @@ sub searchAlternateIdentifier {
     my $datasetId = shift;
     my $entityId = shift;
 
-    # Return a single row, which is a hash of DBIC access methods named for the column that they access 
-    return $self->schema->resultset('VwEmlAlternateidentifier')->search({ datasetid => $datasetId, entity_position => $entityId })->single;
+    # Return a single DBIx::Class::Row
+    return $self->schema->resultset('VwEmlAlternateidentifier')->search({ datasetid => $datasetId })->single;
 }
 
 sub searchAssociatedParties {
@@ -287,7 +287,7 @@ sub searchPackageId {
     my $datasetId = shift;
 
     # Retrieve package identifier for a particular dataset
-    return $self->schema->resultset('VwEmlPackageid')->search({ DataSetID => $datasetId })->single;
+    return $self->schema->resultset('VwEmlPackageid')->search({ datasetid => $datasetId })->single;
 }
 
 sub searchPhysical {
@@ -313,6 +313,14 @@ sub searchProject {
 
     # Retrieve project description for a particular dataset and entity
     return $self->schema->resultset('VwEmlProject')->search({ datasetid => $datasetId })->single;
+}
+
+sub searchPubDate {
+    my $self = shift;
+    my $datasetId = shift;
+
+    # Return a single DBIx::Class:Row
+    return $self->schema->resultset('VwEmlPubdate')->search({ datasetid => $datasetId})->single;
 }
 
 sub searchPublisher {

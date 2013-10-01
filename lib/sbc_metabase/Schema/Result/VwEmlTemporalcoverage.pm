@@ -38,6 +38,11 @@ __PACKAGE__->table("vw_eml_temporalcoverage");
   data_type: 'integer'
   is_nullable: 1
 
+=head2 temporalcoverage_sort_order
+
+  data_type: 'integer'
+  is_nullable: 1
+
 =head2 begindate
 
   data_type: 'text'
@@ -63,6 +68,8 @@ __PACKAGE__->add_columns(
   { data_type => "integer", is_nullable => 1 },
   "attribute_position",
   { data_type => "integer", is_nullable => 1 },
+  "temporalcoverage_sort_order",
+  { data_type => "integer", is_nullable => 1 },
   "begindate",
   { data_type => "text", is_nullable => 1 },
   "enddate",
@@ -76,8 +83,8 @@ __PACKAGE__->add_columns(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-09-30 13:23:49
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Iwobcbv3HXq+qdxbtYmnUg
+# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-10-01 11:30:47
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Ni7ggCBINotA0ltES5JKFQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
