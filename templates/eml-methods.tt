@@ -1,7 +1,7 @@
             [% IF methods.size > 0 %]
             <methods>
                 [%- FOREACH method = methods %]
-                    [% method.methodstep %]
+                    [% method.min %]
                 [%- END %] [%# FOREACH method ... #%]
             </methods>
             [% END %]

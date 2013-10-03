@@ -1,9 +1,18 @@
 #!/bin/bash
 
-databaseName='mcr_metabase'
-datasetId='10'
-validate=1	# a value lf '1' indicates true - run with validation
-runEMLParser=1	# a value lf '1' indicates true - run the EML Parser
-verbose=1	# a value lf '1' indicates true - run in verbose mode
+databaseName=$1
+datasetId=$2
 
-./writeEML.pl $databaseName $datasetId $validate $runEMLParser $verbose
+if [ "$databaseName" == "" ]; then
+    databaseName='mcr_metabase'
+fi
+
+if [ "$datasetId" == "" ]; then
+    datasetId=2
+fi
+
+if [ ! -e out ]; then
+    mkdir out
+fi
+
+./writeEML.pl -pvx -d out $databaseName $datasetId

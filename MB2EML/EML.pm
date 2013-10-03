@@ -27,12 +27,12 @@ sub BUILD {
     my $entity;
     my $entityId;
     my $entitySortOrder;
+    my $shortName;
+    my $title;
 
     $self->mb(MB2EML::Metabase->new({ databaseName => $self->databaseName}));
 
     # Initialize attributes, in case they will be used by the methods.
-    # Uncomment this line when the vw_eml_alternateidentifier view is created
-    #$self->alternateIdentifier($self->getAlternateIdentifier($entity=0));
     $self->unitList($self->getUnitList());
 
     # Construct a 'dataset' hash that contains all info we are using in eml-dataset. This
@@ -42,6 +42,8 @@ sub BUILD {
     $dataset{'abstract'} = $self->getAbstract();
 
     $dataset{'access'} = $self->getAccess($entityId=0);
+    my $alternateId = $self->getAlternateIdentifier($entity=0);
+    $dataset{'alternateidentifier'} = $alternateId->alternateidentifier;
     $dataset{'associatedParties'} = $self->getAssociatedParties();
     $dataset{'contacts'} = $self->getContacts();
     $dataset{'coverage'} = ( { 'geographiccoverage'  => $self->getGeographicCoverage($entityId=0, $columnId=0),
@@ -55,11 +57,33 @@ sub BUILD {
     $dataset{'keywords'} = $self->getKeywords();
     $dataset{'language'} = $self->getLanguage();
     $dataset{'methods'} = $self->getMethods($entityId=0, $columnId=0);
-    $dataset{'packageId'} = $self->getPackageId();
+    my $packageId = $self->getPackageId();
+    if (defined $packageId) {
+        $dataset{'packageId'} = $packageId->packageid;
+    } else {
+        print STDERR "Warning: content not found in Metabase for packageId\n";
+        $dataset{'packageId'} = "";
+    }
+
+    my $pDate = $self->getPubDate();
+    $dataset{'pubdate'} = $pDate->pubdate;
     $dataset{'project'} = $self->getProject();
     $dataset{'publisher'} = $self->getPublisher();
-    my $title = $self->getTitle();
-    $dataset{'title'} = $title->title;
+
+    $shortName = $self->getShortName();
+    if (defined $shortName) {
+        $dataset{'shortName'} = $shortName->shortname;
+    } else {
+        print STDERR "Warning: content not found in Metabase for <shortName>\n";
+    }
+
+    $title = $self->getTitle();
+    if (defined $title) {
+        $dataset{'title'} = $title->title;
+    } else {
+        print STDERR "Warning: content not found in Metabase for <title>\n";
+    }
+
     $self->dataset(\%dataset);
 }
 
@@ -168,8 +192,9 @@ sub getEntities{
 
     for $entity (@$entitiesRef) {
         $entity->{'access'} = $self->getAccess($entity->entity_position);
-        # Uncomment this line when the vw_eml_alternateidentifier view is created
-        #$entity->{'alternateIdentifier'} = $self->getAlternateIdentifier($entity->entity_position);
+        # Uncomment this line when the vw_eml_alternateidentifier view is implemented for entities
+        #my $alternateId = $self->getAlternateIdentifier($entity->entity_position);
+        #$entity->{'alternateidentifier'} = $alternateId->alternateidentifier;
         $entity->{'attributeList'} = $self->getAttributeList($entity->entity_position);
         $entity->{'coverage'}->{'geographiccoverage'} = $self->getGeographicCoverage($entity->entity_position, $columnId=0);
         $entity->{'methods'} = $self->getMethods($entity->entity_position, $columnId=0);
@@ -215,9 +240,7 @@ sub getMethods {
 sub getPackageId {
     my $self = shift;
 
-    my $packageId = $self->mb->searchPackageId($self->datasetId);
-
-    return $packageId;
+    return $self->mb->searchPackageId($self->datasetId);
 }
 
 sub getPhysical{
@@ -231,17 +254,25 @@ sub getPhysical{
 sub getProject {
     my $self = shift;
 
-    my $project = $self->mb->searchProject($self->datasetId);
-
-    return $project;
+    return $self->mb->searchProject($self->datasetId);
 }
 
 sub getPublisher {
     my $self = shift;
 
-    my $publisher = $self->mb->searchPublisher($self->datasetId);
+    return $self->mb->searchPublisher($self->datasetId);
+}
 
-    return $publisher;
+sub getPubDate {
+    my $self = shift;
+
+    return $self->mb->searchPubDate($self->datasetId);
+}
+
+sub getShortName {
+    my $self = shift;
+
+    return $self->mb->searchShortName($self->datasetId);
 }
 
 sub getTaxonomicCoverage{
@@ -325,6 +356,8 @@ sub writeXML {
 
     if ($@) {
         print STDERR $self->datasetId . " : Error creating XML document: $@\n";
+        print STDERR "The following is the invalid raw XML: \n";
+        print STDERR $output . "\n";
         die $self->datasetId . ": Processing halted because the generated XML document is not valid.\n";
     } 
 

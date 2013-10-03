@@ -54,7 +54,7 @@ sub searchAbstract {
     my $self = shift;
     my $datasetId = shift;
 
-    # Return a single row, which is a hash
+    # Return a single DBIx::Class::Row
     return $self->schema->resultset('VwEmlAbstract')->search({ datasetid => $datasetId})->single;
 
 }
@@ -65,7 +65,7 @@ sub searchAccess {
     my $entityId = shift;
     my @accesses = ();
 
-    # resultset returns an iterator
+    # Return a singgle DBIx::Class::Row
     return $self->schema->resultset('VwEmlAccess')->search({ datasetid => $datasetId, entity_position => $entityId })->single;
 }
 
@@ -74,8 +74,8 @@ sub searchAlternateIdentifier {
     my $datasetId = shift;
     my $entityId = shift;
 
-    # Return a single row, which is a hash of DBIC access methods named for the column that they access 
-    return $self->schema->resultset('VwEmlAlternateidentifier')->search({ datasetid => $datasetId, entity_position => $entityId })->single;
+    # Return a single DBIx::Class::Row
+    return $self->schema->resultset('VwEmlAlternateidentifier')->search({ datasetid => $datasetId })->single;
 }
 
 sub searchAssociatedParties {
@@ -242,7 +242,7 @@ sub searchKeywords {
     my $datasetId = shift;
     my @keywords = ();
 
-    my $rs = $self->schema->resultset('VwEmlKeyword')->search({ datasetid => $datasetId }, { order_by => { -asc => 'keywordthesaurus'}} );
+    my $rs = $self->schema->resultset('VwEmlKeyword')->search({ datasetid => $datasetId }, { order_by => { -asc => [qw/keywordthesaurus keyword/]}} );
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
     # i.e. the user doesn't have to know how to use a DBIx resultset
@@ -269,7 +269,7 @@ sub searchMethods {
     my @methods;
 
     my $rs = $self->schema->resultset('VwEmlMethods')->search({ datasetid => $datasetId, entity_position => $entityId, column_position => $columnId }, 
-                                                              { order_by => { -asc => [qw/entity_position column_position methodstep_sort_order/] }});
+                                                              { order_by => { -asc => [qw/entity_position column_position/] }});
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
     # i.e. the user doesn't have to know how to use a DBIx resultset
@@ -287,7 +287,7 @@ sub searchPackageId {
     my $datasetId = shift;
 
     # Retrieve package identifier for a particular dataset
-    return $self->schema->resultset('VwEmlPackageid')->search({ DataSetID => $datasetId })->single;
+    return $self->schema->resultset('VwEmlPackageid')->search({ datasetid => $datasetId })->single;
 }
 
 sub searchPhysical {
@@ -315,11 +315,27 @@ sub searchProject {
     return $self->schema->resultset('VwEmlProject')->search({ datasetid => $datasetId })->single;
 }
 
+sub searchPubDate {
+    my $self = shift;
+    my $datasetId = shift;
+
+    # Return a single DBIx::Class:Row
+    return $self->schema->resultset('VwEmlPubdate')->search({ datasetid => $datasetId})->single;
+}
+
 sub searchPublisher {
     my $self = shift;
     my $datasetId = shift;
 
     return $self->schema->resultset('VwEmlPublisher')->search({ datasetid => $datasetId })->single;
+}
+
+sub searchShortName {
+    my $self = shift;
+    my $datasetId = shift;
+
+    # Return a single DBIx::Class::Row
+    return $self->schema->resultset('VwEmlShortname')->search({ datasetid => $datasetId })->single;
 }
 
 sub searchTemporalCoverage {
@@ -371,7 +387,7 @@ sub searchTitle{
     my $datasetId = shift;
 
     # Return a single row, which is a hash
-    return $self->schema->resultset('VwEmlTitle')->search({ datasetid => $datasetId})->single;
+    return $self->schema->resultset('VwEmlTitle')->search({ datasetid => $datasetId })->single;
 }
 
 sub searchUnitList {

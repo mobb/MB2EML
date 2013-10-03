@@ -6,17 +6,25 @@
             [%- FOREACH physical = entity.physical %]
             <physical>
                 <objectName>[% physical.objectname %]</objectName>
-                <size unit="[% physical.unit %]">[% entity.physical.size %]</size>
+                <size unit="[% physical.unit %]">[% physical.size %]</size>
+                [%- IF physical.characterencoding != "" %]
                 <characterEncoding>[% physical.characterencoding %]</characterEncoding>
+                [%- END %]
                 <dataFormat>
                     <textFormat>
+                        [%- IF physical.numheaderlines != "" %]
                         <numHeaderLines>[% physical.numheaderlines %]</numHeaderLines>
+                        [%- END %]
+                        [%- IF physical.numfooterlines != "" %]
                         <numFooterLines>[% physical.numfooterlines %]</numFooterLines>
+                        [%- END %]
+                        [%- IF physical.recorddelimiter != "" %]
                         <recordDelimiter>[% physical.recorddelimiter %]</recordDelimiter>
+                        [%- END %]
                         <attributeOrientation>[% physical.attributeorientation %]</attributeOrientation>
                         <simpleDelimited>
                             <fieldDelimiter>[% physical.fielddelimiter %]</fieldDelimiter>
-                            <collapseDelimiters>[% physical.collapsedelimiter %]</collapseDelimiters>
+                            <collapseDelimiters>[% physical.collapsedelimiters %]</collapseDelimiters>
                             [% IF physical.quotecharacter != "" %]
                             <quoteCharacter>[% physical.quotecharacter %]</quoteCharacter>
                             [% END %]

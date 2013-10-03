@@ -62,8 +62,8 @@ if ($opt_h) {
     exit;
 }
 
-# If no command line arguments are passed in, then print usage info and exit
-if ($#ARGV == -1 ) {
+# If no command line arguments or too few are passed in, then print usage info and exit
+if ($#ARGV == -1 || $#ARGV < 1) {
     usage();
     exit;
 }
@@ -76,12 +76,8 @@ if (defined $opt_d) {
 
 $databaseName = $ARGV[0]; 
 
-if ($#ARGV > 0 ) {
-    # datasetId can be specified as an integer, i.e. '10' or a range of integers, i.e. '10-20', or 'all'
-    $datasetId  = $ARGV[1]; 
-} else {
-    $datasetId = 'all';
-}
+# datasetId can be specified as an integer, i.e. '10' or a range of integers, i.e. '10-20', or 'all'
+$datasetId  = $ARGV[1]; 
 
 $mb = MB2EML::Metabase->new({ databaseName => $databaseName });
 $idsRef = $mb->searchDatasetIds();
@@ -154,5 +150,6 @@ for my $id (@ids) {
     } else {
         print $emlDoc;
     }
+    undef $emlDoc;
     undef $eml;
 }

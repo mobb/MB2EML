@@ -23,30 +23,28 @@ __PACKAGE__->table("vw_eml_packageid");
 
 =head1 ACCESSORS
 
-=head2 DataSetID
+=head2 datasetid
 
-  accessor: 'data_set_id'
   data_type: 'text'
   is_nullable: 1
 
-=head2 packageId
+=head2 packageid
 
-  accessor: 'package_id'
   data_type: 'text'
   is_nullable: 1
 
 =cut
 
 __PACKAGE__->add_columns(
-  "DataSetID",
-  { accessor => "data_set_id", data_type => "text", is_nullable => 1 },
-  "packageId",
-  { accessor => "package_id", data_type => "text", is_nullable => 1 },
+  "datasetid",
+  { data_type => "text", is_nullable => 1 },
+  "packageid",
+  { data_type => "text", is_nullable => 1 },
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-09-30 13:21:28
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:zhcDC/4d08AZ1taB6S+r8g
+# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-10-01 11:30:42
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:ElEFUJtoy4yecWED6/ZxAA
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

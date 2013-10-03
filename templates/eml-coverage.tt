@@ -3,10 +3,11 @@
                       coverage.taxonomiccoverage.size > 0 %]
                 <coverage>
                     [%- FOREACH gc IN coverage.geographiccoverage %]
-                    <geographicCoverage id="[% gc.id %]">
                         [%- IF gc.is_ref %]
+                    <geographicCoverage>
                         <references>[% gc.id %]</references> 
                         [%- ELSE %]
+                    <geographicCoverage id="[% gc.id %]">
                         <geographicDescription>[% gc.geographicdescription %]</geographicDescription>
                         <boundingCoordinates>
                             <westBoundingCoordinate>[% gc.westboundingcoordinate %]</westBoundingCoordinate> 
@@ -26,10 +27,8 @@
                         [%- END %]
                     </geographicCoverage>
                     [%- END %] [%# END FOREACH gc coverage.geographiccoverage ... #%]
-
-                    [%- IF coverage.temporalcoverage.size > 0 %]
+                    [%- FOREACH tc IN coverage.temporalcoverage %]
                     <temporalCoverage>
-                        [%- FOREACH tc IN coverage.temporalcoverage %]
                             [%- IF tc.singledatetime != "" %]
                         <singleDateTime>
                             <calendarDate>[% tc.singledatetime %]</calendarDate>
@@ -44,9 +43,8 @@
                             </endDate>
                         </rangeOfDates>
                             [%- END %]
-                    [%- END %] [%# END FOREACH tc coverage.temporalcoverage ... #%]
                     </temporalCoverage>
-                    [%- END %] [%# END IF coverage.temporalcoverage ... #%]
+                    [%- END %] [%# END FOREACH tc coverage.temporalcoverage ... #%]
                     [%- FOREACH tc IN coverage.taxonomiccoverage %]
                     <taxonomicCoverage>
                         [% tc.taxonomiccoverage_xml %]
