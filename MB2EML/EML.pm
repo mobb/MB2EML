@@ -27,6 +27,8 @@ sub BUILD {
     my $entity;
     my $entityId;
     my $entitySortOrder;
+    my $shortName;
+    my $title;
 
     $self->mb(MB2EML::Metabase->new({ databaseName => $self->databaseName}));
 
@@ -59,6 +61,7 @@ sub BUILD {
     if (defined $packageId) {
         $dataset{'packageId'} = $packageId->packageid;
     } else {
+        print STDERR "Warning: content not found in Metabase for packageId\n";
         $dataset{'packageId'} = "";
     }
 
@@ -66,8 +69,21 @@ sub BUILD {
     $dataset{'pubdate'} = $pDate->pubdate;
     $dataset{'project'} = $self->getProject();
     $dataset{'publisher'} = $self->getPublisher();
-    my $title = $self->getTitle();
-    $dataset{'title'} = $title->title;
+
+    $shortName = $self->getShortName();
+    if (defined $shortName) {
+        $dataset{'shortName'} = $shortName->shortname;
+    } else {
+        print STDERR "Warning: content not found in Metabase for <shortName>\n";
+    }
+
+    $title = $self->getTitle();
+    if (defined $title) {
+        $dataset{'title'} = $title->title;
+    } else {
+        print STDERR "Warning: content not found in Metabase for <title>\n";
+    }
+
     $self->dataset(\%dataset);
 }
 
@@ -253,6 +269,12 @@ sub getPubDate {
     return $self->mb->searchPubDate($self->datasetId);
 }
 
+sub getShortName {
+    my $self = shift;
+
+    return $self->mb->searchShortName($self->datasetId);
+}
+
 sub getTaxonomicCoverage{
     my $self = shift;
     my $entityId = shift;
@@ -334,6 +356,8 @@ sub writeXML {
 
     if ($@) {
         print STDERR $self->datasetId . " : Error creating XML document: $@\n";
+        print STDERR "The following is the invalid raw XML: \n";
+        print STDERR $output . "\n";
         die $self->datasetId . ": Processing halted because the generated XML document is not valid.\n";
     } 
 

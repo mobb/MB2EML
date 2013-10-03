@@ -8,7 +8,7 @@ if [ "$databaseName" == "" ]; then
 fi
 
 if [ "$datasetId" == "" ]; then
-    datasetId=4
+    datasetId=2
 fi
 
 if [ ! -e out ]; then

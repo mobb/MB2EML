@@ -12,11 +12,15 @@
                 [%- END %]
                 <dataFormat>
                     <textFormat>
+                        [%- IF physical.numheaderlines != "" %]
                         <numHeaderLines>[% physical.numheaderlines %]</numHeaderLines>
+                        [%- END %]
                         [%- IF physical.numfooterlines != "" %]
                         <numFooterLines>[% physical.numfooterlines %]</numFooterLines>
                         [%- END %]
+                        [%- IF physical.recorddelimiter != "" %]
                         <recordDelimiter>[% physical.recorddelimiter %]</recordDelimiter>
+                        [%- END %]
                         <attributeOrientation>[% physical.attributeorientation %]</attributeOrientation>
                         <simpleDelimited>
                             <fieldDelimiter>[% physical.fielddelimiter %]</fieldDelimiter>

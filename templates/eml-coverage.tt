@@ -3,10 +3,11 @@
                       coverage.taxonomiccoverage.size > 0 %]
                 <coverage>
                     [%- FOREACH gc IN coverage.geographiccoverage %]
-                    <geographicCoverage id="[% gc.id %]">
                         [%- IF gc.is_ref %]
+                    <geographicCoverage>
                         <references>[% gc.id %]</references> 
                         [%- ELSE %]
+                    <geographicCoverage id="[% gc.id %]">
                         <geographicDescription>[% gc.geographicdescription %]</geographicDescription>
                         <boundingCoordinates>
                             <westBoundingCoordinate>[% gc.westboundingcoordinate %]</westBoundingCoordinate> 

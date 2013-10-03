@@ -67,7 +67,7 @@
                             [% END %]
                             <numericDomain>
                                 <numberType>[% attribute.numbertype %]</numberType>
-                                [%- IF attritube.bounds_XML != "" %]
+                                [%- IF attribute.bounds_xml != "" %]
                                     [% attribute.bounds_xml %]
                                 [%- END %]
                             </numericDomain>

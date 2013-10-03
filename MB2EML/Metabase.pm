@@ -242,7 +242,7 @@ sub searchKeywords {
     my $datasetId = shift;
     my @keywords = ();
 
-    my $rs = $self->schema->resultset('VwEmlKeyword')->search({ datasetid => $datasetId }, { order_by => { -asc => 'keywordthesaurus'}} );
+    my $rs = $self->schema->resultset('VwEmlKeyword')->search({ datasetid => $datasetId }, { order_by => { -asc => [qw/keywordthesaurus keyword/]}} );
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
     # i.e. the user doesn't have to know how to use a DBIx resultset
@@ -269,7 +269,7 @@ sub searchMethods {
     my @methods;
 
     my $rs = $self->schema->resultset('VwEmlMethods')->search({ datasetid => $datasetId, entity_position => $entityId, column_position => $columnId }, 
-                                                              { order_by => { -asc => [qw/entity_position column_position methodstep_sort_order/] }});
+                                                              { order_by => { -asc => [qw/entity_position column_position/] }});
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
     # i.e. the user doesn't have to know how to use a DBIx resultset
@@ -330,6 +330,14 @@ sub searchPublisher {
     return $self->schema->resultset('VwEmlPublisher')->search({ datasetid => $datasetId })->single;
 }
 
+sub searchShortName {
+    my $self = shift;
+    my $datasetId = shift;
+
+    # Return a single DBIx::Class::Row
+    return $self->schema->resultset('VwEmlShortname')->search({ datasetid => $datasetId })->single;
+}
+
 sub searchTemporalCoverage {
     my $self = shift;
     my $datasetId = shift;
@@ -379,7 +387,7 @@ sub searchTitle{
     my $datasetId = shift;
 
     # Return a single row, which is a hash
-    return $self->schema->resultset('VwEmlTitle')->search({ datasetid => $datasetId})->single;
+    return $self->schema->resultset('VwEmlTitle')->search({ datasetid => $datasetId })->single;
 }
 
 sub searchUnitList {
