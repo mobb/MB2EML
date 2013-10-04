@@ -2,7 +2,9 @@
             <alternateidentifier>[% entity.alternateidentifier %]</alternateidentifier>
             [% END %]
             <entityName>[% entity.entityname %]</entityName>
+            [%- IF entity.entitydescription != "" %]
             <entityDescription>[% entity.entitydescription %]</entityDescription> 
+            [%- END %]
             [%- FOREACH physical = entity.physical %]
             <physical>
                 <objectName>[% physical.objectname %]</objectName>
@@ -21,9 +23,13 @@
                         [%- IF physical.recorddelimiter != "" %]
                         <recordDelimiter>[% physical.recorddelimiter %]</recordDelimiter>
                         [%- END %]
+                        [%- IF physical.attributeorientation != "" %]
                         <attributeOrientation>[% physical.attributeorientation %]</attributeOrientation>
+                        [%- END %]
                         <simpleDelimited>
+                            [%- IF physical.fielddelimiter != "" %]
                             <fieldDelimiter>[% physical.fielddelimiter %]</fieldDelimiter>
+                            [%- END %]
                             <collapseDelimiters>[% physical.collapsedelimiters %]</collapseDelimiters>
                             [% IF physical.quotecharacter != "" %]
                             <quoteCharacter>[% physical.quotecharacter %]</quoteCharacter>
@@ -47,4 +53,6 @@
             [%- END %]
             [%- INCLUDE './templates/eml-coverage.tt' coverage = entity.coverage %]
             [%- INCLUDE './templates/eml-methods.tt' methods = entity.methods %]
-            <additionalInfo>***** TBD *****</additionalInfo>
+            [%- IF entity.additionalinfo != "" %]
+            <additionalInfo>[% entity.additionalinfo %]</additionalInfo>
+            [%- END %]

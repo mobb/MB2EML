@@ -7,7 +7,12 @@
                     [%- SWITCH attribute.measurementscale %]
                     [%- CASE 'dateTime' %]
                         <dateTime>
+                        [%- IF attribute.formatstring != "" %]
                             <formatString>[% attribute.formatstring %]</formatString>
+                        [%- END %]
+                        [%- IF attribute.precision_datetime != "" %]
+                            <dateTimePrecision>[%- attribute.precision_datetime %]</dateTimePrecision>
+                        [%- END %]
                         [%- IF attribute.bounds_xml != "" %]
                             <dateTimeDomain>[%- attribute.bounds_xml %]</dateTimeDomain>
                         [%- END %]
@@ -22,7 +27,7 @@
                             [%- END %]
                             <numericDomain>
                                 <numberType>[% attribute.numbertype %]</numberType>
-                                [%- IF attritube.bounds_XML != "" %]
+                                [%- IF attritube.bounds_xml != "" %]
                                     [% attribute.bounds_xml %]
                                 [%- END %]
                             </numericDomain>
