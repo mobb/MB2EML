@@ -46,9 +46,7 @@
                     </temporalCoverage>
                     [%- END %] [%# END FOREACH tc coverage.temporalcoverage ... #%]
                     [%- FOREACH tc IN coverage.taxonomiccoverage %]
-                    <taxonomicCoverage>
                         [% tc.taxonomiccoverage_xml %]
-                    </taxonomicCoverage>
                     [%- END %] [%# FOREACH tc in coverage.taxonomiccoverage ... #%]
                 </coverage>
                 [%- END %]

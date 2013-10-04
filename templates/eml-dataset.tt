@@ -1,8 +1,10 @@
     <dataset id="[% dataset.id %]">
-        [% IF dataset.alternateidentifier != "" %]
+        [%-IF dataset.alternateidentifier != "" %]
         <alternateIdentifier>[% dataset.alternateidentifier %]</alternateIdentifier>
-        [% END %]
+        [%- END %]
+        [%- IF dataset.shortname != "" %]
         <shortName>[% dataset.shortname %]</shortName>
+        [%- END %]
         <title>[% dataset.title %]</title>
 
         [%- FOREACH creator = dataset.creators %]
@@ -135,7 +137,7 @@
         </keywordSet>
         <keywordSet>
             [%- END %]
-            [%- IF keyword.keywordtype == "" %]
+            [%- IF keyword.keywordtype == "" || keyword.keywordtype.lower == "none" %]
             <keyword>[% keyword.keyword %]</keyword>
             [%- ELSE %]
             <keyword keywordType="[% keyword.keywordtype %]">[% keyword.keyword %]</keyword>
