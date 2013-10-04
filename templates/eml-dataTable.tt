@@ -5,5 +5,7 @@
                 [%- INCLUDE './templates/eml-attribute.tt' %]
             [%- END %] [%# end FOREACH attribute ... #%]
             </attributeList>
+            [%- IF entity.numberofrecords != "" %]
             <numberOfRecords>[%- entity.numberofrecords %]</numberOfRecords>
+            [%- END %]
         </dataTable>
