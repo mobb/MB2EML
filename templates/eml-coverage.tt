@@ -1,8 +1,12 @@
-                [% IF coverage.geographiccoverage.size > 0 ||
+                [%- IF coverage.geographiccoverage.size > 0 ||
                       coverage.temporalcoverage.size > 0 ||
                       coverage.taxonomiccoverage.size > 0 %]
-                <coverage scope="document">
-                    [% FOREACH gc IN coverage.geographiccoverage %]
+                <coverage>
+                    [%- FOREACH gc IN coverage.geographiccoverage %]
+                        [%- IF gc.is_ref %]
+                    <geographicCoverage>
+                        <references>[% gc.id %]</references> 
+                        [%- ELSE %]
                     <geographicCoverage id="[% gc.id %]">
                         <geographicDescription>[% gc.geographicdescription %]</geographicDescription>
                         <boundingCoordinates>
@@ -11,11 +15,25 @@
                             <northBoundingCoordinate>[% gc.northboundingcoordinate %]</northBoundingCoordinate> 
                             <southBoundingCoordinate>[% gc.southboundingcoordinate %]</southBoundingCoordinate>
                          </boundingCoordinates> 
+                            [%- IF gc.gring != "" %]
+                        <datasetGPolygon>
+                            <datasetGPolygonOuterGRing>
+                                <gRing>
+                                [% gc.gring %]
+                                </gRing>
+                            </datasetGPolygonOuterGRing>
+                        </datasetGPolygon>
+                            [%- END %]
+                        [%- END %]
                     </geographicCoverage>
-                    [% END %] [%# END FOREACH gc coverage.geographiccoverage ... #%]
-
-                    [% FOREACH tc IN coverage.temporalcoverage %]
-                    <temporalCoverage scope="document">
+                    [%- END %] [%# END FOREACH gc coverage.geographiccoverage ... #%]
+                    [%- FOREACH tc IN coverage.temporalcoverage %]
+                    <temporalCoverage>
+                            [%- IF tc.singledatetime != "" %]
+                        <singleDateTime>
+                            <calendarDate>[% tc.singledatetime %]</calendarDate>
+                        </singleDateTime>
+                            [%- ELSE %]
                         <rangeOfDates>
                             <beginDate>
                                 <calendarDate>[% tc.begindate %]</calendarDate>
@@ -24,12 +42,11 @@
                                 <calendarDate>[% tc.enddate %]</calendarDate>
                             </endDate>
                         </rangeOfDates>
+                            [%- END %]
                     </temporalCoverage>
-                    [% END %] [%# END FOREACH tc coverage.temporalcoverage ... #%]
-                    [% FOREACH tc IN coverage.taxonomiccoverage %]
-                    <taxonomicCoverage scope="document">
+                    [%- END %] [%# END FOREACH tc coverage.temporalcoverage ... #%]
+                    [%- FOREACH tc IN coverage.taxonomiccoverage %]
                         [% tc.taxonomiccoverage_xml %]
-                    </taxonomicCoverage>
-                    [% END %] [%# FOREACH tc in coverage.taxonomiccoverage ... #%]
+                    [%- END %] [%# FOREACH tc in coverage.taxonomiccoverage ... #%]
                 </coverage>
-                [% END %]
+                [%- END %]

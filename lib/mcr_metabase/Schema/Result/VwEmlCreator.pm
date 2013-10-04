@@ -50,6 +50,12 @@ __PACKAGE__->table("vw_eml_creator");
   data_type: 'text'
   is_nullable: 1
 
+=head2 givenname2
+
+  data_type: 'varchar'
+  is_nullable: 1
+  size: 30
+
 =head2 surname
 
   data_type: 'varchar'
@@ -132,15 +138,17 @@ __PACKAGE__->table("vw_eml_creator");
 
 __PACKAGE__->add_columns(
   "datasetid",
-  { data_type => "integer", is_nullable => 0 },
+  { data_type => "integer", is_nullable => 1 },
   "authorshiporder",
-  { data_type => "smallint", is_nullable => 0 },
+  { data_type => "smallint", is_nullable => 1 },
   "authorshiprole",
   { data_type => "varchar", is_nullable => 1, size => 100 },
   "nameid",
   { data_type => "varchar", is_nullable => 1, size => 20 },
   "givenname",
   { data_type => "text", is_nullable => 1 },
+  "givenname2",
+  { data_type => "varchar", is_nullable => 1, size => 30 },
   "surname",
   { data_type => "varchar", is_nullable => 1, size => 50 },
   "organization",
@@ -170,10 +178,9 @@ __PACKAGE__->add_columns(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-07-22 14:22:18
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:iPAPCvfPELLMYCguW2bXLg
+# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-09-30 13:21:26
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:K/vimc9xdQwddjDXjD9jYw
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
-__PACKAGE__->set_primary_key(qw/ datasetid authorshiporder /);
 1;

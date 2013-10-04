@@ -2,7 +2,7 @@
                     <attributeName>[% attribute.attributename %]</attributeName>
                     <attributeLabel>[% attribute.attributelabel %]</attributeLabel>
                     <attributeDefinition>[% attribute.attributedefinition %]</attributeDefinition>
-                    <storageType>[% attribute.storagetype %]</storageType>
+                    <storageType typeSystem="http://www.w3.org/2001/XMLSchema-datatypes">[% attribute.storagetype %]</storageType>
                     <measurementScale>
                     [%- SWITCH attribute.measurementscale %]
                     [%- CASE 'dateTime' %]
@@ -67,7 +67,7 @@
                             [% END %]
                             <numericDomain>
                                 <numberType>[% attribute.numbertype %]</numberType>
-                                [%- IF attritube.bounds_XML != "" %]
+                                [%- IF attribute.bounds_xml != "" %]
                                     [% attribute.bounds_xml %]
                                 [%- END %]
                             </numericDomain>

@@ -1,18 +1,27 @@
     <dataset id="[% dataset.id %]">
-        [% IF dataset.alternateIdentifier != "" %]
-        <alternateidentifier>[% dataset.alternateIdentifier %]</alternateidentifier>
-        [% END %]
+        [%-IF dataset.alternateidentifier != "" %]
+        <alternateIdentifier>[% dataset.alternateidentifier %]</alternateIdentifier>
+        [%- END %]
+        [%- IF dataset.shortname != "" %]
+        <shortName>[% dataset.shortname %]</shortName>
+        [%- END %]
         <title>[% dataset.title %]</title>
 
         [%- FOREACH creator = dataset.creators %]
         <creator id="[% creator.nameid %]">
+            [% IF creator.givenname != "" ||
+                  creator.givenname2 != "" ||
+                  creator.surname != "" %]
             <individualName>
                 [%- IF creator.givenname != "" %]
                 <givenName>[% creator.givenname %]</givenName>
                 [%- END %]
+                [%- IF creator.givenname2 != "" %]
+                <givenName>[% creator.givenname2 %]</givenName>
+                [%- END %]
                 <surName>[% creator.surname %]</surName>
             </individualName>
- 
+            [%- END %]
             [%- IF creator.organization != "" %]
             <organizationName>[% creator.organization %]</organizationName>
             [%- END %]
@@ -39,14 +48,23 @@
                 [%- IF creator.state != "" %]
                 <administrativeArea>[% creator.state %]</administrativeArea>
                 [%- END %]
-                [%- IF creator.zip != "" %]
-                <postalCode>[% creator.zip %]</postalCode>
+                [%- IF creator.zipcode != "" %]
+                <postalCode>[% creator.zipcode %]</postalCode>
                 [%- END %]
                 [%- IF creator.country != "" %]
                 <country>[% creator.country %]</country>
                 [%- END %]
             </address>
             [%- END %] [%# end IF creator.address1 ... #%]
+            [%- IF creator.phone1 != "" %]
+            <phone phonetype="voice">[% creator.phone1 %]</phone>
+            [%- END %]
+            [%- IF creator.phone2 != "" %]
+            <phone phonetype="voice">[% creator.phone2 %]</phone>
+            [%- END %]
+            [%- IF creator.fax != "" %]
+            <phone phonetype="fax">[% creator.fax %]</phone>
+            [%- END %]
             [%- IF creator.email != "" %]
             <electronicMailAddress>[% creator.email %]</electronicMailAddress>
             [%- END %]
@@ -56,61 +74,81 @@
         </creator>
         [%- END %] [%# end FOREACH creator #%]
         [%- FOREACH associatedParty = dataset.associatedParties %]
-        <associatedParty id="[% associatedParty.nameid %]" scope="document">
+        <associatedParty id="[% associatedParty.nameid %]">
+            [% IF associatedParty.givenname != "" ||
+                  associatedParty.givenname2 != "" ||
+                  associatedParty.surname != "" %]
             <individualName>
+                [%- IF associatedParty.givenname != "" %]
                 <givenName>[% associatedParty.givenname %]</givenName>
+                [%- END %]
+                [%- IF associatedParty.givenname2 != "" %]
+                <givenName>[% associatedParty.givenname2 %]</givenName>
+                [%- END %]
                 <surName>[% associatedParty.surname %]</surName>
             </individualName>
+            [%- END %]
             [%- IF associatedParty.organization != "" %]
             <organizationName>[% associatedParty.organization %]</organizationName>
             [%- END %]
-            <address scope="document">
+            [%- IF associatedParty.role != "" %]
+            <positionName>[% associatedParty.role %]</positionName>
+            [%- END %]
+            <address>
                 <deliveryPoint>[% associatedParty.address1 %]</deliveryPoint>
                 <deliveryPoint>[% associatedParty.address2 %]</deliveryPoint>
                 [%- IF associatedParty.address3 != "" %]
                 <deliveryPoint>[% associatedParty.address3 %]</deliveryPoint>
                 [%- END %]
                 <city>[% associatedParty.city %]</city>
+                <administrativeArea>[% associatedParty.state %]</administrativeArea>
                 <postalCode>[% associatedParty.zipcode %]</postalCode>
                 <country>[% associatedParty.country %]</country>
             </address>
+            [%- IF associatedParty.phone1 != "" %]
             <phone phonetype="voice">[% associatedParty.phone1 %]</phone>
+            [%- END %]
             [%- IF associatedParty.phone2 != "" %]
-            <phone phonetype="fax">[% associatedParty.phone2 %]</phone>
+            <phone phonetype="voice">[% associatedParty.phone2 %]</phone>
             [%- END %]
             [%- IF associatedParty.fax != "" %]
             <phone phonetype="fax">[% associatedParty.fax %]</phone>
             [%- END %]
+            [%- IF associatedParty.email != "" %]
             <electronicMailAddress>[% associatedParty.email %]</electronicMailAddress>
+            [%- END %]
             <role>[% associatedParty.role %]</role>
         </associatedParty>
         [%- END %] [%# end FOREACH associatedParty #%]
+        <pubDate>[%- dataset.pubdate %]</pubDate>
         <language>[% dataset.language.language %]</language>
-        <abstract>
-            [% dataset.abstract.abstract %]
-        </abstract>
+        [%- IF dataset.abstract.abstract != "" %]
+            <abstract>[% dataset.abstract.abstract %]</abstract>
+        [%- END %]
         [%- thesaurus = "" %]
         [%- FOREACH keyword = dataset.keywords %]
             [%- IF loop.first %]
         <keywordSet>
                 [%- thesaurus = keyword.keywordthesaurus %]
+                [%- thesaurusNumber = keyword.thesaurus_sort_order %]
             [%- END %]
-            [%- IF thesaurus != keyword.keywordthesaurus %]
+            [%- IF thesaurusNumber != keyword.thesaurus_sort_order %]
+                [%- IF thesaurus != "" and thesaurus.lower != "none" %]
             <keywordThesaurus>[% thesaurus %]</keywordThesaurus>
-                [%- thesaurus = keyword.keywordthesaurus %]
-        </keywordSet>
-                [%- IF NOT loop.last %]
-        <keywordSet>
                 [%- END %]
+                [%- thesaurus = keyword.keywordthesaurus %]
+                [%- thesaurusNumber = keyword.thesaurus_sort_order %]
+        </keywordSet>
+        <keywordSet>
             [%- END %]
-            [%- IF keyword.keywordType == "" %]
+            [%- IF keyword.keywordtype == "" || keyword.keywordtype.lower == "none" %]
             <keyword>[% keyword.keyword %]</keyword>
-                [%- ELSE %]
+            [%- ELSE %]
             <keyword keywordType="[% keyword.keywordtype %]">[% keyword.keyword %]</keyword>
             [%- END %]
             [%- IF loop.last %]
-                [%- IF keyword.thesaurus != "" %]
-            <keywordThesaurus>[% keyword.thesaurus %]</keywordThesaurus>
+                [%- IF keyword.keywordthesaurus != "" and keyword.keywordthesaurus.lower != "none" %]
+            <keywordThesaurus>[% keyword.keywordthesaurus %]</keywordThesaurus>
                 [%- END %]
         </keywordSet>
             [% END %]
@@ -123,7 +161,7 @@
         </distribution>
         [%- INCLUDE './templates/eml-coverage.tt' coverage = dataset.coverage %]
         [%- FOREACH contact = dataset.contacts %]
-        <contact scope="document">
+        <contact>
             [% contact.contact %] 
         </contact>
         [%- END %] [%# end FOREACH contact #%]

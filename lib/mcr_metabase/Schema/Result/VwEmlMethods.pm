@@ -28,24 +28,19 @@ __PACKAGE__->table("vw_eml_methods");
   data_type: 'integer'
   is_nullable: 1
 
-=head2 entity_sort_order
+=head2 entity_position
 
   data_type: 'integer'
   is_nullable: 1
 
-=head2 column_sort_order
+=head2 column_position
 
   data_type: 'integer'
   is_nullable: 1
 
-=head2 methodstep_sort_order
+=head2 min
 
-  data_type: 'smallint'
-  is_nullable: 1
-
-=head2 methodstep
-
-  data_type: 'xml'
+  data_type: 'text'
   is_nullable: 1
 
 =cut
@@ -53,19 +48,17 @@ __PACKAGE__->table("vw_eml_methods");
 __PACKAGE__->add_columns(
   "datasetid",
   { data_type => "integer", is_nullable => 1 },
-  "entity_sort_order",
+  "entity_position",
   { data_type => "integer", is_nullable => 1 },
-  "column_sort_order",
+  "column_position",
   { data_type => "integer", is_nullable => 1 },
-  "methodstep_sort_order",
-  { data_type => "smallint", is_nullable => 1 },
-  "methodstep",
-  { data_type => "xml", is_nullable => 1 },
+  "min",
+  { data_type => "text", is_nullable => 1 },
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-09-04 14:14:40
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:U07bp/6N/WrmeqoQba300g
+# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-10-03 13:48:44
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:53PJnw33zcL1RtuZNQ2pMQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

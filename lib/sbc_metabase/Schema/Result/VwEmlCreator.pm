@@ -132,9 +132,9 @@ __PACKAGE__->table("vw_eml_creator");
 
 __PACKAGE__->add_columns(
   "datasetid",
-  { data_type => "integer", is_nullable => 0 },
+  { data_type => "integer", is_nullable => 1 },
   "authorshiporder",
-  { data_type => "smallint", is_nullable => 0 },
+  { data_type => "smallint", is_nullable => 1 },
   "authorshiprole",
   { data_type => "varchar", is_nullable => 1, size => 100 },
   "nameid",
@@ -170,10 +170,9 @@ __PACKAGE__->add_columns(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07035 @ 2013-07-22 14:24:08
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:720ySnppRTx8fglvm2cQIA
+# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-09-30 13:23:45
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:ubA3LzxNiYaKRORikfNtKw
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
-__PACKAGE__->set_primary_key(qw/ datasetid authorshiporder /);
 1;

@@ -1,12 +1,12 @@
 use utf8;
-package mcr_metabase::Schema::Result::VwEmlPubdate;
+package sbc_metabase::Schema::Result::VwEmlAlternateidentifier;
 
 # Created by DBIx::Class::Schema::Loader
 # DO NOT MODIFY THE FIRST PART OF THIS FILE
 
 =head1 NAME
 
-mcr_metabase::Schema::Result::VwEmlPubdate
+sbc_metabase::Schema::Result::VwEmlAlternateidentifier
 
 =cut
 
@@ -15,11 +15,11 @@ use warnings;
 
 use base 'DBIx::Class::Core';
 
-=head1 TABLE: C<vw_eml_pubdate>
+=head1 TABLE: C<vw_eml_alternateidentifier>
 
 =cut
 
-__PACKAGE__->table("vw_eml_pubdate");
+__PACKAGE__->table("vw_eml_alternateidentifier");
 
 =head1 ACCESSORS
 
@@ -28,9 +28,9 @@ __PACKAGE__->table("vw_eml_pubdate");
   data_type: 'integer'
   is_nullable: 1
 
-=head2 pubdate
+=head2 alternateidentifier
 
-  data_type: 'date'
+  data_type: 'text'
   is_nullable: 1
 
 =cut
@@ -38,13 +38,13 @@ __PACKAGE__->table("vw_eml_pubdate");
 __PACKAGE__->add_columns(
   "datasetid",
   { data_type => "integer", is_nullable => 1 },
-  "pubdate",
-  { data_type => "date", is_nullable => 1 },
+  "alternateidentifier",
+  { data_type => "text", is_nullable => 1 },
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-09-30 13:21:29
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:guruulMywnvcDP1bYjZOCA
+# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-09-30 13:23:44
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:qFNwLwHTv9IrwuEbbPUQvA
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
