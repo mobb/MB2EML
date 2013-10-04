@@ -130,10 +130,14 @@
             [%- IF loop.first %]
         <keywordSet>
                 [%- thesaurus = keyword.keywordthesaurus %]
+                [%- thesaurusNumber = keyword.thesaurus_sort_order %]
             [%- END %]
-            [%- IF thesaurus != keyword.keywordthesaurus %]
+            [%- IF thesaurusNumber != keyword.thesaurus_sort_order %]
+                [%- IF thesaurus != "" and thesaurus.lower != "none" %]
             <keywordThesaurus>[% thesaurus %]</keywordThesaurus>
+                [%- END %]
                 [%- thesaurus = keyword.keywordthesaurus %]
+                [%- thesaurusNumber = keyword.thesaurus_sort_order %]
         </keywordSet>
         <keywordSet>
             [%- END %]
@@ -143,8 +147,8 @@
             <keyword keywordType="[% keyword.keywordtype %]">[% keyword.keyword %]</keyword>
             [%- END %]
             [%- IF loop.last %]
-                [%- IF keyword.thesaurus != "" %]
-            <keywordThesaurus>[% keyword.thesaurus %]</keywordThesaurus>
+                [%- IF keyword.keywordthesaurus != "" and keyword.keywordthesaurus.lower != "none" %]
+            <keywordThesaurus>[% keyword.keywordthesaurus %]</keywordThesaurus>
                 [%- END %]
         </keywordSet>
             [% END %]

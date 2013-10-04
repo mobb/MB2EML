@@ -242,7 +242,7 @@ sub searchKeywords {
     my $datasetId = shift;
     my @keywords = ();
 
-    my $rs = $self->schema->resultset('VwEmlKeyword')->search({ datasetid => $datasetId }, { order_by => { -asc => [qw/keywordthesaurus keyword/]}} );
+    my $rs = $self->schema->resultset('VwEmlKeyword')->search({ datasetid => $datasetId }, { order_by => { -asc => [qw/thesaurus_sort_order /]}} );
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
     # i.e. the user doesn't have to know how to use a DBIx resultset
