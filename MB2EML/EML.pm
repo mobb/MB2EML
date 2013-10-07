@@ -137,8 +137,7 @@ sub getAttributeList {
         $attribute->{'coverage'}->{'taxonomiccoverage'} = $self->getTaxonomicCoverage($entityId, $attribute->column_position);
 
         # If a geographic coverage for this attribute is found, add it to the attribute hash
-        $attribute->{'coverage'}->{'geographiccoverage'} = $self->getGeographicCoverage($entityId, $attribute->column_position);
-
+        $attribute->{'coverage'}->{'geographiccoverage'} = $self->getGeographicCoverage($entityId, $attribute->column_position); 
         # If a temporal coverage for this attribute is found, add it to the attribute hash
         $attribute->{'coverage'}->{'temporalcoverage'} = $self->getTemporalCoverage($entityId, $attribute->column_position);
 
@@ -166,7 +165,6 @@ sub getCreators{
 
     return $self->mb->searchCreators($self->datasetId);
 }
-
 
 sub getGeographicCoverage{
     my $self = shift;

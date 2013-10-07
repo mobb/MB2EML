@@ -168,7 +168,7 @@
         [%- INCLUDE './templates/eml-methods.tt' methods = dataset.methods %]
         <project>[% dataset.project.project %]</project>
         [%- FOREACH entity = dataset.entities %]
-            [%- SET templateName = 'eml-' _ entity.entitytype _ '.tt' %]
+            [%- SET templateName = 'eml-' _ entity.entity_template _ '.tt' %]
             [%- INCLUDE "./templates/$templateName" %]
         [%- END %] [%# end FOREACH entity #%]
     </dataset>

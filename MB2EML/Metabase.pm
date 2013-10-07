@@ -84,7 +84,7 @@ sub searchAssociatedParties {
     my @associatedParties = ();
 
     # resultset returns an iterator
-    my $rs = $self->schema->resultset('VwEmlAssociatedparty')->search({ datasetid => $datasetId });
+    my $rs = $self->schema->resultset('VwEmlAssociatedparty')->search({ datasetid => $datasetId }, { order_by => { -asc => 'authorshiporder' }});
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
     # i.e. the user doesn't have to know how to use a DBIx resultset
@@ -272,7 +272,7 @@ sub searchMethods {
                                                               { order_by => { -asc => [qw/entity_position column_position/] }});
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
-    # i.e. the user doesn't have to know how to use a DBIx resultset
+    # i.e. the user doesn't have to know how to use a DBIx resultse
     # Each row is a hash that used the column names as the keys.
     while (my $method = $rs->next) {
         #print "metabase methodstep: " . $method->methodstep. "\n";
