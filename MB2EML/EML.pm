@@ -72,8 +72,9 @@ sub BUILD {
 
     $shortName = $self->getShortName();
     if (defined $shortName) {
-        $dataset{'shortName'} = $shortName->shortname;
+        $dataset{'shortname'} = $shortName->shortname;
     } else {
+        $dataset{'shortname'} = "";
         print STDERR "Warning: content not found in Metabase for <shortName>\n";
     }
 
