@@ -224,16 +224,20 @@ the template I<eml-coverage.tt> in the line:
 
 =head2 Changing a column name in Metabase 
 
-The changes necessary to MB2EML after adding a new column to a Metabase view depend on whether the column is used to 
-sort the result set. If the column is a sort column, then the accessor for the view in Metabase.pm mast need to be updated,
-for exxample, the view vw_eml_geographiccoverage is accessed via Metabase->searchGeographicCoverage, which uses the sort
-fields kkkk
+The changes necessary to MB2EML after a column name is changed in a Metabase view depend on whether the column is used to 
+sort or filter the result set or not. If the column is a sort/filter column, then the accessor for the view in Metabase.pm must be updated.
+For exxample, the view vw_eml_geographiccoverage is accessed via Metabase->searchGeographicCoverage, which uses the sort
+fields entity_position, attribute_postion, geocoverage_position, so these column names are referenced in searchGeographicCoverage and must be
+updated if their names change.
+
+If a column is not used to sort or filter the resultSet, then only the template that renders data from the view needs to be updated 
+with the new column name. For example, the column name I<westboundingcoordiate> is used in the template I<eml-coverage.tt> in the line:
 
 =over 4
 
-=item * add an accessor method to Metabase.pm
+=item <eastBoundingCoordinate>[% gc.eastboundingcoordinate %]</eastBoundingCoordinate>
 
-sub searchGeographicCoverage { ... }
+=back
 
 =back
 
