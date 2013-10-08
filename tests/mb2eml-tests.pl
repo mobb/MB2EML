@@ -14,14 +14,15 @@ print "Performing unit tests for mb2eml...";
 ok( defined($mb->schema), 'initialized Metabase object' );
 
 # use thie to show what output is like if tests are failed:: my $datasetId = '99000';
-my $datasetId = '99013';
+my $attributeId;
+my $datasetId = '10';
 my $entityId;
 
 ok ( defined($mb->searchAbstract($datasetId, $entityId=1)), 'fetched data for "abstract" for dataset: ' . $datasetId . ', entity: ' . $entityId);
-ok ( defined($mb->searchAccess($datasetId, $entityId=1)),   'fetched data for "access" for dataset: ' . $datasetId . ', entity: ' . $entityId);
+ok ( defined($mb->searchAccess($datasetId, $entityId=0)),   'fetched data for "access" for dataset: ' . $datasetId . ', entity: ' . $entityId);
 
 # Uncomment this line when the vw_eml_alternateidentifier view is created
-#ok ( defined($mb->searchAlternateIdentifier($datasetId, $entityId)), 'fetched data for "alternateidentifier" for dataset: ' . $datasetId);
+ok ( defined($mb->searchAlternateIdentifier($datasetId, $entityId)), 'fetched data for "alternateidentifier" for dataset: ' . $datasetId);
 
 my $arrRef = $mb->searchAssociatedParties($datasetId);
 ok ( scalar @$arrRef > 0, 'fetched data for "associated parties" for dataset: ' . $datasetId);
@@ -37,7 +38,7 @@ ok ( defined($mb->searchDistribution($datasetId)), 'fetched data for "distributi
 $arrRef = $mb->searchEntities($datasetId);
 ok ( scalar @$arrRef > 0, 'fetched data for "entities" for dataset: ' . $datasetId);
 
-$arrRef = $mb->searchGeographicCoverage($datasetId, $entityId=0);
+$arrRef = $mb->searchGeographicCoverage($datasetId, $entityId=0, $attributeId=0);
 ok ( scalar @$arrRef > 0, 'fetched data for "geographic coverage" for dataset: ' . $datasetId . ', entityId: ' . $entityId);
 
 ok ( defined($mb->searchIntellectualRights($datasetId)), 'fetched data for "intellectual rights" for dataset: ' . $datasetId);
@@ -54,7 +55,7 @@ ok ( defined($mb->searchPhysical($datasetId, $entityId=1)), 'fetched data for "p
 ok ( defined($mb->searchProject($datasetId)), 'fetched data for "project" for dataset: ' . $datasetId);
 ok ( defined($mb->searchPublisher($datasetId)), 'fetched data for "publisher" for dataset: ' . $datasetId);
 
-$arrRef = $mb->searchTaxonomicCoverage($datasetId, $entityId=1, $columnId=10);
+$arrRef = $mb->searchTaxonomicCoverage($datasetId, $entityId=1, $columnId=1);
 ok ( scalar @$arrRef > 0, 'fetched data for "taxonomic coverage" for dataset: ' . $datasetId . ', entityId: ' . $entityId . ', columnId: ' . $columnId);
 
 $arrRef = $mb->searchTemporalCoverage($datasetId, $entityId=0, $columnId=0);
@@ -77,36 +78,41 @@ print "Done performing unit tests for mb2eml...\n";
 print "Performing diff of minimal reference document and newly created document (datasetId=$datasetId)...\n";
 
 $databaseName = 'sbc_metabase';
-$datasetId = '99013';
+$datasetId = '12';
+$refFile = './tests/' . $databaseName . "-" . $datasetId . "-ref.xml";
+$newFile = './tests/' . $databaseName . "-" . $datasetId . "-new.xml";
 
 my $eml = MB2EML::EML->new( { databaseName => $databaseName, datasetId => $datasetId } );
 my $output = $eml->writeXML(validate => 0, runEMLParser => 0);
 
-open (EML_FILE , '>tests/new-eml.xml');
+open (EML_FILE , '>' . $newFile);
 print EML_FILE $output;
 close (EML_FILE); 
 
-my $lines = `diff ./tests/sbc-99013.xml ./tests/new-eml.xml`;
+$cmd = ' diff ' . $refFile . ' ' . $newFile;
+print "cmd: " . $cmd;
+my $lines = eval cmd;
 print $lines . "\n";
 
+exit(1);
 print "Performing diff of full reference document and newly created document (datasetId=$datasetId)...\n";
 
 my $eml = MB2EML::EML->new( { databaseName => $databaseName, datasetId => $datasetId } );
 my $output = $eml->writeXML(validate => 0, runEMLParser => 0);
 
-open (EML_FILE , '>tests/new-eml.xml');
+open (EML_FILE , '>tests/sbc-12-new.xml');
 print EML_FILE $output;
 close (EML_FILE); 
 
 print "Output of diff command: \n";
-my $lines = `diff ./tests/sbc-99013.xml ./tests/new-eml.xml`;
+my $lines = `diff ./tests/sbc-12.xml ./tests/sbc-12-ref.xml`;
 print $lines . "\n";
 
 #use String::Diff;
 #use String::Diff qw( diff_fully diff diff_merge diff_regexp );# export functions
 #use Term::ANSIColor qw( RESET :constants );
 
-#open (REF_FILE, 'tests/sbc-99013.xml');
+#open (REF_FILE, 'tests/sbc-12.xml');
 #my @ref = <REF_FILE>;
 #close (REF_FILE);
 

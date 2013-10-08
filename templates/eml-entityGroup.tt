@@ -1,6 +1,6 @@
-            [% IF entity.alternateidentifier != "" %]
+            [%- IF entity.alternateidentifier != "" %]
             <alternateidentifier>[% entity.alternateidentifier %]</alternateidentifier>
-            [% END %]
+            [%- END %]
             <entityName>[% entity.entityname %]</entityName>
             [%- IF entity.entitydescription != "" %]
             <entityDescription>[% entity.entitydescription %]</entityDescription> 
@@ -13,6 +13,11 @@
                 <characterEncoding>[% physical.characterencoding %]</characterEncoding>
                 [%- END %]
                 <dataFormat>
+                    [%- IF physical.formatname != "" %]
+                    <externallyDefinedFormat>
+                        <formatName>[% physical.formatname %]</formatName>
+                    </externallyDefinedFormat>
+                    [%- ELSE %]
                     <textFormat>
                         [%- IF physical.numheaderlines != "" %]
                         <numHeaderLines>[% physical.numheaderlines %]</numHeaderLines>
@@ -36,6 +41,7 @@
                             [% END %]
                         </simpleDelimited>
                     </textFormat>
+                    [%- END %]
                 </dataFormat>
                 <distribution>
                     [% IF physical.url != "" %]
