@@ -55,7 +55,7 @@ ok ( defined($mb->searchPhysical($datasetId, $entityId=1)), 'fetched data for "p
 ok ( defined($mb->searchProject($datasetId)), 'fetched data for "project" for dataset: ' . $datasetId);
 ok ( defined($mb->searchPublisher($datasetId)), 'fetched data for "publisher" for dataset: ' . $datasetId);
 
-$arrRef = $mb->searchTaxonomicCoverage($datasetId, $entityId=1, $columnId=1);
+$arrRef = $mb->searchTaxonomicCoverage($datasetId, $entityId=0, $columnId=0);
 ok ( scalar @$arrRef > 0, 'fetched data for "taxonomic coverage" for dataset: ' . $datasetId . ', entityId: ' . $entityId . ', columnId: ' . $columnId);
 
 $arrRef = $mb->searchTemporalCoverage($datasetId, $entityId=0, $columnId=0);
@@ -89,12 +89,11 @@ open (EML_FILE , '>' . $newFile);
 print EML_FILE $output;
 close (EML_FILE); 
 
-$cmd = ' diff ' . $refFile . ' ' . $newFile;
+$cmd = ' diff -ub ' . $refFile . ' ' . $newFile;
 print "cmd: " . $cmd;
 my $lines = eval cmd;
 print $lines . "\n";
 
-exit(1);
 print "Performing diff of full reference document and newly created document (datasetId=$datasetId)...\n";
 
 my $eml = MB2EML::EML->new( { databaseName => $databaseName, datasetId => $datasetId } );
@@ -105,7 +104,7 @@ print EML_FILE $output;
 close (EML_FILE); 
 
 print "Output of diff command: \n";
-my $lines = `diff ./tests/sbc-12.xml ./tests/sbc-12-ref.xml`;
+my $lines = `diff -ub ./tests/sbc-12.xml ./tests/sbc-12-ref.xml`;
 print $lines . "\n";
 
 #use String::Diff;
