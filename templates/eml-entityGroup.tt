@@ -8,7 +8,9 @@
             [%- FOREACH physical = entity.physical %]
             <physical>
                 <objectName>[% physical.objectname %]</objectName>
+                [%- IF physical.size != "" %]
                 <size unit="[% physical.unit %]">[% physical.size %]</size>
+                [%- END %]
                 [%- IF physical.characterencoding != "" %]
                 <characterEncoding>[% physical.characterencoding %]</characterEncoding>
                 [%- END %]

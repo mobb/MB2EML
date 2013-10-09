@@ -33,12 +33,6 @@ __PACKAGE__->table("vw_eml_associatedparty");
   data_type: 'smallint'
   is_nullable: 1
 
-=head2 authorshiprole
-
-  data_type: 'varchar'
-  is_nullable: 1
-  size: 100
-
 =head2 nameid
 
   data_type: 'varchar'
@@ -134,6 +128,12 @@ __PACKAGE__->table("vw_eml_associatedparty");
   is_nullable: 1
   size: 50
 
+=head2 onlineurl
+
+  data_type: 'varchar'
+  is_nullable: 1
+  size: 100
+
 =head2 role
 
   data_type: 'varchar'
@@ -147,8 +147,6 @@ __PACKAGE__->add_columns(
   { data_type => "integer", is_nullable => 1 },
   "authorshiporder",
   { data_type => "smallint", is_nullable => 1 },
-  "authorshiprole",
-  { data_type => "varchar", is_nullable => 1, size => 100 },
   "nameid",
   { data_type => "varchar", is_nullable => 1, size => 20 },
   "givenname",
@@ -181,13 +179,15 @@ __PACKAGE__->add_columns(
   { data_type => "varchar", is_nullable => 1, size => 50 },
   "email",
   { data_type => "varchar", is_nullable => 1, size => 50 },
+  "onlineurl",
+  { data_type => "varchar", is_nullable => 1, size => 100 },
   "role",
   { data_type => "varchar", is_nullable => 1, size => 100 },
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-09-30 13:21:25
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:ByFEqOO6ITH40LyeJFVvNg
+# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-10-08 16:28:10
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:C6X/zLid37YaIYFt/KTKzw
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
