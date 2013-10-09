@@ -5,7 +5,7 @@ use warnings;
 
 our $VERSION;
 
-$VERSION = '0.05';
+$VERSION = '0.06';
 
 1;
 
@@ -75,7 +75,9 @@ This package is used if regressing testing is going to be performed.
 The EML 2.1.1 distribution (Schema and EMLParser) are required to validate the EML document against the EML XML Schema and to
 check identifiers in the document.  
 
-The EML distribution is available from I<http://knb.ecoinformatics.org
+The EML distribution is available from I<http://knb.ecoinformatics.org>
+
+The EML specification is available from http://knb.ecoinformatics.org/software/eml/eml-2.1.1/.
 
 =head1 CONFIGURATION
 
@@ -128,17 +130,16 @@ EMLlocation can be specified as:
 
 =back
 
-Note that if a web URL is specified, then the EMLParser program cannot be run because the EML distribution must be in a local directory.
+Note that if a web URL is specified, then the EMLParser program cannot be run because the parser can only read the EML schema from a 
+local directory.
 
 A sample configuration file named B<./config/mb2eml.ini.sample> is included with the MB2EML distribution.
 
 =head1 TEMPLATES
 
 The Perl Templating Toolkit is used to render the EML data to XML.
-The data processed by each template correspond to one EML module, for example the template I<eml-coverage.tt> corresponds to the EML module
-I<eml-covreage>.
-
-This makes the templates easier to edit and allows one template to be used at different levels in the hierarchy, for example the eml-methods.tt template can be used to describe methods at any of the following levels in the EML document: ./eml/dataset, ./eml/dataset/dataTable 
+Each template corresponds to an EML module, for example the template I<eml-coverage.tt> corresponds to the EML module
+I<eml-coverage>. This makes the templates easier to edit and allows one template to be used at different levels in the hierarchy, for example the eml-methods.tt template can be used to describe methods at any of the following levels in the EML document: ./eml/dataset, ./eml/dataset/dataTable 
 
 =head1 TESTING
 
@@ -146,50 +147,103 @@ Please see the documentation for ./tests/mb2eml-test.pl
 
 =head1 MAINTENANCE
 
-MB2EML currently implements a subset of all possible EML modules. This section provides a brief guide for updating MB2EML to
-use new EML modules, or to use additional elements in currently implemented modules.
+MB2EML currently implements a subset of all possible EML elements. This section provides a brief guide for updating MB2EML to
+if new EML elements must be added.
 
-The MB2EML templates are in the ./templates directory. Each template file corresponds to an EML module, for example eml-contacts.tt corresponds to the EML module of the same name.
+The MB2EML templates are in the ./templates directory. 
 Please note that an EML module may contain data from one or more database views. 
-For example, the EML module eml-attribute is rendered using the template file templates/eml-attribute.tt and is supplied with data from the view vw_eml_attributelist. 
-The EML module eml-coverage however, requires data from multiple database views: vw_eml_geographiccoverage, vw_eml_taxonomiccoverage, vw_eml_temporalcoverage.
+For example, the EML module eml-attribute is rendered using the template file templates/eml-attribute.tt and is supplied with data from the single 
+view I<vw_eml_attributelist>. 
+The EML module eml-coverage however, requires data from multiple database views: I<vw_eml_geographiccoverage>, I<vw_eml_taxonomiccoverage>, I<vw_eml_temporalcoverage>.
 
-=head2 Adding a new view
+=head2 Adding a new Metabase view
 
 The changes necessary to implement a new view will be shown by using an example of adding
-the view "vw_eml_geographiccoverage" to MB2EML. As this view is already added to MB2EML you
-can view the source files for further details.
+the view "vw_eml_geographiccoverage" to MB2EML. As this view has already been added to MB2EML you
+can inspect the source files for further details.
 
 =over 4
 
-=item * add accessor method to Metabase.pm
+=item * add an accessor method to Metabase.pm
 
-sub getGeographicCoverage { ... }
+sub searchGeographicCoverage { ... }
 
 The method I<getGeographicCoverage> queries Metabase for geographic coverage metadata. Data will be returned for either the EML dataset level
-or the entity level depending on the value of $entity_sort_order. The value '0' is used to retrieve dataset coverage and any other value will
-retrieve coverage information for the entity with the specified I<entity_sort_order>.
+or the entity level depending on the value of $entity_position. The value '0' is used to retrieve dataset coverage and any other value will
+retrieve coverage information for the entity with the specified I<entity_position>.
 
-Note that the DBIx::Class::ResultSet is returned in the variable I<$rs>, which requires an iterator (i.e. $rs->next) to process. 
-The getGeographicCoverage method reformats this resultSet into an array for easier processing by the calling program.
+Note that a DBIx::Class::ResultSet object is returned in the variable I<$rs>, which requires an iterator (i.e. $rs->next) to process all
+the rows returned from the database.
+The searchGeographicCoverage method reformats this resultSet into an array for easier processing by the calling program.
 
-=item * add attribute to EML.pm
+=item * add an accessor method to EML.pm
 
-=item * add accessor method to EML.pm
+EML.pm is the module that builds the EML object using its' own accessor methods that have names such as I<getGeographicCoverage>.
 
-=item * insert data from accessor into %dataset
+=item * Populate the template variables with the top level EML elements.
+
+The method I<writeXML> calls the Perl Template Toolkit to perform the serialization to XML. Data is passed to the Template Toolkit via
+the Perl hash I<%templateVars>. The hash element 'dataset' contains the entire EML data structure. Data from a newly added Metabase view
+must be inserted into this hash at the proper level. For example, data from the vw_eml_geographiccoverage view is placed in the hash
+at one of these levels:
+
+=over 4
+
+=item * dataset/coverage/geographiccoverage
+
+$dataset{'coverage'} = ( { 'geographiccoverage'  => $self->getGeographicCoverage($entityPostion=0, $attributePostion=0),
+
+=item * dataset/entity/coverage/geographiccoverage
+
+$entity->{'coverage'}->{'geographiccoverage'} = $self->getGeographicCoverage($entity->entity_position, $attributePostion=0);
+
+=item * attribute/coverage
+
+$attribute->{'coverage'}->{'geographiccoverage'} = $self->getGeographicCoverage($entityPostion, $attribute->attribute_position);
+
+=back
 
 =back 
 
-For each new view added to the PostgreSQL mb2eml schema, add an accessor method that will retrieve information from the view. For example, 
-the accessor getContacts retrieves records from the vw_eml_contact view. Currently there are two types of database accessor methods: 
-1. methods that return a single result 
-2. methods that return an array of results. 
-Note that the data object returned by the accessor is either a single Perl DBIC row or an array of DBIC rows.
+=head2 Adding a new column to a Metabase view
+
+The changes necessary to MB2EML after adding a new column to a Metabase view depend on whether the column is used to 
+sort or filter the result set or not. If the column is a sort/filter column, then the accessor for the view in Metabase.pm must be updated,
+for exxample, the view vw_eml_geographiccoverage is accessed via Metabase->searchGeographicCoverage, which uses the sort
+fields entity_position, attribute_postion, geocoverage_position, so these column names are referenced in searchGeographicCoverage.
+
+If a column is not used to sort or filter the resultSet, then only the template that renders data from the view needs to be updated by
+adding the column name in the appropriate location in the template. For example, the column name I<westboundingcoordiate> is used in 
+the template I<eml-coverage.tt> in the line:
+
+=over 4
+
+=item <eastBoundingCoordinate>[% gc.eastboundingcoordinate %]</eastBoundingCoordinate>
+
+=back
+
+=head2 Changing a column name in Metabase 
+
+The changes necessary to MB2EML after a column name is changed in a Metabase view depend on whether the column is used to 
+sort or filter the result set or not. If the column is a sort/filter column, then the accessor for the view in Metabase.pm must be updated.
+For exxample, the view vw_eml_geographiccoverage is accessed via Metabase->searchGeographicCoverage, which uses the sort
+fields entity_position, attribute_postion, geocoverage_position, so these column names are referenced in searchGeographicCoverage and must be
+updated if their names change.
+
+If a column is not used to sort or filter the resultSet, then only the template that renders data from the view needs to be updated 
+with the new column name. For example, the column name I<westboundingcoordiate> is used in the template I<eml-coverage.tt> in the line:
+
+=over 4
+
+=item <eastBoundingCoordinate>[% gc.eastboundingcoordinate %]</eastBoundingCoordinate>
+
+=back
+
+=back
 
 =head1 AUTHOR
 
-Peter Slaughter "<pslaughter@msi.ucsb.edu>"
+Peter Slaughter "<peter@eri.ucsb.edu>"
 
 =cut
 

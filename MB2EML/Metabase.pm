@@ -62,17 +62,17 @@ sub searchAbstract {
 sub searchAccess {
     my $self = shift;
     my $datasetId = shift;
-    my $entityId = shift;
+    my $entityPostion = shift;
     my @accesses = ();
 
     # Return a singgle DBIx::Class::Row
-    return $self->schema->resultset('VwEmlAccess')->search({ datasetid => $datasetId, entity_position => $entityId })->single;
+    return $self->schema->resultset('VwEmlAccess')->search({ datasetid => $datasetId, entity_position => $entityPostion })->single;
 }
 
 sub searchAlternateIdentifier {
     my $self = shift;
     my $datasetId = shift;
-    my $entityId = shift;
+    my $entityPostion = shift;
 
     # Return a single DBIx::Class::Row
     return $self->schema->resultset('VwEmlAlternateidentifier')->search({ datasetid => $datasetId })->single;
@@ -84,7 +84,7 @@ sub searchAssociatedParties {
     my @associatedParties = ();
 
     # resultset returns an iterator
-    my $rs = $self->schema->resultset('VwEmlAssociatedparty')->search({ datasetid => $datasetId });
+    my $rs = $self->schema->resultset('VwEmlAssociatedparty')->search({ datasetid => $datasetId }, { order_by => { -asc => 'authorshiporder' }});
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
     # i.e. the user doesn't have to know how to use a DBIx resultset
@@ -103,13 +103,13 @@ sub searchAssociatedParties {
 sub searchAttributeList {
     my $self = shift;
     my $datasetId = shift;
-    my $entityId = shift;
+    my $entityPostion = shift;
     my @attributeList = ();
     my $dataType;
 
     # resultset returns an iterator
     # Retrieve attributes for a particular dataset and entity, ordered by entity sort order
-    my $rs = $self->schema->resultset('VwEmlAttributelist')->search({ datasetid => $datasetId, entity_position => $entityId }, { order_by => { -asc => 'column_position' }});
+    my $rs = $self->schema->resultset('VwEmlAttributelist')->search({ datasetid => $datasetId, entity_position => $entityPostion }, { order_by => { -asc => 'column_position' }});
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
     # i.e. the user doesn't have to know how to use a DBIx resultset
@@ -211,11 +211,11 @@ sub searchEntities{
 sub searchGeographicCoverage {
     my $self = shift;
     my $datasetId = shift;
-    my $entityId = shift;
-    my $columnId = shift;
+    my $entityPostion = shift;
+    my $attributePosition = shift;
     my @geographicCoverage = ();
 
-    my $rs = $self->schema->resultset('VwEmlGeographiccoverage')->search({ datasetid => $datasetId, entity_position => $entityId, attribute_position => $columnId }, 
+    my $rs = $self->schema->resultset('VwEmlGeographiccoverage')->search({ datasetid => $datasetId, entity_position => $entityPostion, attribute_position => $attributePosition }, 
                                                                          { order_by => { -asc => [qw/entity_position attribute_position geocoverage_sort_order/] }});
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
@@ -242,7 +242,7 @@ sub searchKeywords {
     my $datasetId = shift;
     my @keywords = ();
 
-    my $rs = $self->schema->resultset('VwEmlKeyword')->search({ datasetid => $datasetId }, { order_by => { -asc => [qw/keywordthesaurus keyword/]}} );
+    my $rs = $self->schema->resultset('VwEmlKeyword')->search({ datasetid => $datasetId }, { order_by => { -asc => [qw/thesaurus_sort_order /]}} );
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
     # i.e. the user doesn't have to know how to use a DBIx resultset
@@ -264,15 +264,15 @@ sub searchLanguage {
 sub searchMethods {
     my $self = shift;
     my $datasetId = shift;
-    my $entityId = shift;
-    my $columnId = shift;
+    my $entityPostion = shift;
+    my $attributePosition = shift;
     my @methods;
 
-    my $rs = $self->schema->resultset('VwEmlMethods')->search({ datasetid => $datasetId, entity_position => $entityId, column_position => $columnId }, 
+    my $rs = $self->schema->resultset('VwEmlMethods')->search({ datasetid => $datasetId, entity_position => $entityPostion, column_position => $attributePosition }, 
                                                               { order_by => { -asc => [qw/entity_position column_position/] }});
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
-    # i.e. the user doesn't have to know how to use a DBIx resultset
+    # i.e. the user doesn't have to know how to use a DBIx resultse
     # Each row is a hash that used the column names as the keys.
     while (my $method = $rs->next) {
         #print "metabase methodstep: " . $method->methodstep. "\n";
@@ -293,12 +293,12 @@ sub searchPackageId {
 sub searchPhysical {
     my $self = shift;
     my $datasetId = shift;
-    my $entityId = shift;
+    my $entityPostion = shift;
     my @physical = ();
 
     # resultset returns resultSet object
     # Retrieve physical format description for a particular dataset and entity
-    my $rs = $self->schema->resultset('VwEmlPhysical')->search({ datasetid => $datasetId, entity_position => $entityId });
+    my $rs = $self->schema->resultset('VwEmlPhysical')->search({ datasetid => $datasetId, entity_position => $entityPostion });
 
     while (my $p = $rs->next) {
         push(@physical, $p);
@@ -341,12 +341,12 @@ sub searchShortName {
 sub searchTemporalCoverage {
     my $self = shift;
     my $datasetId = shift;
-    my $entityId = shift;
-    my $columnId = shift;
+    my $entityPostion = shift;
+    my $attributePosition = shift;
     my @temporalCoverage = ();
 
-    #print "$entityId , $datasetId \n";
-    my $rs = $self->schema->resultset('VwEmlTemporalcoverage')->search({ datasetid => $datasetId, entity_position => $entityId, attribute_position => $columnId }, 
+    #print "$entityPostion , $datasetId \n";
+    my $rs = $self->schema->resultset('VwEmlTemporalcoverage')->search({ datasetid => $datasetId, entity_position => $entityPostion, attribute_position => $attributePosition }, 
                                                                        { order_by => { -asc => [qw/entity_position attribute_position temporalcoverage_sort_order/] }});
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
@@ -363,12 +363,12 @@ sub searchTemporalCoverage {
 sub searchTaxonomicCoverage {
     my $self = shift;
     my $datasetId = shift;
-    my $entityId = shift;
-    my $columnId = shift;
+    my $entityPostion = shift;
+    my $attributePosition = shift;
     my @taxonomicCoverage = ();
 
-    #print "$entityId , $datasetId \n";
-    my $rs = $self->schema->resultset('VwEmlTaxonomiccoverage')->search({ datasetid => $datasetId, entity_position => $entityId, attribute_position => $columnId }, 
+    #print "$entityPostion , $datasetId \n";
+    my $rs = $self->schema->resultset('VwEmlTaxonomiccoverage')->search({ datasetid => $datasetId, entity_position => $entityPostion, attribute_position => $attributePosition }, 
                                                                         { order_by => { -asc => [qw /entity_position attribute_position/] }});
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,
@@ -440,7 +440,7 @@ DBIx::Class::Schema::Loader module.
 
 =over 4
 
-=item Arguments: $datasetId, $entityId
+=item Arguments: $datasetId, $entityPostion
 
 =item Return Value: DBIx::Class::Row
 
@@ -450,7 +450,7 @@ DBIx::Class::Schema::Loader module.
 
 =over 4
 
-=item Arguments: $datasetId, $entityId
+=item Arguments: $datasetId, $entityPostion
 
 =item Return Value: DBIx::Class::Row
 
@@ -460,7 +460,7 @@ DBIx::Class::Schema::Loader module.
 
 =over 4
 
-=item Arguments: $datasetId, $entityId
+=item Arguments: $datasetId, $entityPostion
 
 =item Return Value: DBIx::Class::Row
 
@@ -470,7 +470,7 @@ DBIx::Class::Schema::Loader module.
 
 =over 4
 
-=item Arguments: $datasetId, $entityId
+=item Arguments: $datasetId, $entityPostion
 
 =item Return Value: array reference to array of DBIx::Class::Row
 
@@ -480,7 +480,7 @@ DBIx::Class::Schema::Loader module.
 
 =over 4
 
-=item Arguments: $datasetId, $entityId
+=item Arguments: $datasetId, $entityPostion
 
 =item Return Value: array reference to array of DBIx::Class::Row
 
@@ -490,7 +490,7 @@ DBIx::Class::Schema::Loader module.
 
 =over 4
 
-=item Arguments: $datasetId, $entityId
+=item Arguments: $datasetId, $entityPostion
 
 =item Return Value: DBIx::Class::Row
 
@@ -500,7 +500,7 @@ DBIx::Class::Schema::Loader module.
 
 =over 4
 
-=item Arguments: $datasetId, $entityId
+=item Arguments: $datasetId, $entityPostion
 
 =item Return Value: array reference to array of DBIx::Class::Row
 
@@ -510,7 +510,7 @@ DBIx::Class::Schema::Loader module.
 
 =over 4
 
-=item Arguments: $datasetId, $entityId
+=item Arguments: $datasetId, $entityPostion
 
 =item Return Value: DBIx::Class::Row
 
@@ -520,7 +520,7 @@ DBIx::Class::Schema::Loader module.
 
 =over 4
 
-=item Arguments: $datasetId, $entityId
+=item Arguments: $datasetId, $entityPostion
 
 =item Return Value: array reference to array of DBIx::Class::Row
 
@@ -530,7 +530,7 @@ DBIx::Class::Schema::Loader module.
 
 =over 4
 
-=item Arguments: $datasetId, $entityId
+=item Arguments: $datasetId, $entityPostion
 
 =item Return Value: array reference to array of DBIx::Class::Row
 
@@ -540,7 +540,7 @@ DBIx::Class::Schema::Loader module.
 
 =over 4
 
-=item Arguments: $datasetId, $entityId
+=item Arguments: $datasetId, $entityPostion
 
 =item Return Value: DBIx::Class::Row
 
@@ -550,7 +550,7 @@ DBIx::Class::Schema::Loader module.
 
 =over 4
 
-=item Arguments: $datasetId, $entityId
+=item Arguments: $datasetId, $entityPostion
 
 =item Return Value: array reference to array of DBIx::Class::Row
 
@@ -560,7 +560,7 @@ DBIx::Class::Schema::Loader module.
 
 =over 4
 
-=item Arguments: $datasetId, $entityId
+=item Arguments: $datasetId, $entityPostion
 
 =item Return Value: DBIx::Class::Row
 
@@ -570,7 +570,7 @@ DBIx::Class::Schema::Loader module.
 
 =over 4
 
-=item Arguments: $datasetId, $entityId
+=item Arguments: $datasetId, $entityPostion
 
 =item Return Value: array reference to array of DBIx::Class::Row
 
@@ -580,7 +580,7 @@ DBIx::Class::Schema::Loader module.
 
 =over 4
 
-=item Arguments: $datasetId, $entityId
+=item Arguments: $datasetId, $entityPostion
 
 =item Return Value: DBIx::Class::Row
 
@@ -610,7 +610,7 @@ DBIx::Class::Schema::Loader module.
 
 =over 4
 
-=item Arguments: $datasetId, $entityId
+=item Arguments: $datasetId, $entityPostion
 
 =item Return Value: DBIx::Class::Row
 
@@ -620,7 +620,7 @@ DBIx::Class::Schema::Loader module.
 
 =over 4
 
-=item Arguments: $datasetId, $entityId
+=item Arguments: $datasetId, $entityPostion
 
 =item Return Value: array reference to array of DBIx::Class::Row
 
@@ -630,7 +630,7 @@ DBIx::Class::Schema::Loader module.
 
 =over 4
 
-=item Arguments: $datasetId, $entityId
+=item Arguments: $datasetId, $entityPostion
 
 =item Return Value: array reference to array of DBIx::Class::Row
 
@@ -640,7 +640,7 @@ DBIx::Class::Schema::Loader module.
 
 =over 4
 
-=item Arguments: $datasetId, $entityId
+=item Arguments: $datasetId, $entityPostion
 
 =item Return Value: DBIx::Class::Row
 
@@ -650,7 +650,7 @@ DBIx::Class::Schema::Loader module.
 
 =over 4
 
-=item Arguments: $datasetId, $entityId
+=item Arguments: $datasetId, $entityPostion
 
 =item Return Value: array reference to array of DBIx::Class::Row
 

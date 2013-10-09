@@ -18,8 +18,8 @@ that defines an abstraction layer to the underlying database, providing
 isolation from changes to the database, and making it unnecessary to write
 SQL in Perl code.
 
-Data is retrieved via accessor functions (e.g. getContacts) which are based
-on Metabase views.
+Data is retrieved via accessor functions (e.g. seasrchContacts) which are based
+on Metabase views defined in the MB2EML PostgreSQL schema.
 
 Any database related processing should happen in this module, such as checking
 for NULL or invalid values.
@@ -36,7 +36,8 @@ The program saveSchema.pl can be used to create this schema representation.
 EML.pm module
 -------------
 
-The EML.pm module provides an API that is used to assemble EML elements and 
+The EML.pm module provides an API that is used to assemble all required metadata into
+an EML structure and from this
 create an XML document. Any data integrity checking should happen in this module
 for example, ensuring that for a specified dataset, all the required EML data
 is available.
@@ -45,7 +46,8 @@ This module uses the Perl Templating Toolkit in order to render the EML data
 to XML.
 
 After the XML document is created, it is verified using the eml.xsd XML Schema
-definition.
+that is contained in the EML 2.1.1 distribution available at
+http://knb.ecoinformatics.org/software/eml/
 
 Client program
 --------------

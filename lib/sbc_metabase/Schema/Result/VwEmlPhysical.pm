@@ -102,6 +102,12 @@ __PACKAGE__->table("vw_eml_physical");
   is_nullable: 1
   size: 1
 
+=head2 formatname
+
+  data_type: 'text'
+  is_nullable: 1
+  original: {data_type => "varchar"}
+
 =head2 url
 
   data_type: 'text'
@@ -154,6 +160,12 @@ __PACKAGE__->add_columns(
   },
   "quotecharacter",
   { data_type => "char", is_nullable => 1, size => 1 },
+  "formatname",
+  {
+    data_type   => "text",
+    is_nullable => 1,
+    original    => { data_type => "varchar" },
+  },
   "url",
   { data_type => "text", is_nullable => 1 },
   "onlinedescription",
@@ -163,8 +175,8 @@ __PACKAGE__->add_columns(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-09-30 13:23:47
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:krVC7qT8opsGHBJeuqzXRA
+# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-10-07 15:11:25
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:QKYWNk0cqywjR5WrLxvDEw
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

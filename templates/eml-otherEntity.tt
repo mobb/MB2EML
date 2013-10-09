@@ -1,1 +1,12 @@
-        <otherEntity><entityName>Gastil: create my view!</entityName></otherEntity>
+        <otherEntity id="[% entity.entity_id %]">
+            [%- INCLUDE './templates/eml-entityGroup.tt' %]
+            [%- IF entity.attributeList.size > 0 %]
+            <attributeList>
+                [%- FOREACH attribute = entity.attributeList %]
+                    [%- INCLUDE './templates/eml-attribute.tt' %]
+                [%- END %] [%# end FOREACH attribute ... #%]
+            </attributeList>
+            [%- END %]
+            <entityType>[% entity.entitytype %]</entityType>
+        </otherEntity>
+
