@@ -134,6 +134,12 @@ __PACKAGE__->table("vw_eml_creator");
   is_nullable: 1
   size: 50
 
+=head2 onlineurl
+
+  data_type: 'varchar'
+  is_nullable: 1
+  size: 100
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -175,11 +181,13 @@ __PACKAGE__->add_columns(
   { data_type => "varchar", is_nullable => 1, size => 50 },
   "email",
   { data_type => "varchar", is_nullable => 1, size => 50 },
+  "onlineurl",
+  { data_type => "varchar", is_nullable => 1, size => 100 },
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-10-04 15:08:12
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:p8V7gq0+KYuC4Ok3H8eY8w
+# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-10-08 16:28:14
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:ourtwok/nWoL5xbo5UDv6w
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
