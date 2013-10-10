@@ -15,8 +15,15 @@ has 'datasetid' => ( is => 'ro', isa => 'Num');
 sub BUILD {
     my $self = shift;
 
+    my $configFilename = "./config/mb2eml.ini";
+
     # Load config file
-    my $cfg = new Config::Simple('config/mb2eml.ini');
+    my $cfg = new Config::Simple($configFilename);
+
+    if (not defined $cfg) {
+        die "Error: configuration file \"$configFilename\" not found.";
+    }
+
     # search PostgreSQL account and pass
     my $account = $cfg->param('account');
     my $pass = $cfg->param('pass');
@@ -28,7 +35,7 @@ sub BUILD {
     # Postgresql table names or field names are mixed case, because if Postgresql is sent a
     # query with mixed case names, it will 'case_fold' them to lower case, so the names in the
     # SQL won't match the Postgresql names and the query will fail.
-    # Note: export DBIC_TRACE=1 to have DBIC print out the SQL that it generates
+    # Note: export DBIC_TRACE=1 in the parent Unix shell to have DBIC print out the SQL that it generates
 
     # The database to use is specified at runtime, but it is necessary to import the Perl module
     # that contains the on-disk database schema. Because this must be done at runtime, the

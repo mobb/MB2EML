@@ -74,6 +74,22 @@ __PACKAGE__->table("vw_eml_geographiccoverage");
   data_type: 'double precision'
   is_nullable: 1
 
+=head2 altitudeminimum
+
+  data_type: 'double precision'
+  is_nullable: 1
+
+=head2 altitudemaximum
+
+  data_type: 'double precision'
+  is_nullable: 1
+
+=head2 altitudeunits
+
+  data_type: 'text'
+  is_nullable: 1
+  original: {data_type => "varchar"}
+
 =head2 gring
 
   data_type: 'text'
@@ -108,6 +124,16 @@ __PACKAGE__->add_columns(
   { data_type => "double precision", is_nullable => 1 },
   "westboundingcoordinate",
   { data_type => "double precision", is_nullable => 1 },
+  "altitudeminimum",
+  { data_type => "double precision", is_nullable => 1 },
+  "altitudemaximum",
+  { data_type => "double precision", is_nullable => 1 },
+  "altitudeunits",
+  {
+    data_type   => "text",
+    is_nullable => 1,
+    original    => { data_type => "varchar" },
+  },
   "gring",
   {
     data_type   => "text",
@@ -119,8 +145,8 @@ __PACKAGE__->add_columns(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-09-30 13:21:27
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:C+4vzHtXHUYI1y15zYvKRQ
+# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-10-09 17:48:46
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:4DFw/+GK+d85pPfl8HBo3A
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

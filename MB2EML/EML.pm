@@ -307,6 +307,7 @@ sub writeXML {
     use Template;
 
     my ($self, %args) = @_;
+    my $configFilename = "./config/mb2eml.ini";
     my $validate     = $args{validate};
     my $runEMLParser = $args{runEMLParser};
     my $verbose      = $args{verbose};
@@ -364,6 +365,11 @@ sub writeXML {
     if ($validate || $runEMLParser) {
         # Load config file
         my $cfg = new Config::Simple('config/mb2eml.ini');
+
+        if (not defined $cfg) {
+            die "Error: configuration file \"$configFilename\" not found.";
+        }
+
         $EMLlocation = $cfg->param('EMLlocation');
 
         if (! defined $EMLlocation) {
@@ -395,6 +401,8 @@ sub writeXML {
             } 
         }
     }
+
+    #my $subDoc = XML::LibXML::Document->createDocument();
 
     # Run the EMLParser against the newly created document to check that all references are correct.
     if ($runEMLParser) {
