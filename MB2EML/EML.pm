@@ -72,8 +72,9 @@ sub BUILD {
 
     $shortName = $self->getShortName();
     if (defined $shortName) {
-        $dataset{'shortName'} = $shortName->shortname;
+        $dataset{'shortname'} = $shortName->shortname;
     } else {
+        $dataset{'shortname'} = "";
         print STDERR "Warning: content not found in Metabase for <shortName>\n";
     }
 
@@ -136,8 +137,7 @@ sub getAttributeList {
         $attribute->{'coverage'}->{'taxonomiccoverage'} = $self->getTaxonomicCoverage($entityId, $attribute->column_position);
 
         # If a geographic coverage for this attribute is found, add it to the attribute hash
-        $attribute->{'coverage'}->{'geographiccoverage'} = $self->getGeographicCoverage($entityId, $attribute->column_position);
-
+        $attribute->{'coverage'}->{'geographiccoverage'} = $self->getGeographicCoverage($entityId, $attribute->column_position); 
         # If a temporal coverage for this attribute is found, add it to the attribute hash
         $attribute->{'coverage'}->{'temporalcoverage'} = $self->getTemporalCoverage($entityId, $attribute->column_position);
 
@@ -165,7 +165,6 @@ sub getCreators{
 
     return $self->mb->searchCreators($self->datasetId);
 }
-
 
 sub getGeographicCoverage{
     my $self = shift;
@@ -308,6 +307,7 @@ sub writeXML {
     use Template;
 
     my ($self, %args) = @_;
+    my $configFilename = "./config/mb2eml.ini";
     my $validate     = $args{validate};
     my $runEMLParser = $args{runEMLParser};
     my $verbose      = $args{verbose};
@@ -365,6 +365,11 @@ sub writeXML {
     if ($validate || $runEMLParser) {
         # Load config file
         my $cfg = new Config::Simple('config/mb2eml.ini');
+
+        if (not defined $cfg) {
+            die "Error: configuration file \"$configFilename\" not found.";
+        }
+
         $EMLlocation = $cfg->param('EMLlocation');
 
         if (! defined $EMLlocation) {
@@ -396,6 +401,8 @@ sub writeXML {
             } 
         }
     }
+
+    #my $subDoc = XML::LibXML::Document->createDocument();
 
     # Run the EMLParser against the newly created document to check that all references are correct.
     if ($runEMLParser) {

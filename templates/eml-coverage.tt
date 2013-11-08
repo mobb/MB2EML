@@ -14,13 +14,18 @@
                             <eastBoundingCoordinate>[% gc.eastboundingcoordinate %]</eastBoundingCoordinate>
                             <northBoundingCoordinate>[% gc.northboundingcoordinate %]</northBoundingCoordinate> 
                             <southBoundingCoordinate>[% gc.southboundingcoordinate %]</southBoundingCoordinate>
+                            [%- IF gc.altitudeminimum != "" %]
+                            <boundingAltitudes>
+                                <altitudeMinimum>[% gc.altitudeminimum %]</altitudeMinimum>
+                                <altitudeMaximum>[% gc.altitudemaximum %]</altitudeMaximum>
+                                <altitudeUnits>[% gc.altitudeunits %]</altitudeUnits>
+                            </boundingAltitudes> 
+                            [%- END %]
                          </boundingCoordinates> 
                             [%- IF gc.gring != "" %]
                         <datasetGPolygon>
                             <datasetGPolygonOuterGRing>
-                                <gRing>
-                                [% gc.gring %]
-                                </gRing>
+                                <gRing>[% gc.gring.trim %]</gRing>
                             </datasetGPolygonOuterGRing>
                         </datasetGPolygon>
                             [%- END %]
@@ -46,9 +51,7 @@
                     </temporalCoverage>
                     [%- END %] [%# END FOREACH tc coverage.temporalcoverage ... #%]
                     [%- FOREACH tc IN coverage.taxonomiccoverage %]
-                    <taxonomicCoverage>
                         [% tc.taxonomiccoverage_xml %]
-                    </taxonomicCoverage>
                     [%- END %] [%# FOREACH tc in coverage.taxonomiccoverage ... #%]
                 </coverage>
                 [%- END %]

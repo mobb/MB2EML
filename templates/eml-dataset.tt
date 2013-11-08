@@ -1,10 +1,11 @@
     <dataset id="[% dataset.id %]">
-        [% IF dataset.alternateidentifier != "" %]
+        [%- IF dataset.alternateidentifier != "" %]
         <alternateIdentifier>[% dataset.alternateidentifier %]</alternateIdentifier>
-        [% END %]
+        [%- END %]
+        [%- IF dataset.shortname != "" %]
         <shortName>[% dataset.shortname %]</shortName>
+        [%- END %]
         <title>[% dataset.title %]</title>
-
         [%- FOREACH creator = dataset.creators %]
         <creator id="[% creator.nameid %]">
             [% IF creator.givenname != "" ||
@@ -128,21 +129,25 @@
             [%- IF loop.first %]
         <keywordSet>
                 [%- thesaurus = keyword.keywordthesaurus %]
+                [%- thesaurusNumber = keyword.thesaurus_sort_order %]
             [%- END %]
-            [%- IF thesaurus != keyword.keywordthesaurus %]
+            [%- IF thesaurusNumber != keyword.thesaurus_sort_order %]
+                [%- IF thesaurus != "" and thesaurus.lower != "none" %]
             <keywordThesaurus>[% thesaurus %]</keywordThesaurus>
+                [%- END %]
                 [%- thesaurus = keyword.keywordthesaurus %]
+                [%- thesaurusNumber = keyword.thesaurus_sort_order %]
         </keywordSet>
         <keywordSet>
             [%- END %]
-            [%- IF keyword.keywordtype == "" %]
+            [%- IF keyword.keywordtype == "" || keyword.keywordtype.lower == "none" %]
             <keyword>[% keyword.keyword %]</keyword>
             [%- ELSE %]
             <keyword keywordType="[% keyword.keywordtype %]">[% keyword.keyword %]</keyword>
             [%- END %]
             [%- IF loop.last %]
-                [%- IF keyword.thesaurus != "" %]
-            <keywordThesaurus>[% keyword.thesaurus %]</keywordThesaurus>
+                [%- IF keyword.keywordthesaurus != "" and keyword.keywordthesaurus.lower != "none" %]
+            <keywordThesaurus>[% keyword.keywordthesaurus %]</keywordThesaurus>
                 [%- END %]
         </keywordSet>
             [% END %]
@@ -163,7 +168,7 @@
         [%- INCLUDE './templates/eml-methods.tt' methods = dataset.methods %]
         <project>[% dataset.project.project %]</project>
         [%- FOREACH entity = dataset.entities %]
-            [%- SET templateName = 'eml-' _ entity.entitytype _ '.tt' %]
+            [%- SET templateName = 'eml-' _ entity.entity_template _ '.tt' %]
             [%- INCLUDE "./templates/$templateName" %]
         [%- END %] [%# end FOREACH entity #%]
     </dataset>

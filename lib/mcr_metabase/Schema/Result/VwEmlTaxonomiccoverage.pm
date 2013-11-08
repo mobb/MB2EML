@@ -40,7 +40,7 @@ __PACKAGE__->table("vw_eml_taxonomiccoverage");
 
 =head2 taxonomiccoverage_xml
 
-  data_type: 'xml'
+  data_type: 'text'
   is_nullable: 1
 
 =cut
@@ -53,12 +53,12 @@ __PACKAGE__->add_columns(
   "attribute_position",
   { data_type => "integer", is_nullable => 1 },
   "taxonomiccoverage_xml",
-  { data_type => "xml", is_nullable => 1 },
+  { data_type => "text", is_nullable => 1 },
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-09-30 13:21:30
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:zIsf0EWY40U9KS0qSCrdig
+# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-10-04 16:19:24
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:kyzHm8/sU7q0QJ1x6d9WzA
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

@@ -28,6 +28,11 @@ __PACKAGE__->table("vw_eml_keyword");
   data_type: 'integer'
   is_nullable: 1
 
+=head2 thesaurus_sort_order
+
+  data_type: 'integer'
+  is_nullable: 1
+
 =head2 keyword
 
   data_type: 'varchar'
@@ -51,6 +56,8 @@ __PACKAGE__->table("vw_eml_keyword");
 __PACKAGE__->add_columns(
   "datasetid",
   { data_type => "integer", is_nullable => 1 },
+  "thesaurus_sort_order",
+  { data_type => "integer", is_nullable => 1 },
   "keyword",
   { data_type => "varchar", is_nullable => 1, size => 50 },
   "keywordtype",
@@ -60,8 +67,8 @@ __PACKAGE__->add_columns(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-09-30 13:21:27
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:eyqFcrPyVcqkHZArd4IOIw
+# Created by DBIx::Class::Schema::Loader v0.07036 @ 2013-10-04 16:19:08
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:UkYPpgJWA7zFdaiJ1TnTKw
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

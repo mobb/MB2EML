@@ -1,16 +1,25 @@
-            [% IF entity.alternateidentifier != "" %]
+            [%- IF entity.alternateidentifier != "" %]
             <alternateidentifier>[% entity.alternateidentifier %]</alternateidentifier>
-            [% END %]
+            [%- END %]
             <entityName>[% entity.entityname %]</entityName>
+            [%- IF entity.entitydescription != "" %]
             <entityDescription>[% entity.entitydescription %]</entityDescription> 
+            [%- END %]
             [%- FOREACH physical = entity.physical %]
             <physical>
                 <objectName>[% physical.objectname %]</objectName>
+                [%- IF physical.size != "" %]
                 <size unit="[% physical.unit %]">[% physical.size %]</size>
+                [%- END %]
                 [%- IF physical.characterencoding != "" %]
                 <characterEncoding>[% physical.characterencoding %]</characterEncoding>
                 [%- END %]
                 <dataFormat>
+                    [%- IF physical.formatname != "" %]
+                    <externallyDefinedFormat>
+                        <formatName>[% physical.formatname %]</formatName>
+                    </externallyDefinedFormat>
+                    [%- ELSE %]
                     <textFormat>
                         [%- IF physical.numheaderlines != "" %]
                         <numHeaderLines>[% physical.numheaderlines %]</numHeaderLines>
@@ -21,15 +30,20 @@
                         [%- IF physical.recorddelimiter != "" %]
                         <recordDelimiter>[% physical.recorddelimiter %]</recordDelimiter>
                         [%- END %]
+                        [%- IF physical.attributeorientation != "" %]
                         <attributeOrientation>[% physical.attributeorientation %]</attributeOrientation>
+                        [%- END %]
                         <simpleDelimited>
+                            [%- IF physical.fielddelimiter != "" %]
                             <fieldDelimiter>[% physical.fielddelimiter %]</fieldDelimiter>
+                            [%- END %]
                             <collapseDelimiters>[% physical.collapsedelimiters %]</collapseDelimiters>
                             [% IF physical.quotecharacter != "" %]
                             <quoteCharacter>[% physical.quotecharacter %]</quoteCharacter>
                             [% END %]
                         </simpleDelimited>
                     </textFormat>
+                    [%- END %]
                 </dataFormat>
                 <distribution>
                     [% IF physical.url != "" %]
@@ -47,4 +61,6 @@
             [%- END %]
             [%- INCLUDE './templates/eml-coverage.tt' coverage = entity.coverage %]
             [%- INCLUDE './templates/eml-methods.tt' methods = entity.methods %]
-            <additionalInfo>***** TBD *****</additionalInfo>
+            [%- IF entity.additionalinfo != "" %]
+            <additionalInfo>[% entity.additionalinfo %]</additionalInfo>
+            [%- END %]
