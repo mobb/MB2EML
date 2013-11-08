@@ -358,6 +358,7 @@ sub writeXML {
         print STDERR $self->datasetId . " : Error creating XML document: $@\n";
         print STDERR "The following is the invalid raw XML: \n";
         print STDERR $output . "\n";
+        #print $@->getErrorMessage();
         die $self->datasetId . ": Processing halted because the generated XML document is not valid.\n";
     } 
 
@@ -383,6 +384,7 @@ sub writeXML {
 
         if ($@) {
             print STDERR $self->datasetId . ": Unable to initialize XML Schema: $@\n";
+            print $@->getErrorMessage();
         } 
     }
 
@@ -398,6 +400,7 @@ sub writeXML {
             };
             if ($@) {
                 print STDERR $self->datasetId . ": Error validating XML document: $@\n";
+                print $@->getErrorMessage();
             } 
         }
     }
