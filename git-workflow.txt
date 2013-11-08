@@ -1,0 +1,42 @@
+
+The following scenarios illustrate using git update mb2eml.
+
+If you don't already have an MB2EML git repository you can create
+one using the following commands:
+
+     % cd <some directory>
+     % git clone https://github.com/sbpcs/MB2EML
+
+Scenario 1 - Make a change to the devel branch, push devel branch to github
+
+The intent of this workflow is to make and share changes on the devel branch, so that
+potentially risky changes can be reviewed and tested by multiple people, without
+updating the master branch with unproven changes.
+
+- git checkout devel
+
+  Change the current branch to 'devel'. 
+
+- git pull origin devel
+
+  Pull the most recent changes from 'devel' on github before you begin making your changes.
+  The 'git pull' command will always update your current branch, so be careful and checkout
+  the branch you want to update.
+
+- make changes to README.txt
+
+- git add README.txt
+
+  This command 'stages' a copy of README.txt for the next 'git commit'.
+
+- git commit -m "your commit comment goes here"
+
+  Store the changes that were staged and create a commit.
+
+- git push origin devel
+ 
+  Push the new commit in the devel branch to github.
+
+At this point other people can perform a 'git pull origin devel' to get the changes to README.txt
+
+Scenario 2 - Make a change to devel branch, merge with master, push master to github
