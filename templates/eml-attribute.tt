@@ -2,7 +2,9 @@
                     <attributeName>[% attribute.attributename %]</attributeName>
                     <attributeLabel>[% attribute.attributelabel %]</attributeLabel>
                     <attributeDefinition>[% attribute.attributedefinition %]</attributeDefinition>
-                    <storageType typeSystem="http://www.w3.org/2001/XMLSchema-datatypes">[% attribute.storagetype %]</storageType>
+                    [%- IF attribute.storagetype != "" %]
+                        <storageType typeSystem="http://www.w3.org/2001/XMLSchema-datatypes">[% attribute.storagetype %]</storageType>
+                    [%- END %]
                     <measurementScale>
                     [%- SWITCH attribute.measurementscale %]
                     [%- CASE 'dateTime' %]
