@@ -174,7 +174,9 @@ sub searchDatasetIds{
     my $self = shift;
     my @ids = ();
 
-    # Every dataset must have a title, so retrieve the ids from the title view.
+    # Create a list of all datasetIds that are available in the dataset we are using.
+    # We assume that every dataset must have a title and hence an entry in the vw_eml_title table, 
+    # so retrieve the ids from the title view and use as our list of available datasetids.
     my $rs = $self->schema->resultset('VwEmlTitle')->search({}, { order_by => { -asc => 'datasetid'}} );
     
     # Repackage the resultset as an array of rows, which is a more standard representaion,

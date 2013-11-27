@@ -101,9 +101,22 @@ if ($datasetId =~ /(\d+)-(\d+)/) {
 # If keyword "all" is specified for $aatasetId, use all ids.
 } elsif ($datasetId eq "all") {
     @ids = @$idsRef;
-# If single $datasetId is used, then use it!
+# If single $datasetId is specified then first verify that it has been entered in the database, then use it!
 } elsif ($datasetId =~ /(\d+)/) {
-    push (@ids, $datasetId);
+
+    my $idExists = 0;
+    for my $id (@$idsRef) {
+        if ($id == $datasetId) {
+            $idExists = 1;
+            last;
+        }
+    }
+    if ($idExists) {
+        push (@ids, $datasetId);
+    } else {
+        print STDERR "Error: datasetId " . $datasetId . " does not exist in database " . $databaseName . ".\n";
+        exit(0);
+    }
 } else {
     warn "Invalid datasetId: $datasetId\n";
     usage();
